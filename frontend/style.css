@@ -1,0 +1,157 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #172033;
+    background: #f5f7fb;
+}
+
+.navbar {
+    min-height: 70px;
+    padding: 0 7%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #101828;
+    color: white;
+}
+
+.brand {
+    font-weight: 700;
+    font-size: 1.15rem;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin-left: 24px;
+}
+
+.hero {
+    padding: 90px 7%;
+    background: linear-gradient(135deg, #e9efff, #ffffff);
+}
+
+.hero section {
+    max-width: 760px;
+}
+
+.eyebrow {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+h1 {
+    font-size: clamp(2rem, 5vw, 4rem);
+    margin: 12px 0;
+}
+
+.lead {
+    font-size: 1.15rem;
+    line-height: 1.7;
+}
+
+.actions {
+    margin-top: 28px;
+}
+
+.button {
+    display: inline-block;
+    border: 0;
+    border-radius: 10px;
+    padding: 13px 20px;
+    background: #2563eb;
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.button.secondary {
+    background: #172033;
+    margin-left: 8px;
+}
+
+.cards {
+    padding: 45px 7%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.cards article,
+.card-form {
+    background: white;
+    padding: 28px;
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(16, 24, 40, .08);
+}
+
+.form-page {
+    min-height: calc(100vh - 70px);
+    display: grid;
+    place-items: center;
+    padding: 40px 20px;
+}
+
+.card-form {
+    width: min(520px, 100%);
+}
+
+.card-form h1 {
+    font-size: 2.1rem;
+}
+
+label {
+    display: block;
+    margin: 18px 0;
+    font-weight: 700;
+}
+
+input, select {
+    width: 100%;
+    margin-top: 8px;
+    padding: 13px;
+    border: 1px solid #ccd3df;
+    border-radius: 9px;
+    font-size: 1rem;
+}
+
+.message {
+    margin-top: 15px;
+    font-weight: 700;
+}
+
+.message.success { color: #067647; }
+.message.error { color: #b42318; }
+
+.stock {
+    margin-top: 24px;
+    padding: 16px;
+    border-radius: 10px;
+    background: #eef4ff;
+}
+
+@media (max-width: 760px) {
+    .navbar {
+        padding: 15px 5%;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    nav a {
+        margin: 0 8px;
+    }
+
+    .cards {
+        grid-template-columns: 1fr;
+    }
+
+    .hero {
+        padding: 65px 7%;
+    }
+}
