@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - MSP Management</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="navbar">
+    <div class="brand">MSP Management</div>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="register.html">Register</a>
+        <a href="login.html">Login</a>
+        <a href="models.html">Models</a>
+    </nav>
+</header>
+
+<main class="form-page">
+    <form id="loginForm" class="card-form">
+
+        <h1>Login</h1>
+        <p>Login to the Mobile Spare Parts Management System.</p>
+
+        <label>
+            Username
+            <input id="username" name="username" required>
+        </label>
+
+        <label>
+            Password
+            <input id="password" name="password" type="password" required>
+        </label>
+
+        <button class="button" type="submit">Login</button>
+
+        <div id="message" class="message"></div>
+
+    </form>
+</main>
+
+<script>
+document.getElementById("loginForm").addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    const form = new FormData(event.target);
+    const body = new URLSearchParams(form);
+
+    const response = await fetch("/api/login", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body
+    });
+
+    const data = await response.json();
+
+    const message = document.getElementById("message");
+
+    message.textContent = data.message;
+    message.className = response.ok
+        ? "message success"
+        : "message error";
+});
+</script>
+
+</body>
+</html>
