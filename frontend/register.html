@@ -3,13 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register - MSP Management</title>
+    <title>User Registration - MSP Management</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <header class="navbar">
     <div class="brand">MSP Management</div>
-    <nav><a href="index.html">Home</a><a href="register.html">Register</a><a href="models.html">Models</a></nav>
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="register.html">Register</a>
+        <a href="login.html">Login</a>
+        <a href="models.html">Models</a>
+    </nav>
 </header>
 
 <main class="form-page">
@@ -18,40 +23,62 @@
         <p>Register for the Mobile Spare Parts Management System.</p>
 
         <label>Username
-            <input id="username" name="username" required minlength="3">
+            <input id="username" name="username" required minlength="3" maxlength="50" autocomplete="username">
         </label>
 
         <label>Email
-            <input id="email" name="email" type="email" required>
+            <input id="email" name="email" type="email" required maxlength="100" autocomplete="email">
         </label>
 
         <label>Password
-            <input id="password" name="password" type="password" required minlength="6">
+            <input id="password" name="password" type="password" required minlength="6" autocomplete="new-password">
+        </label>
+
+        <label>Confirm Password
+            <input id="confirmPassword" type="password" required minlength="6" autocomplete="new-password">
         </label>
 
         <button class="button" type="submit">Register</button>
-        <div id="message" class="message"></div>
+        <div id="message" class="message" role="alert"></div>
     </form>
 </main>
 
 <script>
-document.getElementById("registerForm").addEventListener("submit", async (event) => {
+const form = document.getElementById("registerForm");
+const message = document.getElementById("message");
+
+form.addEventListener("submit", async (event) => {
     event.preventDefault();
-    const form = new FormData(event.target);
-    const body = new URLSearchParams(form);
+    message.textContent = "";
 
-    const response = await fetch("/api/register", {
-        method: "POST",
-        headers: {"Content-Type": "application/x-www-form-urlencoded"},
-        body
-    });
+    const password = document.getElementById("password").value;
+    const confirmPassword = document.getElementById("confirmPassword").value;
 
-    const data = await response.json();
-    const message = document.getElementById("message");
-    message.textContent = data.message;
-    message.className = response.ok ? "message success" : "message error";
+    if (password !== confirmPassword) {
+        message.textContent = "Passwords do not match.";
+        message.className = "message error";
+        return;
+    }
 
-    if (response.ok) event.target.reset();
+    try {
+        const body = new URLSearchParams(new FormData(form));
+        const response = await fetch("/api/register", {
+            method: "POST",
+            headers: {"Content-Type": "application/x-www-form-urlencoded"},
+            body
+        });
+
+        const data = await response.json();
+        message.textContent = data.message;
+        message.className = response.ok ? "message success" : "message error";
+
+        if (response.ok) {
+            form.reset();
+        }
+    } catch (error) {
+        message.textContent = "Unable to connect to the server.";
+        message.className = "message error";
+    }
 });
 </script>
 </body>
