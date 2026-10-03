@@ -6,62 +6,137 @@
     <title>Models - MSP Management</title>
     <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
+
 <header class="navbar">
     <div class="brand">MSP Management</div>
-    <nav><a href="index.html">Home</a><a href="register.html">Register</a><a href="models.html">Models</a></nav>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="register.html">Register</a>
+        <a href="models.html">Models</a>
+    </nav>
 </header>
 
 <main class="form-page">
-    <section class="card-form">
-        <h1>Spare Parts by Model</h1>
-        <p>Select a mobile model to view its available stock.</p>
 
-        <label>Mobile Model
+    <section class="card-form">
+
+        <h1>Spare Parts by Model</h1>
+
+        <p>Select a mobile model to view its available spare part.</p>
+
+        <label>
+            Mobile Model
+
             <select id="modelSelect">
                 <option value="">Loading models...</option>
             </select>
         </label>
 
         <div id="stockResult" class="stock"></div>
+
     </section>
+
 </main>
 
 <script>
-async function loadModels() {
-    const select = document.getElementById("modelSelect");
-    const response = await fetch("/api/models");
-    const models = await response.json();
 
-    select.innerHTML = '<option value="">Select Model</option>';
-    models.forEach(model => {
-        const option = document.createElement("option");
-        option.value = model;
-        option.textContent = model;
-        select.appendChild(option);
-    });
+async function loadModels() {
+
+    const select = document.getElementById("modelSelect");
+
+    try {
+
+        const response = await fetch("/api/models");
+
+        if (!response.ok) {
+            throw new Error("Failed to load models");
+        }
+
+        const models = await response.json();
+
+        select.innerHTML =
+            '<option value="">Select Model</option>';
+
+        models.forEach(model => {
+
+            const option =
+                document.createElement("option");
+
+            option.value = model;
+            option.textContent = model;
+
+            select.appendChild(option);
+        });
+
+    } catch (error) {
+
+        select.innerHTML =
+            '<option value="">Unable to load models</option>';
+
+        console.error(error);
+    }
 }
 
+
 async function showStock() {
-    const model = document.getElementById("modelSelect").value;
-    const result = document.getElementById("stockResult");
+
+    const model =
+        document.getElementById("modelSelect").value;
+
+    const result =
+        document.getElementById("stockResult");
 
     if (!model) {
         result.textContent = "";
         return;
     }
 
-    const response = await fetch("/api/spare-parts");
-    const parts = await response.json();
-    const part = parts.find(item => item.model === model);
+    try {
 
-    result.textContent = part
-        ? `${part.partName} — ${part.quantity} units — ₹${part.price.toFixed(2)}`
-        : "No stock information available.";
+        const response =
+            await fetch("/api/spare-parts");
+
+        if (!response.ok) {
+            throw new Error("Failed to load spare parts");
+        }
+
+        const parts =
+            await response.json();
+
+        const part =
+            parts.find(item => item.model === model);
+
+        if (part) {
+
+            result.textContent =
+                `${model}: ${part.partName} — ${part.quantity} units — ₹${part.price.toFixed(2)}`;
+
+        } else {
+
+            result.textContent =
+                "No stock information available.";
+        }
+
+    } catch (error) {
+
+        result.textContent =
+            "Unable to load spare-part information.";
+
+        console.error(error);
+    }
 }
 
-document.getElementById("modelSelect").addEventListener("change", showStock);
+
+document
+    .getElementById("modelSelect")
+    .addEventListener("change", showStock);
+
 loadModels();
+
 </script>
+
 </body>
 </html>
