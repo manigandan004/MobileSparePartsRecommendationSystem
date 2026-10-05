@@ -60,4 +60,19 @@ public class SparePartService {
     public synchronized List<SparePart> getAllParts() {
         return Collections.unmodifiableList(new ArrayList<>(parts));
     }
+
+    public synchronized SparePart findById(int id) {
+        return parts.stream().filter(p -> p.getId() == id).findFirst().orElse(null);
+    }
+
+    public synchronized List<SparePart> search(String query, String model, String category) {
+        String q = query == null ? "" : query.trim().toLowerCase(Locale.ROOT);
+        String m = model == null ? "" : model.trim().toLowerCase(Locale.ROOT);
+        String c = category == null ? "" : category.trim().toLowerCase(Locale.ROOT);
+        return parts.stream().filter(p ->
+                (q.isBlank() || p.getPartName().toLowerCase(Locale.ROOT).contains(q) || p.getModel().toLowerCase(Locale.ROOT).contains(q))
+                && (m.isBlank() || p.getModel().toLowerCase(Locale.ROOT).contains(m))
+                && (c.isBlank() || p.getPartName().toLowerCase(Locale.ROOT).contains(c))
+        ).toList();
+    }
 }
