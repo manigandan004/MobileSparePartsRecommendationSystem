@@ -1,1 +1,1010 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Browse Spare Parts</title><link rel="stylesheet" href="style.css"></head><body><main class="container"><a href="index.html">← Home</a><h1>Browse / Search Spare Parts</h1><input id="q" placeholder="Search part or model"><button onclick="load()">Search</button><div id="list"></div></main><script>async function load(){const q=encodeURIComponent(document.getElementById('q').value);const data=await fetch('/api/spare-parts?search='+q).then(r=>r.json());document.getElementById('list').innerHTML=data.map(p=>`<div class="card"><h3>${p.partName}</h3><p>${p.model} · ₹${p.price} · Stock ${p.quantity}</p><a href="details.html?id=${p.id}">View details</a></div>`).join('')||'<p>No parts found.</p>'}load();</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Browse Spare Parts | MobiSpares Connect
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+</head>
+
+<body>
+
+
+<div class="topbar">
+
+    <div class="container">
+
+        <span>
+            Specialized mobile spare-parts marketplace
+        </span>
+
+        <span>
+            Find parts for your selected device
+        </span>
+
+    </div>
+
+</div>
+
+
+<nav class="navbar">
+
+    <div class="container nav-inner">
+
+
+        <a
+            class="brand"
+            href="index.html"
+        >
+
+            <span class="brand-mark">
+                MS
+            </span>
+
+            MobiSpares
+            <span style="color:#2563eb">
+                Connect
+            </span>
+
+        </a>
+
+
+        <div class="nav-links">
+
+            <a href="index.html">
+                Home
+            </a>
+
+            <a
+                class="active"
+                href="browse.html"
+            >
+                Browse Parts
+            </a>
+
+            <a href="models.html">
+                Select Model
+            </a>
+
+        </div>
+
+
+        <div class="nav-actions">
+
+            <a
+                class="btn btn-secondary"
+                href="register.html"
+            >
+                Register
+            </a>
+
+            <a
+                class="btn btn-primary"
+                href="login.html"
+            >
+                Sign in
+            </a>
+
+            <button
+                class="icon-btn menu-btn"
+                onclick="toggleMenu()"
+            >
+                ☰
+            </button>
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+<main class="page">
+
+    <div class="container">
+
+
+        <div class="page-head">
+
+            <div>
+
+                <div class="eyebrow">
+                    SPARE PARTS
+                </div>
+
+                <h1>
+                    Browse & Search Spare Parts
+                </h1>
+
+                <p class="lead">
+
+                    Search displays, batteries,
+                    cameras and charging parts
+                    for your selected mobile.
+
+                </p>
+
+            </div>
+
+
+            <a
+                class="btn btn-secondary"
+                href="models.html"
+            >
+                Change Mobile →
+            </a>
+
+        </div>
+
+
+        <!-- SELECTED DEVICE -->
+
+        <div
+            class="selected-device card mb"
+        >
+
+            <div>
+
+                <span
+                    class="muted"
+                    style="font-size:13px"
+                >
+                    Selected device
+                </span>
+
+                <h3
+                    id="selectedDevice"
+                    style="margin-top:5px"
+                >
+                    All mobile devices
+                </h3>
+
+            </div>
+
+
+            <a
+                href="models.html"
+                class="btn btn-outline"
+            >
+                Change model
+            </a>
+
+        </div>
+
+
+        <!-- SEARCH / FILTER -->
+
+        <div class="card mb">
+
+            <div class="filters">
+
+
+                <div
+                    class="search"
+                    style="
+                    flex:2;
+                    min-width:230px;
+                    "
+                >
+
+                    <span class="search-icon">
+                        ⌕
+                    </span>
+
+                    <input
+                        id="searchInput"
+                        class="input"
+                        placeholder="Search displays, batteries, cameras…"
+                    >
+
+                </div>
+
+
+                <select
+                    id="brandFilter"
+                    class="select"
+                    style="
+                    flex:1;
+                    min-width:160px;
+                    "
+                >
+
+                    <option value="all">
+                        All brands
+                    </option>
+
+                </select>
+
+
+                <select
+                    id="categoryFilter"
+                    class="select"
+                    style="
+                    flex:1;
+                    min-width:160px;
+                    "
+                >
+
+                    <option value="all">
+                        All categories
+                    </option>
+
+                    <option value="Display">
+                        Display
+                    </option>
+
+                    <option value="Battery">
+                        Battery
+                    </option>
+
+                    <option value="Camera">
+                        Camera
+                    </option>
+
+                    <option value="Charging">
+                        Charging
+                    </option>
+
+                </select>
+
+
+            </div>
+
+        </div>
+
+
+        <!-- PRODUCTS -->
+
+        <div
+            id="productGrid"
+            class="grid grid-3"
+        ></div>
+
+
+        <div
+            id="noResults"
+            class="card empty"
+            style="display:none;margin-top:18px"
+        >
+
+            No spare parts match your search
+            or selected mobile.
+
+        </div>
+
+
+    </div>
+
+</main>
+
+
+<footer class="footer">
+
+    <div class="container">
+
+
+        <div class="footer-grid">
+
+
+            <div>
+
+                <div
+                    class="brand"
+                    style="color:#fff"
+                >
+
+                    <span class="brand-mark">
+                        MS
+                    </span>
+
+                    MobiSpares Connect
+
+                </div>
+
+                <p
+                    style="
+                    font-size:13px;
+                    max-width:360px;
+                    "
+                >
+
+                    Browse mobile spare parts
+                    by brand, model and component.
+
+                </p>
+
+            </div>
+
+
+            <div>
+
+                <h3>
+                    Shop
+                </h3>
+
+                <a href="browse.html">
+                    Browse parts
+                </a>
+
+                <a href="models.html">
+                    Mobile models
+                </a>
+
+            </div>
+
+
+            <div>
+
+                <h3>
+                    Account
+                </h3>
+
+                <a href="login.html">
+                    Sign in
+                </a>
+
+                <a href="register.html">
+                    Create account
+                </a>
+
+            </div>
+
+
+            <div>
+
+                <h3>
+                    Explore
+                </h3>
+
+                <a href="index.html">
+                    Home
+                </a>
+
+                <a href="models.html">
+                    Choose mobile
+                </a>
+
+            </div>
+
+
+        </div>
+
+
+        <div class="copyright">
+
+            © 2026 MobiSpares Connect
+            • Mobile spare-parts marketplace
+
+        </div>
+
+
+    </div>
+
+</footer>
+
+
+<script>
+
+
+/*
+=========================================================
+SPARE PARTS DATA
+
+Each product is linked to a specific
+brand + model.
+=========================================================
+*/
+
+const products = [
+
+    {
+        brand: "Apple",
+        model: "iPhone 13",
+        category: "Display",
+        name: "iPhone 13 OLED Display",
+        desc: "Replacement OLED display assembly.",
+        price: "₹5,999",
+        rating: "4.8",
+        sku: "SP-1001",
+        icon: "📱"
+    },
+
+    {
+        brand: "Apple",
+        model: "iPhone 13",
+        category: "Battery",
+        name: "iPhone 13 Replacement Battery",
+        desc: "High-capacity replacement battery.",
+        price: "₹1,699",
+        rating: "4.7",
+        sku: "SP-1002",
+        icon: "🔋"
+    },
+
+    {
+        brand: "Apple",
+        model: "iPhone 14",
+        category: "Display",
+        name: "iPhone 14 OLED Display",
+        desc: "Replacement display for iPhone 14.",
+        price: "₹6,499",
+        rating: "4.7",
+        sku: "SP-1003",
+        icon: "📱"
+    },
+
+
+    {
+        brand: "Samsung",
+        model: "Galaxy A54",
+        category: "Display",
+        name: "Samsung Galaxy A54 OLED Display",
+        desc: "Original-quality replacement display.",
+        price: "₹3,499",
+        rating: "4.8",
+        sku: "SP-1101",
+        icon: "📱"
+    },
+
+    {
+        brand: "Samsung",
+        model: "Galaxy A54",
+        category: "Battery",
+        name: "Samsung A54 Battery",
+        desc: "Replacement battery for Galaxy A54.",
+        price: "₹1,299",
+        rating: "4.6",
+        sku: "SP-1102",
+        icon: "🔋"
+    },
+
+    {
+        brand: "Samsung",
+        model: "Galaxy S23",
+        category: "Camera",
+        name: "Galaxy S23 Rear Camera Module",
+        desc: "Replacement rear camera module.",
+        price: "₹4,899",
+        rating: "4.7",
+        sku: "SP-1103",
+        icon: "📷"
+    },
+
+
+    {
+        brand: "OnePlus",
+        model: "OnePlus 11",
+        category: "Camera",
+        name: "OnePlus 11 Rear Camera Module",
+        desc: "Rear camera module for repair use.",
+        price: "₹2,899",
+        rating: "4.6",
+        sku: "SP-1201",
+        icon: "📷"
+    },
+
+    {
+        brand: "OnePlus",
+        model: "OnePlus 12",
+        category: "Battery",
+        name: "OnePlus 12 Replacement Battery",
+        desc: "Replacement battery assembly.",
+        price: "₹1,899",
+        rating: "4.6",
+        sku: "SP-1202",
+        icon: "🔋"
+    },
+
+
+    {
+        brand: "Xiaomi",
+        model: "Redmi Note 13",
+        category: "Charging",
+        name: "Redmi Note 13 Charging Port",
+        desc: "Replacement charging connector.",
+        price: "₹799",
+        rating: "4.5",
+        sku: "SP-1301",
+        icon: "⚡"
+    },
+
+    {
+        brand: "Xiaomi",
+        model: "Redmi Note 13 Pro",
+        category: "Display",
+        name: "Redmi Note 13 Pro Display",
+        desc: "Replacement AMOLED display.",
+        price: "₹2,999",
+        rating: "4.6",
+        sku: "SP-1302",
+        icon: "📱"
+    },
+
+
+    {
+        brand: "Vivo",
+        model: "Vivo V29",
+        category: "Display",
+        name: "Vivo V29 AMOLED Display",
+        desc: "Replacement AMOLED display assembly.",
+        price: "₹3,299",
+        rating: "4.5",
+        sku: "SP-1401",
+        icon: "📱"
+    },
+
+    {
+        brand: "Vivo",
+        model: "Vivo V30",
+        category: "Battery",
+        name: "Vivo V30 Battery",
+        desc: "Replacement battery assembly.",
+        price: "₹1,399",
+        rating: "4.5",
+        sku: "SP-1402",
+        icon: "🔋"
+    },
+
+
+    {
+        brand: "Oppo",
+        model: "Oppo Reno 11",
+        category: "Camera",
+        name: "Oppo Reno 11 Camera Module",
+        desc: "Replacement camera module.",
+        price: "₹2,699",
+        rating: "4.5",
+        sku: "SP-1501",
+        icon: "📷"
+    },
+
+    {
+        brand: "Oppo",
+        model: "Oppo A79",
+        category: "Charging",
+        name: "Oppo A79 Charging Port",
+        desc: "Replacement USB charging connector.",
+        price: "₹699",
+        rating: "4.4",
+        sku: "SP-1502",
+        icon: "⚡"
+    },
+
+
+    {
+        brand: "Realme",
+        model: "Realme 11 Pro",
+        category: "Display",
+        name: "Realme 11 Pro AMOLED Display",
+        desc: "Replacement AMOLED display.",
+        price: "₹2,799",
+        rating: "4.5",
+        sku: "SP-1601",
+        icon: "📱"
+    },
+
+
+    {
+        brand: "Motorola",
+        model: "Moto G84",
+        category: "Battery",
+        name: "Moto G84 Replacement Battery",
+        desc: "Replacement battery assembly.",
+        price: "₹1,199",
+        rating: "4.4",
+        sku: "SP-1701",
+        icon: "🔋"
+    },
+
+
+    {
+        brand: "Google",
+        model: "Pixel 7a",
+        category: "Display",
+        name: "Google Pixel 7a Display",
+        desc: "Replacement display assembly.",
+        price: "₹4,499",
+        rating: "4.6",
+        sku: "SP-1801",
+        icon: "📱"
+    },
+
+    {
+        brand: "Google",
+        model: "Pixel 8",
+        category: "Camera",
+        name: "Google Pixel 8 Camera Module",
+        desc: "Replacement camera module.",
+        price: "₹5,299",
+        rating: "4.7",
+        sku: "SP-1802",
+        icon: "📷"
+    }
+
+];
+
+
+/*
+=========================================================
+ELEMENTS
+=========================================================
+*/
+
+const searchInput =
+    document.getElementById("searchInput");
+
+const brandFilter =
+    document.getElementById("brandFilter");
+
+const categoryFilter =
+    document.getElementById("categoryFilter");
+
+const grid =
+    document.getElementById("productGrid");
+
+const noResults =
+    document.getElementById("noResults");
+
+
+/*
+=========================================================
+BRAND FILTER
+=========================================================
+*/
+
+[
+    ...new Set(
+        products.map(
+            product => product.brand
+        )
+    )
+].forEach(
+    brandName => {
+
+        brandFilter.add(
+            new Option(
+                brandName,
+                brandName
+            )
+        );
+
+    }
+);
+
+
+/*
+=========================================================
+READ SELECTED DEVICE
+=========================================================
+*/
+
+const params =
+    new URLSearchParams(
+        window.location.search
+    );
+
+
+const selectedBrand =
+    params.get("brand") ||
+    localStorage.getItem(
+        "selectedBrand"
+    ) ||
+    "";
+
+
+const selectedModel =
+    params.get("model") ||
+    localStorage.getItem(
+        "selectedModel"
+    ) ||
+    "";
+
+
+/*
+Show selected brand in filter.
+*/
+
+if (selectedBrand) {
+
+    brandFilter.value =
+        selectedBrand;
+
+}
+
+
+/*
+Show selected device.
+*/
+
+document
+    .getElementById("selectedDevice")
+    .textContent =
+
+    selectedModel
+
+        ? selectedBrand +
+          " " +
+          selectedModel
+
+        : selectedBrand ||
+          "All mobile devices";
+
+
+/*
+=========================================================
+RENDER PRODUCTS
+=========================================================
+*/
+
+function render() {
+
+
+    const search =
+        searchInput.value
+            .toLowerCase()
+            .trim();
+
+
+    const brand =
+        brandFilter.value;
+
+
+    const category =
+        categoryFilter.value;
+
+
+    const filtered =
+        products.filter(
+            function(product) {
+
+
+                /*
+                If a model was selected,
+                show only that model.
+                */
+
+                const modelMatch =
+                    !selectedModel ||
+                    product.model ===
+                    selectedModel;
+
+
+                /*
+                Brand filter
+                */
+
+                const brandMatch =
+                    brand === "all" ||
+                    product.brand ===
+                    brand;
+
+
+                /*
+                Category filter
+                */
+
+                const categoryMatch =
+                    category === "all" ||
+                    product.category ===
+                    category;
+
+
+                /*
+                Search
+                */
+
+                const searchText =
+
+                    product.name +
+                    " " +
+                    product.brand +
+                    " " +
+                    product.model +
+                    " " +
+                    product.category;
+
+
+                const searchMatch =
+                    !search ||
+                    searchText
+                        .toLowerCase()
+                        .includes(search);
+
+
+                return (
+                    modelMatch &&
+                    brandMatch &&
+                    categoryMatch &&
+                    searchMatch
+                );
+
+            }
+        );
+
+
+    /*
+    Display cards.
+    */
+
+    grid.innerHTML =
+        filtered.map(
+            function(product) {
+
+                return `
+
+                    <div class="card">
+
+                        <div class="product-img">
+                            ${product.icon}
+                        </div>
+
+                        <div class="product-meta">
+
+                            <span class="badge success">
+                                Available
+                            </span>
+
+                            <span>
+                                SKU ${product.sku}
+                            </span>
+
+                        </div>
+
+
+                        <h3>
+                            ${product.name}
+                        </h3>
+
+
+                        <p class="muted">
+                            ${product.desc}
+                        </p>
+
+
+                        <div class="product-meta">
+
+                            <span class="price">
+                                ${product.price}
+                            </span>
+
+                            <span class="rating">
+                                ★ ${product.rating}
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                `;
+
+            }
+        )
+        .join("");
+
+
+    /*
+    No results message.
+    */
+
+    noResults.style.display =
+        filtered.length
+            ? "none"
+            : "block";
+
+}
+
+
+/*
+=========================================================
+EVENTS
+=========================================================
+*/
+
+searchInput.addEventListener(
+    "input",
+    render
+);
+
+
+brandFilter.addEventListener(
+    "change",
+    render
+);
+
+
+categoryFilter.addEventListener(
+    "change",
+    render
+);
+
+
+/*
+Initial render.
+*/
+
+render();
+
+
+/*
+=========================================================
+MOBILE MENU
+=========================================================
+*/
+
+function toggleMenu() {
+
+    const n =
+        document.querySelector(
+            ".nav-links"
+        );
+
+    if (!n) return;
+
+
+    if (
+        n.style.display === "flex"
+    ) {
+
+        n.style.display =
+            "none";
+
+    } else {
+
+        n.style.display =
+            "flex";
+
+        n.style.position =
+            "absolute";
+
+        n.style.top =
+            "64px";
+
+        n.style.left =
+            "12px";
+
+        n.style.right =
+            "12px";
+
+        n.style.flexDirection =
+            "column";
+
+        n.style.alignItems =
+            "stretch";
+
+        n.style.padding =
+            "10px";
+
+        n.style.background =
+            "#fff";
+
+        n.style.border =
+            "1px solid #e2e8f0";
+
+        n.style.borderRadius =
+            "16px";
+
+        n.style.boxShadow =
+            "0 15px 35px rgba(15,23,42,.12)";
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>
