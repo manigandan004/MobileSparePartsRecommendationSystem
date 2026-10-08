@@ -1,23 +1,48 @@
 # Mobile Spare Parts Management System
 
-Team 01 project. Sprint 1 foundation + Sprint 2 completed work implementation.
+Team 01 project for managing mobile spare parts, compatibility, search, product details, and related services.
 
-## Sprint 2
+## Completed Stories
 
-MSPR-3 User Registration; MSPR-4 User Login; MSPR-5 Browse Mobile Spare Parts; MSPR-6 Select Mobile Brand and Model; MSPR-7 Search Spare Parts; MSPR-9 View Product Details; MSPR-10 Check Spare-Part Compatibility; MSPR-26 Part Out of Stock Notifications; MSPR-27 Integrated Repair Guides; MSPR-29 Defective Part Return & Replacement; MSPR-20 Price Tracking.
+- MSPR-3: User Registration
+- MSPR-4: User Login
+- MSPR-5: Browse Mobile Spare Parts
+- MSPR-6: Select Mobile Brand and Model
+- MSPR-7: Search Spare Parts
+- MSPR-9: View Product Details
+- MSPR-10: Check Spare-Part Compatibility
 
-Supporting features include product reviews/ratings, order tracking, comparison and recommendations.
+## Current Branch
 
-## Run
+**MSPR-10-Check-Spare-Part-Compatibility**
 
-Requires JDK 17+ and Maven.
+This branch contains the implementation for checking whether a spare part is compatible with a selected mobile model.
 
-```bash
-mvn clean test
-mvn clean compile
-java -cp target/classes com.msp.App
-```
+## MSPR-10 Feature
 
-Open `http://localhost:8080/`.
+The compatibility feature allows users to verify whether a spare part can be used with a selected mobile model before purchasing.
 
-The current implementation uses an in-memory service layer for the web demo. `database/schema.sql` remains the database schema reference.
+### Features
+
+- Select a mobile model
+- Select a spare part
+- Check spare-part compatibility
+- Display the compatibility result
+
+## Technology Stack
+
+- Java
+- Maven
+- MySQL
+- HTML
+- CSS
+- JavaScript
+
+## Project Structure
+
+```text
+database/
+frontend/
+src/
+pom.xml
+README.md
