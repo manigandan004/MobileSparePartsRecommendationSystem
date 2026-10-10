@@ -1,136 +1,1692 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Track Order - PartPulse MSP</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Orders | PartPulse MSP</title>
+  <link rel="stylesheet" href="style.css">
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f5f7fb;
-            margin: 0;
-        }
+  <style>
+    :root {
+      --blue: #2563eb;
+      --blue-dark: #1d4ed8;
+      --ink: #172033;
+      --muted: #64748b;
+      --line: #e5eaf2;
+      --bg: #f5f7fb;
+      --green: #15803d;
+      --orange: #c2410c;
+      --red: #b91c1c;
+    }
 
-        .container {
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 20px;
-        }
+    * { box-sizing: border-box; }
 
-        .order-card {
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            margin-bottom: 20px;
-        }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+    }
 
-        .order-card h2 {
-            margin-top: 0;
-        }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    a { color: inherit; text-decoration: none; }
 
-        .status {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 30px;
-            position: relative;
-        }
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding: 15px 6%;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255,255,255,.97);
+      backdrop-filter: blur(12px);
+    }
 
-        .status::before {
-            content: "";
-            position: absolute;
-            top: 15px;
-            left: 8%;
-            right: 8%;
-            height: 3px;
-            background: #ddd;
-            z-index: 0;
-        }
+    .logo {
+      color: var(--blue);
+      font-size: 23px;
+      font-weight: 900;
+      letter-spacing: -.8px;
+    }
 
-        .step {
-            text-align: center;
-            position: relative;
-            z-index: 1;
-        }
+    .logo span { color: var(--ink); }
 
-        .circle {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: #ddd;
-            margin: auto;
-            line-height: 30px;
-            color: white;
-            font-weight: bold;
-        }
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      color: #475569;
+      font-size: 13px;
+      font-weight: 700;
+    }
 
-        .active .circle {
-            background: #2563eb;
-        }
+    .nav-links a:hover, .nav-links a.active { color: var(--blue); }
 
-        .step p {
-            font-size: 13px;
-        }
+    .account-btn {
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: var(--blue);
+      color: white;
+      font-size: 12px;
+      font-weight: 800;
+    }
 
-        .back {
-            display: inline-block;
-            margin-top: 20px;
-            text-decoration: none;
-            color: #2563eb;
-        }
-    </style>
+    .page { width: min(1150px, 93%); margin: auto; }
+
+    .breadcrumb {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      padding: 22px 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .breadcrumb a:hover { color: var(--blue); }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 34px;
+      border-radius: 23px;
+      background: linear-gradient(120deg, #12234b, #1d4ed8 72%, #60a5fa);
+      color: white;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      top: -100px;
+      right: -50px;
+      width: 260px;
+      height: 260px;
+      border: 40px solid rgba(255,255,255,.1);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      padding: 7px 10px;
+      border-radius: 8px;
+      background: rgba(255,255,255,.14);
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 1px;
+    }
+
+    .hero h1 {
+      position: relative;
+      z-index: 1;
+      margin: 16px 0 10px;
+      font-size: clamp(29px, 4vw, 42px);
+      letter-spacing: -1px;
+    }
+
+    .hero p {
+      position: relative;
+      z-index: 1;
+      max-width: 640px;
+      margin: 0;
+      color: #dbeafe;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .hero-actions {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 21px;
+    }
+
+    .hero-actions a, .hero-actions button {
+      padding: 11px 14px;
+      border: 1px solid rgba(255,255,255,.4);
+      border-radius: 10px;
+      background: transparent;
+      color: white;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .hero-actions a:first-child {
+      border-color: white;
+      background: white;
+      color: var(--blue);
+    }
+
+    .section-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin: 29px 0 16px;
+    }
+
+    .section-heading h2 {
+      margin: 0;
+      font-size: 23px;
+      letter-spacing: -.5px;
+    }
+
+    .section-heading p {
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 7px 10px;
+      border-radius: 8px;
+      background: #eaf1ff;
+      color: var(--blue);
+      font-size: 10px;
+      font-weight: 900;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 13px;
+    }
+
+    .stat-card {
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: white;
+      transition: transform .2s, box-shadow .2s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 9px 25px rgba(15,23,42,.05);
+    }
+
+    .stat-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .stat-icon {
+      display: grid;
+      place-items: center;
+      width: 38px;
+      height: 38px;
+      border-radius: 11px;
+      background: #eff6ff;
+      font-size: 19px;
+    }
+
+    .stat-number {
+      display: block;
+      margin-top: 13px;
+      font-size: 27px;
+      font-weight: 900;
+      letter-spacing: -.7px;
+      overflow-wrap: anywhere;
+    }
+
+    .stat-label {
+      display: block;
+      margin-top: 5px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: minmax(180px, 1fr) 175px 175px auto;
+      gap: 10px;
+      margin: 20px 0 13px;
+    }
+
+    .control {
+      width: 100%;
+      min-width: 0;
+      padding: 12px;
+      border: 1px solid #dce3ed;
+      border-radius: 10px;
+      outline: none;
+      background: white;
+      color: var(--ink);
+      font-size: 12px;
+    }
+
+    .control:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px #dbeafe;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      min-height: 40px;
+      padding: 10px 13px;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 850;
+      transition: .2s;
+    }
+
+    .btn-primary { background: var(--blue); color: white; }
+    .btn-primary:hover { background: var(--blue-dark); }
+    .btn-outline { border-color: #dce3ed; background: white; color: #334155; }
+    .btn-outline:hover { border-color: #93b4fb; background: #eff6ff; color: var(--blue); }
+    .btn-danger { border-color: #fecaca; background: #fff; color: var(--red); }
+    .btn-danger:hover { background: #fef2f2; }
+
+    .filter-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 15px 0 20px;
+    }
+
+    .chip {
+      padding: 8px 12px;
+      border: 1px solid #dce3ed;
+      border-radius: 20px;
+      background: white;
+      color: #475569;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .chip.active {
+      border-color: var(--blue);
+      background: var(--blue);
+      color: white;
+    }
+
+    .status {
+      margin: 12px 0;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .status.error { background: #fef2f2; color: #b91c1c; }
+    .status.success { background: #f0fdf4; color: #166534; }
+    .status[hidden] { display: none; }
+
+    .orders-list {
+      display: grid;
+      gap: 15px;
+    }
+
+    .order-card {
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 17px;
+      background: white;
+      animation: appear .25s ease;
+    }
+
+    @keyframes appear {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .order-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 13px;
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--line);
+      background: #fcfdff;
+    }
+
+    .order-number {
+      margin: 0;
+      font-size: 14px;
+      font-weight: 900;
+      overflow-wrap: anywhere;
+    }
+
+    .order-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 13px;
+      margin-top: 7px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 10px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .status-pill::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .status-delivered { background: #dcfce7; color: #166534; }
+    .status-shipped { background: #dbeafe; color: #1d4ed8; }
+    .status-processing { background: #fef3c7; color: #92400e; }
+    .status-cancelled { background: #fee2e2; color: #b91c1c; }
+    .status-pending { background: #f1f5f9; color: #475569; }
+    .status-returned { background: #f3e8ff; color: #7e22ce; }
+
+    .order-body { padding: 20px; }
+
+    .order-main {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 190px;
+      gap: 20px;
+    }
+
+    .items-label {
+      margin: 0 0 13px;
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: .7px;
+      text-transform: uppercase;
+    }
+
+    .item-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .item-icon {
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      width: 52px;
+      height: 52px;
+      border: 1px solid #e8edf5;
+      border-radius: 12px;
+      background: #f8fafc;
+      font-size: 23px;
+    }
+
+    .item-info { min-width: 0; flex: 1; }
+
+    .item-info h4 {
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    .item-info p {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.6;
+    }
+
+    .item-price {
+      flex-shrink: 0;
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    .more-items {
+      margin-top: 9px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .order-total {
+      align-self: stretch;
+      padding: 16px;
+      border-radius: 12px;
+      background: #f8fafc;
+    }
+
+    .total-label {
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .total-price {
+      display: block;
+      margin-top: 7px;
+      font-size: 23px;
+      font-weight: 900;
+      overflow-wrap: anywhere;
+    }
+
+    .payment-line {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 10px;
+    }
+
+    .payment-line strong {
+      color: var(--ink);
+      text-align: right;
+    }
+
+    .order-progress {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      margin: 20px 0 2px;
+      padding: 16px 0 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .progress-step {
+      position: relative;
+      text-align: center;
+      color: #94a3b8;
+      font-size: 10px;
+    }
+
+    .progress-step:not(:last-child)::after {
+      content: "";
+      position: absolute;
+      top: 9px;
+      left: calc(50% + 12px);
+      width: calc(100% - 24px);
+      height: 2px;
+      background: #e2e8f0;
+    }
+
+    .progress-dot {
+      position: relative;
+      z-index: 1;
+      display: block;
+      width: 18px;
+      height: 18px;
+      margin: 0 auto 8px;
+      border: 3px solid #dbe2ec;
+      border-radius: 50%;
+      background: white;
+    }
+
+    .progress-step.done { color: #166534; }
+    .progress-step.done .progress-dot { border-color: #16a34a; background: #16a34a; }
+    .progress-step.done:not(:last-child)::after { background: #16a34a; }
+    .progress-step.current { color: var(--blue); font-weight: 900; }
+    .progress-step.current .progress-dot { border-color: var(--blue); background: white; box-shadow: 0 0 0 3px #dbeafe; }
+
+    .cancelled-note {
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 10px;
+      background: #fef2f2;
+      color: #991b1b;
+      font-size: 11px;
+      line-height: 1.7;
+    }
+
+    .order-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding: 14px 20px;
+      border-top: 1px solid var(--line);
+      background: #fcfdff;
+    }
+
+    .footer-hint {
+      color: var(--muted);
+      font-size: 10px;
+      line-height: 1.6;
+    }
+
+    .order-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .empty-state {
+      display: none;
+      padding: 42px 20px;
+      border: 1px dashed #cbd5e1;
+      border-radius: 17px;
+      background: white;
+      text-align: center;
+    }
+
+    .empty-state.visible { display: block; }
+    .empty-icon { font-size: 43px; }
+    .empty-state h3 { margin: 12px 0 8px; }
+    .empty-state p { color: var(--muted); font-size: 12px; line-height: 1.7; }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 23px 0 35px;
+    }
+
+    .pagination button {
+      min-width: 37px;
+      min-height: 36px;
+      padding: 7px 10px;
+      border: 1px solid #dce3ed;
+      border-radius: 9px;
+      background: white;
+      color: #475569;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .pagination button.active {
+      border-color: var(--blue);
+      background: var(--blue);
+      color: white;
+    }
+
+    .help-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 13px;
+      margin: 20px 0 42px;
+    }
+
+    .help-card {
+      padding: 19px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: white;
+    }
+
+    .help-card .icon { font-size: 24px; }
+    .help-card h3 { margin: 12px 0 7px; font-size: 13px; }
+    .help-card p { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.8; }
+    .help-card a { color: var(--blue); font-weight: 800; }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      background: rgba(15,23,42,.58);
+    }
+
+    .modal-backdrop.open { display: flex; }
+
+    .modal {
+      width: min(600px, 100%);
+      max-height: 88vh;
+      overflow-y: auto;
+      border-radius: 18px;
+      background: white;
+      box-shadow: 0 25px 80px rgba(0,0,0,.25);
+      animation: appear .2s ease;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 19px 21px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .modal-header h2 { margin: 0; font-size: 18px; }
+
+    .close-btn {
+      width: 34px;
+      height: 34px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: white;
+      font-size: 19px;
+    }
+
+    .modal-content { padding: 21px; }
+    .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    .detail-box {
+      min-width: 0;
+      padding: 13px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      overflow-wrap: anywhere;
+    }
+
+    .detail-box.full { grid-column: 1 / -1; }
+    .detail-box span { display: block; color: var(--muted); font-size: 10px; }
+    .detail-box strong { display: block; margin-top: 7px; font-size: 12px; line-height: 1.7; }
+
+    footer {
+      padding: 25px;
+      background: #101b32;
+      color: #cbd5e1;
+      text-align: center;
+      font-size: 12px;
+    }
+
+    footer strong { color: white; }
+
+    @media (max-width: 900px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .toolbar { grid-template-columns: 1fr 1fr; }
+      .order-main { grid-template-columns: 1fr 165px; gap: 12px; }
+    }
+
+    @media (max-width: 600px) {
+      .navbar { padding: 13px 4%; }
+      .nav-links { width: 100%; justify-content: space-between; gap: 8px; }
+      .nav-links a { font-size: 10px; }
+      .account-btn { display: none; }
+      .hero { padding: 25px 20px; }
+      .stats-grid { gap: 9px; }
+      .stat-card { padding: 14px; }
+      .stat-number { font-size: 23px; }
+      .toolbar { grid-template-columns: 1fr; }
+      .order-header, .order-body, .order-footer { padding: 15px; }
+      .order-main { grid-template-columns: 1fr; }
+      .order-total { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; align-items: center; }
+      .total-price { margin-top: 4px; }
+      .payment-line { margin-top: 4px; }
+      .item-price { font-size: 11px; }
+      .item-icon { width: 44px; height: 44px; }
+      .order-actions { width: 100%; }
+      .order-actions .btn { flex: 1; }
+      .help-grid { grid-template-columns: 1fr; }
+      .progress-step { font-size: 9px; }
+      .detail-grid { grid-template-columns: 1fr; }
+      .detail-box.full { grid-column: auto; }
+    }
+  </style>
 </head>
 
 <body>
+  <header class="navbar">
+    <a href="index.html" class="logo">PartPulse<span> MSP</span></a>
 
-<div class="container">
+    <nav class="nav-links" aria-label="Main navigation">
+      <a href="index.html">Home</a>
+      <a href="models.html">My Device</a>
+      <a href="browse.html">Spare Parts</a>
+      <a class="active" href="orders.html">Orders</a>
+      <a href="reviews.html">Reviews</a>
+    </nav>
 
-    <h1>Track Your Order</h1>
+    <a href="login.html" class="account-btn">My Account ↗</a>
+  </header>
 
-    <div class="order-card">
-
-        <h2>Order #1001</h2>
-
-        <p><strong>Part:</strong> Samsung S24 Charging Port</p>
-        <p><strong>Quantity:</strong> 1</p>
-        <p><strong>Status:</strong> Out for Delivery</p>
-
-        <div class="status">
-
-            <div class="step active">
-                <div class="circle">✓</div>
-                <p>Placed</p>
-            </div>
-
-            <div class="step active">
-                <div class="circle">✓</div>
-                <p>Packed</p>
-            </div>
-
-            <div class="step active">
-                <div class="circle">✓</div>
-                <p>Shipped</p>
-            </div>
-
-            <div class="step active">
-                <div class="circle">✓</div>
-                <p>Out for Delivery</p>
-            </div>
-
-            <div class="step">
-                <div class="circle">5</div>
-                <p>Delivered</p>
-            </div>
-
-        </div>
-
+  <main class="page">
+    <div class="breadcrumb">
+      <a href="index.html">Home</a>
+      <span>›</span>
+      <strong>My Orders</strong>
     </div>
 
-    <a class="back" href="index.html">← Back to Home</a>
+    <section class="hero">
+      <span class="eyebrow">📦 ORDER MANAGEMENT</span>
+      <h1>Your orders, all in one place.</h1>
+      <p>Track your spare-parts purchases, check order status, review item and payment details, and quickly find previous orders.</p>
 
-</div>
+      <div class="hero-actions">
+        <a href="#orderHistory">View my orders ↓</a>
+        <a href="browse.html">Continue shopping ↗</a>
+      </div>
+    </section>
 
+    <section class="section-heading">
+      <div>
+        <h2>Order overview</h2>
+        <p>Summary based on the order records returned by your backend.</p>
+      </div>
+      <span class="badge" id="lastUpdated">Loading orders…</span>
+    </section>
+
+    <section class="stats-grid">
+      <article class="stat-card">
+        <div class="stat-top">
+          <span class="stat-label">ALL ORDERS</span>
+          <span class="stat-icon">📦</span>
+        </div>
+        <strong class="stat-number" id="totalOrders">—</strong>
+        <span class="stat-label">Orders found</span>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-top">
+          <span class="stat-label">IN PROGRESS</span>
+          <span class="stat-icon">🚚</span>
+        </div>
+        <strong class="stat-number" id="activeOrders">—</strong>
+        <span class="stat-label">Processing or shipping</span>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-top">
+          <span class="stat-label">DELIVERED</span>
+          <span class="stat-icon">✅</span>
+        </div>
+        <strong class="stat-number" id="deliveredOrders">—</strong>
+        <span class="stat-label">Successfully delivered</span>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-top">
+          <span class="stat-label">ORDER VALUE</span>
+          <span class="stat-icon">₹</span>
+        </div>
+        <strong class="stat-number" id="totalSpent">—</strong>
+        <span class="stat-label">Total value of recorded orders</span>
+      </article>
+    </section>
+
+    <section id="orderHistory">
+      <div class="section-heading">
+        <div>
+          <h2>Order history</h2>
+          <p>Search orders, filter by status, and open an order for its full details.</p>
+        </div>
+        <button class="btn btn-outline" type="button" id="refreshOrders">↻ Refresh</button>
+      </div>
+
+      <div class="toolbar">
+        <input class="control" id="searchOrders" type="search"
+          placeholder="Search order ID, item, status…" aria-label="Search orders">
+
+        <select class="control" id="statusFilter" aria-label="Filter by status">
+          <option value="all">All statuses</option>
+          <option value="pending">Pending</option>
+          <option value="processing">Processing</option>
+          <option value="shipped">Shipped</option>
+          <option value="delivered">Delivered</option>
+          <option value="cancelled">Cancelled</option>
+          <option value="returned">Returned</option>
+        </select>
+
+        <select class="control" id="sortOrders" aria-label="Sort orders">
+          <option value="newest">Newest first</option>
+          <option value="oldest">Oldest first</option>
+          <option value="amount-high">Highest amount</option>
+          <option value="amount-low">Lowest amount</option>
+        </select>
+
+        <button class="btn btn-outline" type="button" id="clearFilters">Clear filters</button>
+      </div>
+
+      <div class="filter-chips" id="statusChips">
+        <button class="chip active" type="button" data-status="all">All orders</button>
+        <button class="chip" type="button" data-status="pending">Pending</button>
+        <button class="chip" type="button" data-status="processing">Processing</button>
+        <button class="chip" type="button" data-status="shipped">Shipped</button>
+        <button class="chip" type="button" data-status="delivered">Delivered</button>
+        <button class="chip" type="button" data-status="cancelled">Cancelled</button>
+      </div>
+
+      <div id="pageStatus" class="status" role="status" hidden></div>
+      <div class="orders-list" id="ordersList"></div>
+
+      <div class="empty-state" id="emptyState">
+        <div class="empty-icon">🛍️</div>
+        <h3 id="emptyTitle">No orders found</h3>
+        <p id="emptyMessage">Try changing your search or filters.</p>
+        <a class="btn btn-primary" href="browse.html">Browse spare parts ↗</a>
+      </div>
+
+      <div class="pagination" id="pagination"></div>
+    </section>
+
+    <section class="section-heading">
+      <div>
+        <h2>Need help with an order?</h2>
+        <p>Choose the right next step for your purchase.</p>
+      </div>
+    </section>
+
+    <section class="help-grid">
+      <article class="help-card">
+        <div class="icon">🚚</div>
+        <h3>Delivery updates</h3>
+        <p>Open an order to view its current status. Live courier tracking requires a tracking number and carrier integration from your backend.</p>
+      </article>
+
+      <article class="help-card">
+        <div class="icon">↩️</div>
+        <h3>Returns and refunds</h3>
+        <p>Check the order's status before requesting a return.</p>
+        <p style="margin-top:10px"><a href="returns.html">View return information ↗</a></p>
+      </article>
+
+      <article class="help-card">
+        <div class="icon">💬</div>
+        <h3>Product feedback</h3>
+        <p>Share your experience with a spare part to help other customers choose wisely.</p>
+        <p style="margin-top:10px"><a href="reviews.html">Write a review ↗</a></p>
+      </article>
+    </section>
+  </main>
+
+  <footer>
+    <strong>PartPulse MSP</strong> · Mobile Spare Parts Management
+    <p>Manage your spare-parts orders with confidence.</p>
+  </footer>
+
+  <div class="modal-backdrop" id="detailsBackdrop" role="presentation">
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-header">
+        <h2 id="modalTitle">Order details</h2>
+        <button class="close-btn" id="closeModal" type="button" aria-label="Close details">×</button>
+      </div>
+      <div class="modal-content" id="modalContent"></div>
+    </section>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    (() => {
+      "use strict";
+
+      const $ = id => document.getElementById(id);
+      const PAGE_SIZE = 5;
+
+      const state = {
+        orders: [],
+        products: [],
+        status: "all",
+        search: "",
+        sort: "newest",
+        page: 1,
+        loading: false
+      };
+
+      function first(obj, keys, fallback = "") {
+        for (const key of keys) {
+          if (obj && obj[key] !== undefined && obj[key] !== null && obj[key] !== "") {
+            return obj[key];
+          }
+        }
+        return fallback;
+      }
+
+      function escapeHTML(value) {
+        return String(value ?? "").replace(/[&<>"']/g, char => ({
+          "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+        })[char]);
+      }
+
+      function listFrom(data, keys = []) {
+        if (Array.isArray(data)) return data;
+        for (const key of keys) {
+          if (Array.isArray(data?.[key])) return data[key];
+        }
+        return [];
+      }
+
+      function idOf(order, index) {
+        return String(first(order, [
+          "order_id", "orderId", "id", "order_number", "orderNumber"
+        ], "Order-" + (index + 1)));
+      }
+
+      function statusOf(order) {
+        const raw = String(first(order, [
+          "status", "order_status", "orderStatus", "delivery_status", "deliveryStatus"
+        ], "pending")).toLowerCase().trim();
+
+        if (raw.includes("cancel")) return "cancelled";
+        if (raw.includes("deliver") || raw === "completed" || raw === "complete") return "delivered";
+        if (raw.includes("return") || raw.includes("refund")) return "returned";
+        if (raw.includes("ship") || raw.includes("dispatch") || raw.includes("transit")) return "shipped";
+        if (raw.includes("process") || raw.includes("confirm") || raw.includes("packed")) return "processing";
+        if (raw.includes("pending") || raw.includes("placed") || raw.includes("new")) return "pending";
+
+        return raw || "pending";
+      }
+
+      function statusLabel(status) {
+        const labels = {
+          pending: "Pending",
+          processing: "Processing",
+          shipped: "Shipped",
+          delivered: "Delivered",
+          cancelled: "Cancelled",
+          returned: "Returned"
+        };
+        return labels[status] || status.charAt(0).toUpperCase() + status.slice(1);
+      }
+
+      function dateOf(order) {
+        const raw = first(order, [
+          "order_date", "orderDate", "created_at", "createdAt", "date", "placed_at"
+        ], "");
+        if (!raw) return null;
+        const date = new Date(raw);
+        return Number.isNaN(date.getTime()) ? null : date;
+      }
+
+      function dateText(date) {
+        if (!date) return "Date unavailable";
+        return date.toLocaleDateString("en-IN", {
+          day: "numeric", month: "short", year: "numeric"
+        });
+      }
+
+      function money(value) {
+        const amount = Number(value);
+        if (!Number.isFinite(amount)) return "Not available";
+        return "₹" + amount.toLocaleString("en-IN", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        });
+      }
+
+      function orderAmount(order) {
+        const raw = first(order, [
+          "total_amount", "totalAmount", "total_price", "totalPrice",
+          "grand_total", "grandTotal", "amount", "total"
+        ], null);
+
+        const amount = Number(raw);
+        return raw !== null && Number.isFinite(amount) ? amount : null;
+      }
+
+      function paymentMethod(order) {
+        return String(first(order, [
+          "payment_method", "paymentMethod", "payment_type", "paymentType"
+        ], "Not provided"));
+      }
+
+      function paymentStatus(order) {
+        return String(first(order, [
+          "payment_status", "paymentStatus", "payment_state"
+        ], "Not provided"));
+      }
+
+      function customerName(order) {
+        return String(first(order, [
+          "customer_name", "customerName", "username", "user_name", "name"
+        ], "Not provided"));
+      }
+
+      function customerEmail(order) {
+        return String(first(order, [
+          "email", "customer_email", "customerEmail"
+        ], "Not provided"));
+      }
+
+      function customerPhone(order) {
+        return String(first(order, [
+          "phone", "phone_number", "phoneNumber", "mobile"
+        ], "Not provided"));
+      }
+
+      function addressOf(order) {
+        return String(first(order, [
+          "shipping_address", "shippingAddress", "delivery_address",
+          "deliveryAddress", "address"
+        ], "Not provided"));
+      }
+
+      function trackingNumber(order) {
+        return String(first(order, [
+          "tracking_number", "trackingNumber", "tracking_id", "trackingId"
+        ], ""));
+      }
+
+      function expectedDelivery(order) {
+        const raw = first(order, [
+          "expected_delivery", "expectedDelivery", "delivery_date",
+          "deliveryDate", "estimated_delivery", "estimatedDelivery"
+        ], "");
+        if (!raw) return "";
+        const date = new Date(raw);
+        return Number.isNaN(date.getTime()) ? String(raw) : dateText(date);
+      }
+
+      function orderItems(order) {
+        const items = first(order, [
+          "items", "order_items", "orderItems", "products", "parts", "details"
+        ], []);
+
+        if (Array.isArray(items)) return items;
+
+        // Some APIs return one product directly on the order object.
+        const partId = first(order, ["part_id", "partId", "spare_part_id"], "");
+        const partName = first(order, ["part_name", "partName", "product_name", "productName"], "");
+
+        if (partId || partName) return [{
+          id: partId,
+          name: partName || "Spare part",
+          quantity: first(order, ["quantity", "qty"], 1),
+          price: first(order, ["price", "unit_price", "unitPrice"], null)
+        }];
+
+        return [];
+      }
+
+      function itemId(item) {
+        return String(first(item, [
+          "part_id", "partId", "product_id", "productId", "spare_part_id", "id"
+        ], ""));
+      }
+
+      function itemName(item) {
+        const direct = first(item, [
+          "part_name", "partName", "product_name", "productName", "name", "title"
+        ], "");
+
+        if (direct) return String(direct);
+
+        const product = state.products.find(p => productId(p) === itemId(item));
+        return product ? productName(product) : "Spare part";
+      }
+
+      function itemQuantity(item) {
+        const quantity = Number(first(item, ["quantity", "qty", "count"], 1));
+        return Number.isFinite(quantity) && quantity > 0 ? quantity : 1;
+      }
+
+      function itemPrice(item) {
+        const raw = first(item, [
+          "unit_price", "unitPrice", "price", "selling_price", "sellingPrice", "cost"
+        ], null);
+        const amount = Number(raw);
+        return raw !== null && Number.isFinite(amount) ? amount : null;
+      }
+
+      function itemLineTotal(item) {
+        const raw = first(item, [
+          "subtotal", "line_total", "lineTotal", "total_price", "totalPrice"
+        ], null);
+        const amount = Number(raw);
+
+        if (raw !== null && Number.isFinite(amount)) return amount;
+
+        const price = itemPrice(item);
+        return price === null ? null : price * itemQuantity(item);
+      }
+
+      function productId(product) {
+        return String(first(product, ["id", "part_id", "partId", "spare_part_id"], ""));
+      }
+
+      function productName(product) {
+        return String(first(product, ["name", "part_name", "partName", "title"], "Spare part"));
+      }
+
+      function orderItemCount(order) {
+        return orderItems(order).reduce((sum, item) => sum + itemQuantity(item), 0);
+      }
+
+      function totalItemsText(order) {
+        const count = orderItemCount(order);
+        return count + " item" + (count === 1 ? "" : "s");
+      }
+
+      function statusClass(status) {
+        if (status === "delivered") return "status-delivered";
+        if (status === "shipped") return "status-shipped";
+        if (status === "processing") return "status-processing";
+        if (status === "cancelled") return "status-cancelled";
+        if (status === "returned") return "status-returned";
+        return "status-pending";
+      }
+
+      async function apiGet(path) {
+        if (window.API && typeof window.API.get === "function") {
+          return await window.API.get(path);
+        }
+
+        const response = await fetch(path);
+        if (!response.ok) throw new Error("Request failed (" + response.status + ")");
+        return response.json();
+      }
+
+      function setStatus(message, type = "") {
+        $("pageStatus").textContent = message;
+        $("pageStatus").className = "status" + (type ? " " + type : "");
+        $("pageStatus").hidden = !message;
+      }
+
+      function renderStats() {
+        const orders = state.orders;
+
+        $("totalOrders").textContent = orders.length;
+        $("activeOrders").textContent = orders.filter(order =>
+          ["pending", "processing", "shipped"].includes(statusOf(order))
+        ).length;
+
+        $("deliveredOrders").textContent = orders.filter(order =>
+          statusOf(order) === "delivered"
+        ).length;
+
+        const amounts = orders.map(orderAmount).filter(value => value !== null);
+        const total = amounts.reduce((sum, amount) => sum + amount, 0);
+
+        $("totalSpent").textContent = amounts.length ? money(total) : "—";
+        $("lastUpdated").textContent = "Updated " +
+          new Date().toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
+      }
+
+      function progressHTML(status) {
+        if (status === "cancelled") {
+          return '<div class="cancelled-note">This order is marked as cancelled in the available order data.</div>';
+        }
+
+        if (status === "returned") {
+          return '<div class="cancelled-note" style="background:#f3e8ff;color:#6b21a8">This order is marked as returned. Check your return information for further updates.</div>';
+        }
+
+        const stages = [
+          { label: "Order placed", statuses: ["pending", "processing", "shipped", "delivered"] },
+          { label: "Processing", statuses: ["processing", "shipped", "delivered"] },
+          { label: "Shipped", statuses: ["shipped", "delivered"] },
+          { label: "Delivered", statuses: ["delivered"] }
+        ];
+
+        const currentIndex = {
+          pending: 0,
+          processing: 1,
+          shipped: 2,
+          delivered: 3
+        }[status];
+
+        return '<div class="order-progress" aria-label="Order status progress">' +
+          stages.map((stage, index) => {
+            const done = stage.statuses.includes(status) && index < currentIndex;
+            const current = index === currentIndex;
+
+            return `
+              <div class="progress-step ${done ? "done" : ""} ${current ? "current" : ""}">
+                <span class="progress-dot"></span>
+                ${stage.label}
+              </div>`;
+          }).join("") +
+          '</div>';
+      }
+
+      function renderItemRows(order, limit = 2) {
+        const items = orderItems(order);
+
+        if (!items.length) {
+          return '<p class="footer-hint">Item details are not available in the order response.</p>';
+        }
+
+        const visible = items.slice(0, limit);
+
+        return visible.map(item => {
+          const name = itemName(item);
+          const quantity = itemQuantity(item);
+          const total = itemLineTotal(item);
+          const unit = itemPrice(item);
+
+          const priceText = total !== null ? money(total) :
+            unit !== null ? money(unit) : "—";
+
+          return `
+            <div class="item-row">
+              <div class="item-icon" aria-hidden="true">🔧</div>
+              <div class="item-info">
+                <h4>${escapeHTML(name)}</h4>
+                <p>Quantity: ${quantity}` +
+                (unit !== null ? ' · Unit price: ' + escapeHTML(money(unit)) : '') +
+                `</p>
+              </div>
+              <div class="item-price">${escapeHTML(priceText)}</div>
+            </div>`;
+        }).join("") +
+        (items.length > limit
+          ? '<div class="more-items">+' + (items.length - limit) + ' more item(s) in this order</div>'
+          : '');
+      }
+
+      function renderOrderCard(order) {
+        const index = state.orders.indexOf(order);
+        const id = idOf(order, index);
+        const status = statusOf(order);
+        const date = dateText(dateOf(order));
+        const amount = orderAmount(order);
+        const method = paymentMethod(order);
+        const payStatus = paymentStatus(order);
+        const delivery = expectedDelivery(order);
+        const tracking = trackingNumber(order);
+
+        const canCancel = ["pending", "processing"].includes(status);
+        const address = addressOf(order);
+
+        return `
+          <article class="order-card">
+            <div class="order-header">
+              <div>
+                <h3 class="order-number">Order #${escapeHTML(id)}</h3>
+                <div class="order-meta">
+                  <span>📅 ${escapeHTML(date)}</span>
+                  <span>📦 ${escapeHTML(totalItemsText(order))}</span>
+                  ${delivery ? '<span>🚚 ETA: ' + escapeHTML(delivery) + '</span>' : ''}
+                </div>
+              </div>
+              <span class="status-pill ${statusClass(status)}">${escapeHTML(statusLabel(status))}</span>
+            </div>
+
+            <div class="order-body">
+              <div class="order-main">
+                <div>
+                  <p class="items-label">Order items</p>
+                  ${renderItemRows(order, 2)}
+                  ${tracking ? '<p class="footer-hint">Tracking number: ' + escapeHTML(tracking) + '</p>' : ''}
+                </div>
+
+                <div class="order-total">
+                  <div>
+                    <span class="total-label">Order total</span>
+                    <strong class="total-price">${amount === null ? "Not available" : escapeHTML(money(amount))}</strong>
+                  </div>
+                  <div>
+                    <div class="payment-line">
+                      <span>Payment</span>
+                      <strong>${escapeHTML(method)}</strong>
+                    </div>
+                    <div class="payment-line">
+                      <span>Pay status</span>
+                      <strong>${escapeHTML(payStatus)}</strong>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              ${progressHTML(status)}
+            </div>
+
+            <div class="order-footer">
+              <span class="footer-hint">${address !== "Not provided"
+                ? "Delivery details available in order information."
+                : "Delivery address not included in this order response."}</span>
+
+              <div class="order-actions">
+                <button class="btn btn-outline" type="button" data-details="${escapeHTML(id)}">
+                  View details
+                </button>
+                ${canCancel
+                  ? '<button class="btn btn-danger" type="button" data-cancel="' + escapeHTML(id) + '">Cancellation help</button>'
+                  : ''}
+                <button class="btn btn-primary" type="button" data-reorder="${escapeHTML(id)}">
+                  Shop again ↗
+                </button>
+              </div>
+            </div>
+          </article>`;
+      }
+
+      function filteredOrders() {
+        let result = state.orders.filter(order => {
+          const status = statusOf(order);
+
+          if (state.status !== "all" && status !== state.status) return false;
+
+          const itemText = orderItems(order).map(itemName).join(" ");
+          const searchText = [
+            idOf(order, state.orders.indexOf(order)),
+            statusLabel(status),
+            paymentMethod(order),
+            paymentStatus(order),
+            customerName(order),
+            itemText
+          ].join(" ").toLowerCase();
+
+          if (state.search && !searchText.includes(state.search.toLowerCase())) return false;
+
+          return true;
+        });
+
+        result.sort((a, b) => {
+          const dateA = dateOf(a)?.getTime() || 0;
+          const dateB = dateOf(b)?.getTime() || 0;
+          const amountA = orderAmount(a) ?? -1;
+          const amountB = orderAmount(b) ?? -1;
+
+          if (state.sort === "oldest") return dateA - dateB;
+          if (state.sort === "amount-high") return amountB - amountA;
+          if (state.sort === "amount-low") return amountA - amountB;
+          return dateB - dateA;
+        });
+
+        return result;
+      }
+
+      function renderPagination(totalPages) {
+        const container = $("pagination");
+        container.innerHTML = "";
+
+        if (totalPages <= 1) return;
+
+        const addButton = (label, page, active = false, disabled = false) => {
+          const button = document.createElement("button");
+          button.textContent = label;
+          button.disabled = disabled;
+          if (active) button.classList.add("active");
+
+          button.addEventListener("click", () => {
+            state.page = page;
+            renderOrders();
+            $("orderHistory").scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+
+          container.appendChild(button);
+        };
+
+        addButton("←", Math.max(1, state.page - 1), false, state.page === 1);
+
+        for (let page = 1; page <= totalPages; page++) {
+          addButton(String(page), page, page === state.page);
+        }
+
+        addButton("→", Math.min(totalPages, state.page + 1), false, state.page === totalPages);
+      }
+
+      function renderOrders() {
+        const result = filteredOrders();
+        const totalPages = Math.max(1, Math.ceil(result.length / PAGE_SIZE));
+
+        if (state.page > totalPages) state.page = totalPages;
+
+        const start = (state.page - 1) * PAGE_SIZE;
+        const visible = result.slice(start, start + PAGE_SIZE);
+
+        $("ordersList").innerHTML = visible.map(renderOrderCard).join("");
+        $("ordersList").style.display = result.length ? "grid" : "none";
+        $("emptyState").classList.toggle("visible", result.length === 0);
+
+        $("emptyTitle").textContent = state.orders.length ? "No matching orders" : "No orders available";
+        $("emptyMessage").textContent = state.orders.length
+          ? "Try a different search term or clear the filters."
+          : "When order records are available from the backend, they will appear here.";
+
+        renderPagination(totalPages);
+      }
+
+      function updateChips(status) {
+        $("statusChips").querySelectorAll("[data-status]").forEach(chip => {
+          const active = chip.dataset.status === status;
+          chip.classList.toggle("active", active);
+          chip.setAttribute("aria-pressed", String(active));
+        });
+      }
+
+      function openDetails(id) {
+        const order = state.orders.find((item, index) => idOf(item, index) === String(id));
+        if (!order) return;
+
+        const status = statusOf(order);
+        const amount = orderAmount(order);
+        const items = orderItems(order);
+        const tracking = trackingNumber(order);
+        const delivery = expectedDelivery(order);
+
+        $("modalTitle").textContent = "Order #" + id;
+
+        $("modalContent").innerHTML = `
+          <div class="detail-grid">
+            <div class="detail-box">
+              <span>Order date</span>
+              <strong>${escapeHTML(dateText(dateOf(order)))}</strong>
+            </div>
+            <div class="detail-box">
+              <span>Current status</span>
+              <strong>${escapeHTML(statusLabel(status))}</strong>
+            </div>
+            <div class="detail-box">
+              <span>Order total</span>
+              <strong>${amount === null ? "Not available" : escapeHTML(money(amount))}</strong>
+            </div>
+            <div class="detail-box">
+              <span>Number of items</span>
+              <strong>${escapeHTML(totalItemsText(order))}</strong>
+            </div>
+            <div class="detail-box">
+              <span>Customer</span>
+              <strong>${escapeHTML(customerName(order))}</strong>
+            </div>
+            <div class="detail-box">
+              <span>Email</span>
+              <strong>${escapeHTML(customerEmail(order))}</strong>
+            </div>
+            <div class="detail-box">
+              <span>Phone</span>
+              <strong>${escapeHTML(customerPhone(order))}</strong>
+            </div>
+            <div class="detail-box">
+              <span>Payment method</span>
+              <strong>${escapeHTML(paymentMethod(order))}</strong>
+            </div>
+            <div class="detail-box">
+              <span>Payment status</span>
+              <strong>${escapeHTML(paymentStatus(order))}</strong>
+            </div>
+            <div class="detail-box">
+              <span>Expected delivery</span>
+              <strong>${escapeHTML(delivery || "Not provided")}</strong>
+            </div>
+            <div class="detail-box">
+              <span>Tracking number</span>
+              <strong>${escapeHTML(tracking || "Not provided")}</strong>
+            </div>
+            <div class="detail-box full">
+              <span>Delivery address</span>
+              <strong>${escapeHTML(addressOf(order))}</strong>
+            </div>
+            <div class="detail-box full">
+              <span>Items</span>
+              <strong>${items.length
+                ? items.map(item => escapeHTML(itemName(item)) +
+                    " × " + itemQuantity(item) +
+                    (itemLineTotal(item) !== null ? " — " + escapeHTML(money(itemLineTotal(item))) : "")
+                  ).join("<br>")
+                : "Item details are not included in the API response."}</strong>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-wrap:wrap;gap:9px;margin-top:18px">
+            <a class="btn btn-primary" href="browse.html">Browse spare parts ↗</a>
+            <button class="btn btn-outline" id="modalCloseBottom" type="button">Close</button>
+          </div>`;
+
+        $("detailsBackdrop").classList.add("open");
+        $("closeModal").focus();
+
+        $("modalCloseBottom").addEventListener("click", closeModal);
+      }
+
+      function closeModal() {
+        $("detailsBackdrop").classList.remove("open");
+      }
+
+      function reorder(id) {
+        const order = state.orders.find((item, index) => idOf(item, index) === String(id));
+        if (!order) return;
+
+        const items = orderItems(order);
+        const firstId = items.length ? itemId(items[0]) : "";
+
+        // Browse page is the safe fallback because a cart/reorder endpoint
+        // has not been verified for this project.
+        if (firstId) {
+          window.location.href = "browse.html?part=" + encodeURIComponent(firstId);
+        } else {
+          window.location.href = "browse.html";
+        }
+      }
+
+      function cancellationHelp(id) {
+        const order = state.orders.find((item, index) => idOf(item, index) === String(id));
+        if (!order) return;
+
+        const status = statusOf(order);
+
+        if (!["pending", "processing"].includes(status)) {
+          setStatus("This order may no longer be eligible for cancellation. Check its current status.", "error");
+          return;
+        }
+
+        // This page deliberately does not cancel an order because no
+        // cancellation endpoint has been confirmed in the Java backend.
+        setStatus(
+          "Order #" + id + " is " + statusLabel(status).toLowerCase() +
+          ". Cancellation has not been submitted. Connect a verified cancellation API in the Java backend before enabling cancellation.",
+          "error"
+        );
+
+        $("pageStatus").scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+
+      async function loadOrders() {
+        if (state.loading) return;
+
+        state.loading = true;
+        $("refreshOrders").disabled = true;
+        $("refreshOrders").textContent = "Loading…";
+        setStatus("Loading your orders…");
+
+        try {
+          const results = await Promise.allSettled([
+            apiGet("/api/orders"),
+            apiGet("/api/spare-parts")
+          ]);
+
+          if (results[0].status === "rejected") {
+            throw results[0].reason || new Error("Could not load orders.");
+          }
+
+          state.orders = listFrom(results[0].value, ["orders", "data", "results"]);
+          state.products = results[1].status === "fulfilled"
+            ? listFrom(results[1].value, ["parts", "spareParts", "data", "results"])
+            : [];
+
+          renderStats();
+          renderOrders();
+
+          setStatus(state.orders.length
+            ? "Loaded " + state.orders.length + " order record(s) from the backend."
+            : "No orders were returned by the backend. This account may not have any orders yet.");
+        } catch (error) {
+          console.error("Order loading failed:", error);
+          state.orders = [];
+          state.products = [];
+
+          renderStats();
+          renderOrders();
+
+          setStatus(
+            "Could not load orders. Confirm that GET /api/orders is available and that the Java backend is running. " +
+            (error.message || ""),
+            "error"
+          );
+        } finally {
+          state.loading = false;
+          $("refreshOrders").disabled = false;
+          $("refreshOrders").textContent = "↻ Refresh";
+        }
+      }
+
+      $("searchOrders").addEventListener("input", () => {
+        state.search = $("searchOrders").value.trim();
+        state.page = 1;
+        renderOrders();
+      });
+
+      $("statusFilter").addEventListener("change", () => {
+        state.status = $("statusFilter").value;
+        state.page = 1;
+        updateChips(state.status);
+        renderOrders();
+      });
+
+      $("sortOrders").addEventListener("change", () => {
+        state.sort = $("sortOrders").value;
+        state.page = 1;
+        renderOrders();
+      });
+
+      $("statusChips").querySelectorAll("[data-status]").forEach(chip => {
+        chip.addEventListener("click", () => {
+          state.status = chip.dataset.status;
+          $("statusFilter").value = state.status;
+          state.page = 1;
+          updateChips(state.status);
+          renderOrders();
+        });
+      });
+
+      $("clearFilters").addEventListener("click", () => {
+        state.status = "all";
+        state.search = "";
+        state.sort = "newest";
+        state.page = 1;
+
+        $("searchOrders").value = "";
+        $("statusFilter").value = "all";
+        $("sortOrders").value = "newest";
+
+        updateChips("all");
+        renderOrders();
+      });
+
+      $("refreshOrders").addEventListener("click", loadOrders);
+      $("closeModal").addEventListener("click", closeModal);
+
+      $("detailsBackdrop").addEventListener("click", event => {
+        if (event.target === $("detailsBackdrop")) closeModal();
+      });
+
+      document.addEventListener("keydown", event => {
+        if (event.key === "Escape") closeModal();
+      });
+
+      $("ordersList").addEventListener("click", event => {
+        const detailsButton = event.target.closest("[data-details]");
+        const reorderButton = event.target.closest("[data-reorder]");
+        const cancelButton = event.target.closest("[data-cancel]");
+
+        if (detailsButton) openDetails(detailsButton.dataset.details);
+        if (reorderButton) reorder(reorderButton.dataset.reorder);
+        if (cancelButton) cancellationHelp(cancelButton.dataset.cancel);
+      });
+
+      loadOrders();
+    })();
+  </script>
 </body>
 </html>

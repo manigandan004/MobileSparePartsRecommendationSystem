@@ -1,1 +1,896 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Brand & Model</title><link rel="stylesheet" href="style.css"></head><body><main class="container"><a href="index.html">← Home</a><h1>Select Mobile Brand and Model</h1><select id="brand" onchange="loadModels()"><option>Loading...</option></select><select id="model"></select><div id="stock"></div></main><script>async function init(){const b=await fetch('/api/brands').then(r=>r.json());brand.innerHTML=b.map(x=>`<option>${x}</option>`).join('');loadModels()}async function loadModels(){const m=await fetch('/api/models?brand='+encodeURIComponent(brand.value)).then(r=>r.json());model.innerHTML=m.map(x=>`<option>${x}</option>`).join('');const p=await fetch('/api/spare-parts?model='+encodeURIComponent(model.value)).then(r=>r.json());stock.innerHTML=p.map(x=>`<div class="card">${x.partName} — ₹${x.price} — Stock ${x.quantity}</div>`).join('')||'<p>No parts.</p>'}init();</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Mobile Models | MobiSpares Connect
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+</head>
+
+<body>
+
+
+<div class="topbar">
+
+    <div class="container">
+
+        <span>
+            Specialized mobile spare-parts marketplace
+        </span>
+
+        <span>
+            Choose the exact device before searching
+        </span>
+
+    </div>
+
+</div>
+
+
+<nav class="navbar">
+
+    <div class="container nav-inner">
+
+
+        <a
+            class="brand"
+            href="index.html"
+        >
+
+            <span class="brand-mark">
+                MS
+            </span>
+
+            MobiSpares
+            <span style="color:#2563eb">
+                Connect
+            </span>
+
+        </a>
+
+
+        <div class="nav-links">
+
+            <a href="index.html">
+                Home
+            </a>
+
+            <a href="browse.html">
+                Browse Parts
+            </a>
+
+            <a
+                class="active"
+                href="models.html"
+            >
+                Select Model
+            </a>
+
+        </div>
+
+
+        <div class="nav-actions">
+
+            <a
+                class="btn btn-secondary"
+                href="register.html"
+            >
+                Register
+            </a>
+
+            <a
+                class="btn btn-primary"
+                href="login.html"
+            >
+                Sign in
+            </a>
+
+            <button
+                class="icon-btn menu-btn"
+                onclick="toggleMenu()"
+            >
+                ☰
+            </button>
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+<main class="page">
+
+    <div class="container">
+
+
+        <div class="page-head">
+
+            <div>
+
+                <div class="eyebrow">
+                    MOBILE SELECTION
+                </div>
+
+                <h1>
+                    Select your mobile brand & model
+                </h1>
+
+                <p class="lead">
+
+                    Select your brand first.
+                    Then choose a model belonging
+                    to that brand.
+
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <!-- SELECTOR -->
+
+        <div class="card mb">
+
+
+            <div class="form-grid">
+
+
+                <div class="field">
+
+                    <label for="brand">
+                        Mobile brand
+                    </label>
+
+                    <select
+                        id="brand"
+                        class="select"
+                    >
+
+                        <option value="">
+                            Select brand
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="field">
+
+                    <label for="model">
+                        Mobile model
+                    </label>
+
+                    <select
+                        id="model"
+                        class="select"
+                        disabled
+                    >
+
+                        <option value="">
+                            Select brand first
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+            </div>
+
+
+            <div
+                id="modelMessage"
+                class="notice"
+                style="margin-top:16px"
+            >
+
+                Select a brand first.
+                The model list will contain only
+                models from that brand.
+
+            </div>
+
+
+            <div class="hero-actions">
+
+                <button
+                    id="continueBtn"
+                    class="btn btn-primary"
+                    disabled
+                >
+
+                    Continue to Spare Parts →
+
+                </button>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- QUICK MODELS -->
+
+        <div class="section-head">
+
+            <div>
+
+                <div class="eyebrow">
+                    POPULAR DEVICES
+                </div>
+
+                <h2>
+                    Quick model selection
+                </h2>
+
+            </div>
+
+        </div>
+
+
+        <div
+            id="modelCards"
+            class="grid grid-4"
+        ></div>
+
+
+    </div>
+
+</main>
+
+
+<footer class="footer">
+
+    <div class="container">
+
+
+        <div class="footer-grid">
+
+
+            <div>
+
+                <div
+                    class="brand"
+                    style="color:#fff"
+                >
+
+                    <span class="brand-mark">
+                        MS
+                    </span>
+
+                    MobiSpares Connect
+
+                </div>
+
+                <p
+                    style="
+                    font-size:13px;
+                    max-width:360px;
+                    "
+                >
+
+                    Find the right mobile spare part
+                    by selecting the correct brand
+                    and model.
+
+                </p>
+
+            </div>
+
+
+            <div>
+
+                <h3>
+                    Shop
+                </h3>
+
+                <a href="browse.html">
+                    Browse parts
+                </a>
+
+                <a href="models.html">
+                    Mobile models
+                </a>
+
+            </div>
+
+
+            <div>
+
+                <h3>
+                    Account
+                </h3>
+
+                <a href="login.html">
+                    Sign in
+                </a>
+
+                <a href="register.html">
+                    Create account
+                </a>
+
+            </div>
+
+
+            <div>
+
+                <h3>
+                    Explore
+                </h3>
+
+                <a href="index.html">
+                    Home
+                </a>
+
+                <a href="browse.html">
+                    Search parts
+                </a>
+
+            </div>
+
+
+        </div>
+
+
+        <div class="copyright">
+
+            © 2026 MobiSpares Connect
+            • Mobile spare-parts marketplace
+
+        </div>
+
+
+    </div>
+
+</footer>
+
+
+<script>
+
+/*
+=========================================================
+MOBILE CATALOG
+Each brand contains ONLY its own models.
+=========================================================
+*/
+
+const catalog = {
+
+    Apple: [
+        "iPhone 11",
+        "iPhone 12",
+        "iPhone 13",
+        "iPhone 14",
+        "iPhone 15",
+        "iPhone 16"
+    ],
+
+    Samsung: [
+        "Galaxy A14",
+        "Galaxy A24",
+        "Galaxy A34",
+        "Galaxy A54",
+        "Galaxy S21",
+        "Galaxy S22",
+        "Galaxy S23",
+        "Galaxy S24",
+        "Galaxy S25"
+    ],
+
+    OnePlus: [
+        "OnePlus 9",
+        "OnePlus 10 Pro",
+        "OnePlus 11",
+        "OnePlus 12",
+        "OnePlus 13",
+        "OnePlus Nord CE 3"
+    ],
+
+    Xiaomi: [
+        "Redmi Note 12",
+        "Redmi Note 13",
+        "Redmi Note 13 Pro",
+        "Redmi Note 14",
+        "Xiaomi 13",
+        "Xiaomi 14"
+    ],
+
+    Vivo: [
+        "Vivo V23",
+        "Vivo V25",
+        "Vivo V27",
+        "Vivo V29",
+        "Vivo V30",
+        "Vivo V40"
+    ],
+
+    Oppo: [
+        "Oppo A57",
+        "Oppo A78",
+        "Oppo A79",
+        "Oppo Reno 8",
+        "Oppo Reno 10",
+        "Oppo Reno 11"
+    ],
+
+    Realme: [
+        "Realme 9 Pro",
+        "Realme 10",
+        "Realme 11 Pro",
+        "Realme 12 Pro",
+        "Realme 13 Pro",
+        "Realme Narzo 60"
+    ],
+
+    Motorola: [
+        "Moto G52",
+        "Moto G54",
+        "Moto G84",
+        "Moto G85",
+        "Edge 40",
+        "Edge 50 Fusion"
+    ],
+
+    Google: [
+        "Pixel 6",
+        "Pixel 6a",
+        "Pixel 7",
+        "Pixel 7a",
+        "Pixel 8",
+        "Pixel 8a"
+    ]
+
+};
+
+
+/* BRAND ICONS */
+
+const icons = {
+
+    Apple: "",
+    Samsung: "▣",
+    OnePlus: "＋",
+    Xiaomi: "◆",
+    Vivo: "V",
+    Oppo: "O",
+    Realme: "R",
+    Motorola: "M",
+    Google: "G"
+
+};
+
+
+/* ELEMENTS */
+
+const brand =
+    document.getElementById("brand");
+
+const model =
+    document.getElementById("model");
+
+const continueBtn =
+    document.getElementById("continueBtn");
+
+const message =
+    document.getElementById("modelMessage");
+
+const modelCards =
+    document.getElementById("modelCards");
+
+
+/* LOAD BRANDS */
+
+Object.keys(catalog).forEach(
+    function(brandName) {
+
+        brand.add(
+            new Option(
+                brandName,
+                brandName
+            )
+        );
+
+    }
+);
+
+
+/* LOAD MODELS */
+
+function loadModels(selectedModel = "") {
+
+    model.innerHTML = "";
+
+
+    if (!brand.value) {
+
+        model.disabled = true;
+
+        model.add(
+            new Option(
+                "Select brand first",
+                ""
+            )
+        );
+
+        continueBtn.disabled = true;
+
+        return;
+
+    }
+
+
+    model.disabled = false;
+
+
+    model.add(
+        new Option(
+            "Select model",
+            ""
+        )
+    );
+
+
+    /*
+    IMPORTANT:
+    Only models belonging to
+    the selected brand are added.
+    */
+
+    catalog[brand.value].forEach(
+        function(modelName) {
+
+            model.add(
+                new Option(
+                    modelName,
+                    modelName
+                )
+            );
+
+        }
+    );
+
+
+    if (
+        selectedModel &&
+        catalog[brand.value].includes(
+            selectedModel
+        )
+    ) {
+
+        model.value =
+            selectedModel;
+
+    }
+
+}
+
+
+/* UPDATE UI */
+
+function updateState() {
+
+    const valid =
+        brand.value !== "" &&
+        model.value !== "";
+
+
+    continueBtn.disabled =
+        !valid;
+
+
+    if (valid) {
+
+        message.className =
+            "notice success-box";
+
+        message.textContent =
+            "Selected device: " +
+            brand.value +
+            " " +
+            model.value +
+            ". Click continue to search spare parts.";
+
+    } else {
+
+        message.className =
+            "notice";
+
+        if (!brand.value) {
+
+            message.textContent =
+                "Select a brand first. The model list will contain only models from that brand.";
+
+        } else {
+
+            message.textContent =
+                "Now select a model from " +
+                brand.value +
+                ".";
+
+        }
+
+    }
+
+}
+
+
+/* BRAND CHANGE */
+
+brand.addEventListener(
+    "change",
+    function() {
+
+        /*
+        Clear the previous model when
+        the brand changes.
+        */
+
+        loadModels();
+
+        updateState();
+
+    }
+);
+
+
+/* MODEL CHANGE */
+
+model.addEventListener(
+    "change",
+    function() {
+
+        updateState();
+
+    }
+);
+
+
+/* QUICK MODEL CARDS */
+
+const popularModels = [
+
+    ["Apple", "iPhone 13"],
+    ["Samsung", "Galaxy A54"],
+    ["OnePlus", "OnePlus 11"],
+    ["Xiaomi", "Redmi Note 13"],
+    ["Vivo", "Vivo V29"],
+    ["Oppo", "Oppo Reno 11"],
+    ["Realme", "Realme 11 Pro"],
+    ["Motorola", "Moto G84"]
+
+];
+
+
+modelCards.innerHTML =
+    popularModels.map(
+        function(item) {
+
+            const brandName =
+                item[0];
+
+            const modelName =
+                item[1];
+
+            return `
+
+                <div class="card">
+
+                    <div class="product-img small">
+                        ${icons[brandName]}
+                    </div>
+
+                    <h3>
+                        ${modelName}
+                    </h3>
+
+                    <p class="muted">
+                        ${brandName}
+                    </p>
+
+                    <button
+                        class="btn btn-secondary"
+                        onclick="chooseDevice(
+                            '${brandName}',
+                            '${modelName}'
+                        )"
+                    >
+                        Select
+                    </button>
+
+                </div>
+
+            `;
+
+        }
+    ).join("");
+
+
+/* QUICK SELECTION */
+
+function chooseDevice(
+    brandName,
+    modelName
+) {
+
+    brand.value =
+        brandName;
+
+
+    loadModels(
+        modelName
+    );
+
+
+    model.value =
+        modelName;
+
+
+    updateState();
+
+
+    window.scrollTo({
+
+        top: 0,
+
+        behavior: "smooth"
+
+    });
+
+}
+
+
+/* URL PARAMETERS */
+
+const params =
+    new URLSearchParams(
+        window.location.search
+    );
+
+
+const initialBrand =
+    params.get("brand");
+
+const initialModel =
+    params.get("model");
+
+
+if (
+    initialBrand &&
+    catalog[initialBrand]
+) {
+
+    brand.value =
+        initialBrand;
+
+    loadModels(
+        initialModel || ""
+    );
+
+    updateState();
+
+}
+
+
+/* CONTINUE */
+
+continueBtn.addEventListener(
+    "click",
+    function() {
+
+        if (
+            !brand.value ||
+            !model.value
+        ) {
+
+            return;
+
+        }
+
+
+        localStorage.setItem(
+            "selectedBrand",
+            brand.value
+        );
+
+        localStorage.setItem(
+            "selectedModel",
+            model.value
+        );
+
+
+        window.location.href =
+            "browse.html?brand=" +
+            encodeURIComponent(
+                brand.value
+            ) +
+            "&model=" +
+            encodeURIComponent(
+                model.value
+            );
+
+    }
+);
+
+
+/* MOBILE MENU */
+
+function toggleMenu() {
+
+    const n =
+        document.querySelector(
+            ".nav-links"
+        );
+
+    if (!n) return;
+
+
+    if (
+        n.style.display === "flex"
+    ) {
+
+        n.style.display =
+            "none";
+
+    } else {
+
+        n.style.display =
+            "flex";
+
+        n.style.position =
+            "absolute";
+
+        n.style.top =
+            "64px";
+
+        n.style.left =
+            "12px";
+
+        n.style.right =
+            "12px";
+
+        n.style.flexDirection =
+            "column";
+
+        n.style.alignItems =
+            "stretch";
+
+        n.style.padding =
+            "10px";
+
+        n.style.background =
+            "#fff";
+
+        n.style.border =
+            "1px solid #e2e8f0";
+
+        n.style.borderRadius =
+            "16px";
+
+        n.style.boxShadow =
+            "0 15px 35px rgba(15,23,42,.12)";
+
+    }
+
+}
+
+</script>
+
+</body>
+</html>

@@ -1,1 +1,1560 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Stock Notifications</title><link rel="stylesheet" href="style.css"></head><body><main class="container"><a href="index.html">← Home</a><h1>Part Out of Stock / Low Stock Notifications</h1><div id="out"></div></main><script>fetch('/api/notifications').then(r=>r.json()).then(x=>out.innerHTML=x.map(n=>`<div class="card"><b>${n.type}</b><p>${n.part} (${n.model}) — ${n.message}</p></div>`).join('')||'<p>No stock alerts.</p>');</script></body></html>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notifications | PartPulse MSP</title>
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    :root {
+      --blue: #2563eb;
+      --blue-dark: #1d4ed8;
+      --ink: #172033;
+      --muted: #64748b;
+      --line: #e2e8f0;
+      --bg: #f5f7fb;
+      --green: #15803d;
+      --red: #b91c1c;
+      --purple: #7e22ce;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+    }
+
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    a { color: inherit; text-decoration: none; }
+
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      padding: 15px 6%;
+      background: rgba(255,255,255,.97);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(12px);
+    }
+
+    .logo {
+      color: var(--blue);
+      font-size: 23px;
+      font-weight: 900;
+      letter-spacing: -.8px;
+    }
+
+    .logo span { color: var(--ink); }
+
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      color: #475569;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .nav-links a:hover, .nav-links a.active { color: var(--blue); }
+
+    .account-btn {
+      padding: 10px 13px;
+      border-radius: 10px;
+      background: var(--blue);
+      color: white;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .page { width: min(1180px, 93%); margin: auto; }
+
+    .breadcrumb {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      padding: 22px 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 34px;
+      border-radius: 23px;
+      background: linear-gradient(120deg, #111c3d, #1d4ed8 72%, #60a5fa);
+      color: white;
+    }
+
+    .hero::after {
+      content: "♧";
+      position: absolute;
+      right: 18px;
+      top: -68px;
+      color: rgba(255,255,255,.09);
+      font-size: 240px;
+      font-weight: 900;
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      position: relative;
+      z-index: 1;
+      display: inline-block;
+      padding: 7px 10px;
+      border-radius: 8px;
+      background: rgba(255,255,255,.14);
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 1px;
+    }
+
+    .hero h1 {
+      position: relative;
+      z-index: 1;
+      margin: 16px 0 10px;
+      font-size: clamp(29px, 4vw, 42px);
+      letter-spacing: -1px;
+    }
+
+    .hero p {
+      position: relative;
+      z-index: 1;
+      max-width: 640px;
+      color: #dbeafe;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .hero-actions {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 21px;
+    }
+
+    .hero-actions a, .hero-actions button {
+      padding: 11px 14px;
+      border: 1px solid rgba(255,255,255,.4);
+      border-radius: 10px;
+      background: transparent;
+      color: white;
+      font-size: 11px;
+      font-weight: 850;
+    }
+
+    .hero-actions a:first-child {
+      background: white;
+      color: var(--blue);
+    }
+
+    .section-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin: 28px 0 16px;
+    }
+
+    .section-heading h2 { margin: 0; font-size: 22px; letter-spacing: -.5px; }
+
+    .section-heading p {
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 13px;
+    }
+
+    .stat-card {
+      padding: 19px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: white;
+      transition: .2s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 9px 25px rgba(15,23,42,.05);
+    }
+
+    .stat-top { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+    .stat-icon { font-size: 23px; }
+    .stat-label { color: var(--muted); font-size: 10px; font-weight: 800; }
+    .stat-number { display: block; margin-top: 12px; font-size: 27px; font-weight: 900; }
+    .stat-sub { display: block; margin-top: 5px; color: var(--muted); font-size: 10px; }
+
+    .badge {
+      display: inline-block;
+      padding: 7px 10px;
+      border-radius: 8px;
+      background: #eff6ff;
+      color: var(--blue);
+      font-size: 10px;
+      font-weight: 900;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 310px;
+      align-items: start;
+      gap: 18px;
+      margin-top: 24px;
+    }
+
+    .panel {
+      min-width: 0;
+      padding: 21px;
+      border: 1px solid var(--line);
+      border-radius: 17px;
+      background: white;
+    }
+
+    .panel-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .panel-heading h2 { margin: 0; font-size: 18px; }
+    .panel-heading p { margin: 6px 0 0; color: var(--muted); font-size: 11px; line-height: 1.7; }
+
+    .btn {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 7px;
+      min-height: 38px;
+      padding: 9px 12px;
+      border: 1px solid transparent;
+      border-radius: 9px;
+      font-size: 11px;
+      font-weight: 850;
+      transition: .2s;
+    }
+
+    .btn-primary { background: var(--blue); color: white; }
+    .btn-primary:hover { background: var(--blue-dark); }
+    .btn-outline { border-color: #d7dfeb; background: white; color: #334155; }
+    .btn-outline:hover { border-color: #93b4fb; background: #eff6ff; color: var(--blue); }
+    .btn:disabled { opacity: .5; cursor: not-allowed; }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 150px;
+      gap: 10px;
+      margin-bottom: 13px;
+    }
+
+    .control {
+      width: 100%;
+      min-width: 0;
+      padding: 11px 12px;
+      border: 1px solid #d7dfeb;
+      border-radius: 9px;
+      outline: none;
+      background: white;
+      color: var(--ink);
+      font-size: 11px;
+    }
+
+    .control:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px #dbeafe;
+    }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin: 13px 0 16px;
+    }
+
+    .tab {
+      padding: 8px 11px;
+      border: 1px solid #dce3ed;
+      border-radius: 20px;
+      background: white;
+      color: #475569;
+      font-size: 10px;
+      font-weight: 850;
+    }
+
+    .tab.active { border-color: var(--blue); background: var(--blue); color: white; }
+
+    .bulk-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 9px;
+      padding: 11px 0;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .bulk-actions span { color: var(--muted); font-size: 10px; }
+    .bulk-buttons { display: flex; flex-wrap: wrap; gap: 7px; }
+
+    .notification-list { display: grid; gap: 10px; margin-top: 14px; }
+
+    .notification {
+      display: grid;
+      grid-template-columns: 43px minmax(0, 1fr) 12px;
+      gap: 12px;
+      align-items: start;
+      padding: 15px;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      background: white;
+      transition: border-color .2s, background .2s, transform .2s;
+      animation: enter .22s ease;
+    }
+
+    @keyframes enter {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .notification:hover { border-color: #b9cdf8; }
+    .notification.unread { border-color: #c9dcff; background: #f6f9ff; }
+
+    .notification-icon {
+      display: grid;
+      place-items: center;
+      width: 43px;
+      height: 43px;
+      border-radius: 12px;
+      background: #eff6ff;
+      font-size: 21px;
+    }
+
+    .notification-icon.order { background: #dbeafe; }
+    .notification-icon.delivery { background: #dcfce7; }
+    .notification-icon.return { background: #f3e8ff; }
+    .notification-icon.account { background: #fef3c7; }
+    .notification-icon.promo { background: #ffe4e6; }
+    .notification-icon.system { background: #e2e8f0; }
+
+    .notification-content { min-width: 0; }
+
+    .notification-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .notification-title {
+      margin: 0;
+      font-size: 12px;
+      line-height: 1.6;
+      font-weight: 900;
+      overflow-wrap: anywhere;
+    }
+
+    .notification-time { color: var(--muted); font-size: 10px; white-space: nowrap; }
+
+    .notification-message {
+      margin: 7px 0 0;
+      color: #526078;
+      font-size: 11px;
+      line-height: 1.8;
+      overflow-wrap: anywhere;
+    }
+
+    .notification-bottom {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 11px;
+    }
+
+    .category-label {
+      padding: 5px 8px;
+      border-radius: 7px;
+      background: #f1f5f9;
+      color: #475569;
+      font-size: 9px;
+      font-weight: 850;
+    }
+
+    .text-action {
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: var(--blue);
+      font-size: 10px;
+      font-weight: 850;
+    }
+
+    .text-action:hover { text-decoration: underline; }
+
+    .unread-dot {
+      width: 9px;
+      height: 9px;
+      margin-top: 5px;
+      border-radius: 50%;
+      background: var(--blue);
+    }
+
+    .notification:not(.unread) .unread-dot { background: transparent; }
+
+    .empty-state {
+      padding: 37px 18px;
+      border: 1px dashed #cbd5e1;
+      border-radius: 14px;
+      background: #f8fafc;
+      text-align: center;
+    }
+
+    .empty-state .empty-icon { font-size: 39px; }
+    .empty-state h3 { margin: 12px 0 7px; font-size: 14px; }
+    .empty-state p { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.8; }
+
+    .status-message {
+      margin: 12px 0;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-size: 11px;
+      line-height: 1.8;
+    }
+
+    .status-message.error { background: #fef2f2; color: #b91c1c; }
+    .status-message.success { background: #f0fdf4; color: #166534; }
+    .status-message[hidden] { display: none; }
+
+    .side-panel { display: grid; gap: 15px; }
+
+    .preference-list { display: grid; gap: 0; }
+
+    .preference {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 0;
+      border-bottom: 1px solid #edf0f5;
+    }
+
+    .preference:last-child { border-bottom: 0; }
+
+    .preference strong { display: block; font-size: 11px; }
+    .preference small { display: block; margin-top: 5px; color: var(--muted); font-size: 10px; line-height: 1.6; }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 40px;
+      height: 23px;
+      flex-shrink: 0;
+    }
+
+    .switch input { width: 0; height: 0; opacity: 0; }
+
+    .slider {
+      position: absolute;
+      inset: 0;
+      border-radius: 20px;
+      background: #cbd5e1;
+      transition: .2s;
+      cursor: pointer;
+    }
+
+    .slider::before {
+      content: "";
+      position: absolute;
+      left: 3px;
+      bottom: 3px;
+      width: 17px;
+      height: 17px;
+      border-radius: 50%;
+      background: white;
+      transition: .2s;
+    }
+
+    .switch input:checked + .slider { background: var(--blue); }
+    .switch input:checked + .slider::before { transform: translateX(17px); }
+    .switch input:focus-visible + .slider { outline: 3px solid #bfdbfe; }
+
+    .quick-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 0;
+      border-bottom: 1px solid #edf0f5;
+    }
+
+    .quick-link:last-child { border-bottom: 0; }
+    .quick-link-icon { font-size: 21px; }
+    .quick-link strong { display: block; font-size: 11px; }
+    .quick-link small { display: block; margin-top: 5px; color: var(--muted); font-size: 10px; }
+    .quick-link .arrow { margin-left: auto; color: var(--blue); }
+
+    .detail-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      background: rgba(15,23,42,.58);
+    }
+
+    .detail-backdrop.open { display: flex; }
+
+    .detail-modal {
+      width: min(520px, 100%);
+      max-height: 85vh;
+      overflow-y: auto;
+      border-radius: 17px;
+      background: white;
+      box-shadow: 0 25px 80px rgba(0,0,0,.25);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .modal-header h2 { margin: 0; font-size: 17px; }
+
+    .close-button {
+      width: 34px;
+      height: 34px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: white;
+      font-size: 19px;
+    }
+
+    .modal-body { padding: 20px; }
+    .modal-body p { color: #475569; font-size: 12px; line-height: 1.9; overflow-wrap: anywhere; }
+    .modal-meta { margin-top: 15px; padding: 12px; border-radius: 10px; background: #f8fafc; color: var(--muted); font-size: 10px; line-height: 1.8; }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 17px;
+    }
+
+    .pagination button {
+      min-width: 34px;
+      min-height: 34px;
+      padding: 6px 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: white;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .pagination button.active { border-color: var(--blue); background: var(--blue); color: white; }
+
+    .bottom-note {
+      margin: 24px 0 40px;
+      padding: 18px;
+      border: 1px solid #bfdbfe;
+      border-radius: 13px;
+      background: #eff6ff;
+      color: #1e40af;
+      font-size: 11px;
+      line-height: 1.8;
+    }
+
+    footer {
+      padding: 25px;
+      background: #101b32;
+      color: #cbd5e1;
+      text-align: center;
+      font-size: 12px;
+    }
+
+    footer strong { color: white; }
+
+    @media (max-width: 1000px) {
+      .layout { grid-template-columns: 1fr; }
+      .side-panel { grid-template-columns: 1fr 1fr; align-items: start; }
+    }
+
+    @media (max-width: 700px) {
+      .stats { grid-template-columns: 1fr 1fr; }
+      .side-panel { grid-template-columns: 1fr; }
+      .toolbar { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 520px) {
+      .navbar { padding: 13px 4%; }
+      .nav-links { width: 100%; justify-content: space-between; gap: 7px; }
+      .nav-links a { font-size: 9px; }
+      .account-btn { display: none; }
+      .hero { padding: 25px 20px; }
+      .panel { padding: 15px; }
+      .notification { grid-template-columns: 36px minmax(0, 1fr) 8px; gap: 9px; padding: 12px; }
+      .notification-icon { width: 36px; height: 36px; font-size: 18px; }
+      .notification-time { white-space: normal; }
+      .stats { gap: 9px; }
+      .stat-card { padding: 13px; }
+      .stat-number { font-size: 23px; }
+      .bulk-actions { align-items: flex-start; flex-direction: column; }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="navbar">
+    <a href="index.html" class="logo">PartPulse<span> MSP</span></a>
+
+    <nav class="nav-links" aria-label="Main navigation">
+      <a href="index.html">Home</a>
+      <a href="models.html">My Device</a>
+      <a href="browse.html">Spare Parts</a>
+      <a href="orders.html">Orders</a>
+      <a class="active" href="notifications.html">Notifications</a>
+      <a href="reviews.html">Reviews</a>
+    </nav>
+
+    <a href="login.html" class="account-btn">My Account ↗</a>
+  </header>
+
+  <main class="page">
+    <div class="breadcrumb">
+      <a href="index.html">Home</a>
+      <span>›</span>
+      <strong>Notifications</strong>
+    </div>
+
+    <section class="hero">
+      <span class="eyebrow">🔔 NOTIFICATION CENTER</span>
+      <h1>Stay updated. Stay in control.</h1>
+      <p>Keep track of order confirmations, delivery updates, return requests, account activity, and important PartPulse announcements.</p>
+
+      <div class="hero-actions">
+        <a href="#notificationCenter">View notifications ↓</a>
+        <a href="#preferences">Manage preferences</a>
+        <button id="heroMarkAll" type="button">✓ Mark all as read</button>
+      </div>
+    </section>
+
+    <section class="section-heading">
+      <div>
+        <h2>Your notification overview</h2>
+        <p>Counts are calculated from the notification records loaded for this page.</p>
+      </div>
+      <span class="badge" id="syncLabel">Connecting…</span>
+    </section>
+
+    <section class="stats">
+      <article class="stat-card">
+        <div class="stat-top">
+          <span class="stat-label">TOTAL NOTIFICATIONS</span>
+          <span class="stat-icon">🔔</span>
+        </div>
+        <strong class="stat-number" id="totalCount">—</strong>
+        <span class="stat-sub">All loaded notifications</span>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-top">
+          <span class="stat-label">UNREAD</span>
+          <span class="stat-icon">🔵</span>
+        </div>
+        <strong class="stat-number" id="unreadCount">—</strong>
+        <span class="stat-sub">Waiting for your attention</span>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-top">
+          <span class="stat-label">ORDER UPDATES</span>
+          <span class="stat-icon">📦</span>
+        </div>
+        <strong class="stat-number" id="orderCount">—</strong>
+        <span class="stat-sub">Orders and delivery notices</span>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-top">
+          <span class="stat-label">OTHER UPDATES</span>
+          <span class="stat-icon">✨</span>
+        </div>
+        <strong class="stat-number" id="otherCount">—</strong>
+        <span class="stat-sub">Returns, account, and announcements</span>
+      </article>
+    </section>
+
+    <div class="layout">
+      <section class="panel" id="notificationCenter">
+        <div class="panel-heading">
+          <div>
+            <h2>All notifications</h2>
+            <p>Search, filter, open, and manage your messages.</p>
+          </div>
+          <button class="btn btn-outline" id="refreshBtn" type="button">↻ Refresh</button>
+        </div>
+
+        <div id="pageMessage" class="status-message" role="status" hidden></div>
+
+        <div class="toolbar">
+          <input class="control" id="searchInput" type="search"
+            placeholder="Search notifications…" aria-label="Search notifications">
+
+          <select class="control" id="sortSelect" aria-label="Sort notifications">
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
+          </select>
+        </div>
+
+        <div class="tabs" id="categoryTabs">
+          <button class="tab active" data-category="all" type="button">All</button>
+          <button class="tab" data-category="order" type="button">Orders</button>
+          <button class="tab" data-category="delivery" type="button">Delivery</button>
+          <button class="tab" data-category="return" type="button">Returns</button>
+          <button class="tab" data-category="account" type="button">Account</button>
+          <button class="tab" data-category="promo" type="button">Offers</button>
+          <button class="tab" data-category="system" type="button">System</button>
+        </div>
+
+        <div class="tabs" id="readTabs">
+          <button class="tab active" data-read="all" type="button">Everything</button>
+          <button class="tab" data-read="unread" type="button">Unread only</button>
+          <button class="tab" data-read="read" type="button">Read only</button>
+        </div>
+
+        <div class="bulk-actions">
+          <span id="resultsCount">Loading notifications…</span>
+          <div class="bulk-buttons">
+            <button class="btn btn-outline" id="markVisibleRead" type="button">Mark visible read</button>
+            <button class="btn btn-outline" id="clearSearch" type="button">Clear filters</button>
+          </div>
+        </div>
+
+        <div class="notification-list" id="notificationList"></div>
+
+        <div class="empty-state" id="emptyState" hidden>
+          <div class="empty-icon">🔕</div>
+          <h3 id="emptyTitle">No notifications found</h3>
+          <p id="emptyDescription">Try another category or search term.</p>
+        </div>
+
+        <div class="pagination" id="pagination"></div>
+      </section>
+
+      <aside class="side-panel">
+        <section class="panel" id="preferences">
+          <div class="panel-heading">
+            <div>
+              <h2>Notification preferences</h2>
+              <p>Choose which notification types you want enabled in this browser.</p>
+            </div>
+          </div>
+
+          <div class="preference-list">
+            <div class="preference">
+              <div>
+                <strong>Order updates</strong>
+                <small>Order confirmations and changes</small>
+              </div>
+              <label class="switch">
+                <input type="checkbox" data-pref="orders" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="preference">
+              <div>
+                <strong>Delivery alerts</strong>
+                <small>Dispatch and delivery updates</small>
+              </div>
+              <label class="switch">
+                <input type="checkbox" data-pref="delivery" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="preference">
+              <div>
+                <strong>Returns and refunds</strong>
+                <small>Return status and refund updates</small>
+              </div>
+              <label class="switch">
+                <input type="checkbox" data-pref="returns" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="preference">
+              <div>
+                <strong>Account and security</strong>
+                <small>Important account messages</small>
+              </div>
+              <label class="switch">
+                <input type="checkbox" data-pref="account" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="preference">
+              <div>
+                <strong>Offers and announcements</strong>
+                <small>Promotions and new features</small>
+              </div>
+              <label class="switch">
+                <input type="checkbox" data-pref="promo">
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+
+          <button class="btn btn-primary" id="savePreferences" type="button" style="width:100%;margin-top:12px">
+            Save preferences
+          </button>
+
+          <p class="hint">Preferences are stored in this browser only. Server-side preferences and email/push delivery require backend support.</p>
+          <div id="preferenceMessage" class="status-message" hidden></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading">
+            <div>
+              <h2>Quick links</h2>
+              <p>Go directly to related pages.</p>
+            </div>
+          </div>
+
+          <a href="orders.html" class="quick-link">
+            <span class="quick-link-icon">📦</span>
+            <span><strong>My orders</strong><small>View purchases and status</small></span>
+            <span class="arrow">↗</span>
+          </a>
+
+          <a href="returns.html" class="quick-link">
+            <span class="quick-link-icon">↩️</span>
+            <span><strong>Returns and refunds</strong><small>Review return requests</small></span>
+            <span class="arrow">↗</span>
+          </a>
+
+          <a href="browse.html" class="quick-link">
+            <span class="quick-link-icon">🔧</span>
+            <span><strong>Browse spare parts</strong><small>Find compatible parts</small></span>
+            <span class="arrow">↗</span>
+          </a>
+
+          <a href="reviews.html" class="quick-link">
+            <span class="quick-link-icon">⭐</span>
+            <span><strong>Product reviews</strong><small>Share your experience</small></span>
+            <span class="arrow">↗</span>
+          </a>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading">
+            <div>
+              <h2>Notification tips</h2>
+              <p>Keep your account organized.</p>
+            </div>
+          </div>
+          <p style="margin:0;color:var(--muted);font-size:11px;line-height:1.9">
+            • Review unread order updates regularly.<br>
+            • Check delivery status before contacting support.<br>
+            • Keep your account details up to date.<br>
+            • Use the Returns page for return-request updates.
+          </p>
+        </section>
+      </aside>
+    </div>
+
+    <div class="bottom-note">
+      <strong>Privacy and delivery note:</strong> This page displays notifications returned by your application. Browser preferences do not automatically send emails, SMS messages, or push notifications. Those features require server-side integration.
+    </div>
+  </main>
+
+  <footer>
+    <strong>PartPulse MSP</strong> · Mobile Spare Parts Management
+    <p>Important updates for your spare-parts experience.</p>
+  </footer>
+
+  <div class="detail-backdrop" id="detailBackdrop" role="presentation">
+    <section class="detail-modal" role="dialog" aria-modal="true" aria-labelledby="detailTitle">
+      <div class="modal-header">
+        <h2 id="detailTitle">Notification details</h2>
+        <button class="close-button" id="closeDetail" type="button" aria-label="Close details">×</button>
+      </div>
+      <div class="modal-body" id="detailBody"></div>
+    </section>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    (() => {
+      "use strict";
+
+      const $ = id => document.getElementById(id);
+      const PAGE_SIZE = 8;
+
+      const state = {
+        notifications: [],
+        category: "all",
+        readFilter: "all",
+        search: "",
+        sort: "newest",
+        page: 1,
+        loading: false
+      };
+
+      const defaultPreferences = {
+        orders: true,
+        delivery: true,
+        returns: true,
+        account: true,
+        promo: false
+      };
+
+      let preferences = { ...defaultPreferences };
+
+      function first(obj, keys, fallback = "") {
+        for (const key of keys) {
+          if (obj && obj[key] !== undefined && obj[key] !== null && obj[key] !== "") {
+            return obj[key];
+          }
+        }
+        return fallback;
+      }
+
+      function escapeHTML(value) {
+        return String(value ?? "").replace(/[&<>"']/g, char => ({
+          "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+        })[char]);
+      }
+
+      function arrayFrom(data, keys = []) {
+        if (Array.isArray(data)) return data;
+        for (const key of keys) {
+          if (Array.isArray(data?.[key])) return data[key];
+        }
+        return [];
+      }
+
+      function notificationId(item, index) {
+        return String(first(item, ["notification_id", "notificationId", "id"], "notification-" + index));
+      }
+
+      function categoryOf(item) {
+        const raw = String(first(item, [
+          "category", "type", "notification_type", "notificationType"
+        ], "system")).toLowerCase();
+
+        if (raw.includes("deliver") || raw.includes("shipment") || raw.includes("dispatch")) return "delivery";
+        if (raw.includes("order") || raw.includes("purchase") || raw.includes("payment")) return "order";
+        if (raw.includes("return") || raw.includes("refund") || raw.includes("exchange")) return "return";
+        if (raw.includes("account") || raw.includes("security") || raw.includes("password") || raw.includes("login")) return "account";
+        if (raw.includes("promo") || raw.includes("offer") || raw.includes("discount") || raw.includes("campaign")) return "promo";
+        if (raw.includes("system") || raw.includes("maintenance") || raw.includes("announcement")) return "system";
+
+        return raw || "system";
+      }
+
+      function categoryLabel(category) {
+        const labels = {
+          order: "Order",
+          delivery: "Delivery",
+          return: "Returns",
+          account: "Account",
+          promo: "Offers",
+          system: "System"
+        };
+        return labels[category] || category.charAt(0).toUpperCase() + category.slice(1);
+      }
+
+      function categoryIcon(category) {
+        const icons = {
+          order: "📦",
+          delivery: "🚚",
+          return: "↩️",
+          account: "🔐",
+          promo: "🎁",
+          system: "⚙️"
+        };
+        return icons[category] || "🔔";
+      }
+
+      function isRead(item) {
+        const value = first(item, ["is_read", "isRead", "read", "read_status", "readStatus"], false);
+        return value === true || value === 1 || String(value).toLowerCase() === "true" ||
+          String(value).toLowerCase() === "read";
+      }
+
+      function dateOf(item) {
+        const raw = first(item, [
+          "created_at", "createdAt", "timestamp", "date", "sent_at", "sentAt"
+        ], "");
+        if (!raw) return null;
+        const date = new Date(raw);
+        return Number.isNaN(date.getTime()) ? null : date;
+      }
+
+      function dateText(date) {
+        if (!date) return "Time unavailable";
+        return date.toLocaleString("en-IN", {
+          day: "numeric", month: "short", year: "numeric",
+          hour: "2-digit", minute: "2-digit"
+        });
+      }
+
+      function relativeTime(date) {
+        if (!date) return "Time unavailable";
+
+        const diff = Date.now() - date.getTime();
+        if (diff < 0) return dateText(date);
+
+        const minutes = Math.floor(diff / 60000);
+        if (minutes < 1) return "Just now";
+        if (minutes < 60) return minutes + " min ago";
+
+        const hours = Math.floor(minutes / 60);
+        if (hours < 24) return hours + " hr ago";
+
+        const days = Math.floor(hours / 24);
+        if (days < 7) return days + " day" + (days === 1 ? "" : "s") + " ago";
+
+        return dateText(date);
+      }
+
+      function titleOf(item) {
+        return String(first(item, [
+          "title", "subject", "notification_title", "notificationTitle", "heading"
+        ], "Notification"));
+      }
+
+      function messageOf(item) {
+        return String(first(item, [
+          "message", "body", "description", "content", "notification_message", "notificationMessage"
+        ], "No additional details were provided."));
+      }
+
+      function actionUrl(item) {
+        const url = String(first(item, ["action_url", "actionUrl", "link", "url"], ""));
+        // Only permit local relative page links; never use arbitrary schemes.
+        if (!url || !/^[a-zA-Z0-9_./?=&%-]+$/.test(url) || url.startsWith("//")) return "";
+        return url;
+      }
+
+      function categoryPreference(category) {
+        if (category === "order") return "orders";
+        if (category === "delivery") return "delivery";
+        if (category === "return") return "returns";
+        if (category === "account") return "account";
+        if (category === "promo") return "promo";
+        return null;
+      }
+
+      function showMessage(id, message, type = "") {
+        const el = $(id);
+        el.textContent = message;
+        el.className = "status-message" + (type ? " " + type : "");
+        el.hidden = !message;
+      }
+
+      async function apiGet(path) {
+        if (window.API && typeof window.API.get === "function") {
+          return await window.API.get(path);
+        }
+
+        const response = await fetch(path);
+        if (!response.ok) throw new Error("Request failed (" + response.status + ")");
+        return response.json();
+      }
+
+      async function apiPost(path, data) {
+        if (window.API && typeof window.API.post === "function") {
+          return await window.API.post(path, data);
+        }
+
+        const body = new URLSearchParams();
+        Object.entries(data).forEach(([key, value]) => body.append(key, String(value)));
+
+        const response = await fetch(path, {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
+          body
+        });
+
+        const text = await response.text();
+        let result = {};
+        try { result = text ? JSON.parse(text) : {}; }
+        catch { result = { message: text }; }
+
+        if (!response.ok) {
+          throw new Error(result.message || result.error || "Request failed (" + response.status + ")");
+        }
+        return result;
+      }
+
+      function readPreferences() {
+        try {
+          const saved = localStorage.getItem("partpulse_notification_preferences");
+          if (saved) preferences = { ...defaultPreferences, ...JSON.parse(saved) };
+        } catch (error) {
+          console.warn("Could not load notification preferences.", error);
+        }
+
+        document.querySelectorAll("[data-pref]").forEach(input => {
+          input.checked = Boolean(preferences[input.dataset.pref]);
+        });
+      }
+
+      function savePreferences() {
+        document.querySelectorAll("[data-pref]").forEach(input => {
+          preferences[input.dataset.pref] = input.checked;
+        });
+
+        try {
+          localStorage.setItem("partpulse_notification_preferences", JSON.stringify(preferences));
+          showMessage("preferenceMessage", "Preferences saved in this browser.", "success");
+        } catch (error) {
+          showMessage("preferenceMessage", "Your browser could not save these preferences.", "error");
+        }
+      }
+
+      function updateStats() {
+        const notifications = state.notifications;
+        const unread = notifications.filter(item => !isRead(item)).length;
+
+        $("totalCount").textContent = notifications.length;
+        $("unreadCount").textContent = unread;
+        $("orderCount").textContent = notifications.filter(item =>
+          ["order", "delivery"].includes(categoryOf(item))
+        ).length;
+        $("otherCount").textContent = notifications.filter(item =>
+          ["return", "account", "promo", "system"].includes(categoryOf(item))
+        ).length;
+
+        $("syncLabel").textContent = "Unread: " + unread;
+        document.title = unread ? "(" + unread + ") Notifications | PartPulse MSP" : "Notifications | PartPulse MSP";
+      }
+
+      function filteredNotifications() {
+        let result = state.notifications.filter(item => {
+          const category = categoryOf(item);
+          const read = isRead(item);
+
+          if (state.category !== "all" && category !== state.category) return false;
+          if (state.readFilter === "unread" && read) return false;
+          if (state.readFilter === "read" && !read) return false;
+
+          const text = [
+            titleOf(item), messageOf(item), categoryLabel(category),
+            first(item, ["order_id", "orderId"], ""),
+            first(item, ["notification_id", "notificationId", "id"], "")
+          ].join(" ").toLowerCase();
+
+          if (state.search && !text.includes(state.search.toLowerCase())) return false;
+
+          return true;
+        });
+
+        result.sort((a, b) => {
+          const aDate = dateOf(a)?.getTime() || 0;
+          const bDate = dateOf(b)?.getTime() || 0;
+          return state.sort === "oldest" ? aDate - bDate : bDate - aDate;
+        });
+
+        return result;
+      }
+
+      function renderNotification(item) {
+        const index = state.notifications.indexOf(item);
+        const id = notificationId(item, index);
+        const category = categoryOf(item);
+        const read = isRead(item);
+        const date = dateOf(item);
+        const title = titleOf(item);
+        const message = messageOf(item);
+
+        return `
+          <article class="notification ${read ? "" : "unread"}" data-id="${escapeHTML(id)}">
+            <div class="notification-icon ${escapeHTML(category)}">${categoryIcon(category)}</div>
+
+            <div class="notification-content">
+              <div class="notification-top">
+                <h3 class="notification-title">${escapeHTML(title)}</h3>
+                <span class="notification-time" title="${escapeHTML(dateText(date))}">${escapeHTML(relativeTime(date))}</span>
+              </div>
+
+              <p class="notification-message">${escapeHTML(message)}</p>
+
+              <div class="notification-bottom">
+                <span class="category-label">${escapeHTML(categoryLabel(category))}</span>
+                <button class="text-action" type="button" data-open="${escapeHTML(id)}">View details</button>
+                ${read
+                  ? '<button class="text-action" type="button" data-mark-unread="' + escapeHTML(id) + '">Mark unread</button>'
+                  : '<button class="text-action" type="button" data-mark-read="' + escapeHTML(id) + '">Mark as read</button>'}
+                ${actionUrl(item)
+                  ? '<a class="text-action" href="' + escapeHTML(actionUrl(item)) + '">Open related page ↗</a>'
+                  : ''}
+              </div>
+            </div>
+
+            <span class="unread-dot" aria-label="${read ? "Read" : "Unread"}"></span>
+          </article>`;
+      }
+
+      function renderPagination(totalPages) {
+        const container = $("pagination");
+        container.innerHTML = "";
+
+        if (totalPages <= 1) return;
+
+        const add = (label, page, active = false, disabled = false) => {
+          const button = document.createElement("button");
+          button.textContent = label;
+          button.disabled = disabled;
+          if (active) button.classList.add("active");
+
+          button.addEventListener("click", () => {
+            state.page = page;
+            renderNotifications();
+            $("notificationCenter").scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+
+          container.appendChild(button);
+        };
+
+        add("←", Math.max(1, state.page - 1), false, state.page === 1);
+
+        for (let i = 1; i <= totalPages; i++) {
+          add(String(i), i, i === state.page);
+        }
+
+        add("→", Math.min(totalPages, state.page + 1), false, state.page === totalPages);
+      }
+
+      function renderNotifications() {
+        const results = filteredNotifications();
+        const totalPages = Math.max(1, Math.ceil(results.length / PAGE_SIZE));
+
+        if (state.page > totalPages) state.page = totalPages;
+
+        const start = (state.page - 1) * PAGE_SIZE;
+        const visible = results.slice(start, start + PAGE_SIZE);
+
+        $("notificationList").innerHTML = visible.map(renderNotification).join("");
+        $("notificationList").style.display = results.length ? "grid" : "none";
+        $("emptyState").hidden = results.length > 0;
+
+        $("emptyTitle").textContent = state.notifications.length
+          ? "No matching notifications"
+          : "You're all caught up";
+
+        $("emptyDescription").textContent = state.notifications.length
+          ? "Try another category, read status, or search term."
+          : "No notifications were returned by the backend.";
+
+        $("resultsCount").textContent = results.length
+          ? "Showing " + (start + 1) + "–" + Math.min(start + PAGE_SIZE, results.length) +
+            " of " + results.length + " notifications"
+          : "0 notifications";
+
+        renderPagination(totalPages);
+        updateStats();
+      }
+
+      function setActiveTabs() {
+        document.querySelectorAll("[data-category]").forEach(button => {
+          button.classList.toggle("active", button.dataset.category === state.category);
+        });
+
+        document.querySelectorAll("[data-read]").forEach(button => {
+          button.classList.toggle("active", button.dataset.read === state.readFilter);
+        });
+      }
+
+      function localUpdateRead(item, read) {
+        // Keep the locally displayed record consistent until refreshed.
+        item.is_read = read;
+        item.isRead = read;
+      }
+
+      async function markRead(id, read) {
+        const index = state.notifications.findIndex((item, i) => notificationId(item, i) === String(id));
+        if (index < 0) return;
+
+        const item = state.notifications[index];
+        const previous = isRead(item);
+
+        if (previous === read) return;
+
+        // The API must confirm persistence before we report success.
+        try {
+          await apiPost("/api/notifications/read", {
+            notificationId: id,
+            isRead: read
+          });
+
+          localUpdateRead(item, read);
+          renderNotifications();
+          showMessage("pageMessage", read ? "Notification marked as read." : "Notification marked as unread.", "success");
+        } catch (error) {
+          console.error(error);
+          showMessage(
+            "pageMessage",
+            "The read status was not saved. POST /api/notifications/read must be implemented by your Java backend. " +
+            (error.message || ""),
+            "error"
+          );
+        }
+      }
+
+      async function markManyRead(items) {
+        const unread = items.filter(item => !isRead(item));
+
+        if (!unread.length) {
+          showMessage("pageMessage", "There are no unread notifications in this selection.");
+          return;
+        }
+
+        let succeeded = 0;
+        let failed = 0;
+
+        for (const item of unread) {
+          const index = state.notifications.indexOf(item);
+          const id = notificationId(item, index);
+
+          try {
+            await apiPost("/api/notifications/read", {
+              notificationId: id,
+              isRead: true
+            });
+
+            localUpdateRead(item, true);
+            succeeded++;
+          } catch (error) {
+            failed++;
+            console.error("Could not mark notification as read:", id, error);
+          }
+        }
+
+        renderNotifications();
+
+        if (failed === 0) {
+          showMessage("pageMessage", "Marked " + succeeded + " notification(s) as read.", "success");
+        } else {
+          showMessage(
+            "pageMessage",
+            succeeded + " notification(s) updated; " + failed +
+            " failed. Check that the Java read-status endpoint is configured.",
+            "error"
+          );
+        }
+      }
+
+      function openDetails(id) {
+        const index = state.notifications.findIndex((item, i) => notificationId(item, i) === String(id));
+        if (index < 0) return;
+
+        const item = state.notifications[index];
+        const category = categoryOf(item);
+        const date = dateOf(item);
+        const read = isRead(item);
+
+        $("detailTitle").textContent = titleOf(item);
+
+        $("detailBody").innerHTML = `
+          <span class="badge">${escapeHTML(categoryLabel(category))}</span>
+          <p>${escapeHTML(messageOf(item))}</p>
+          <div class="modal-meta">
+            <strong>Notification ID:</strong> ${escapeHTML(notificationId(item, index))}<br>
+            <strong>Date:</strong> ${escapeHTML(dateText(date))}<br>
+            <strong>Status:</strong> ${read ? "Read" : "Unread"}<br>
+            <strong>Order ID:</strong> ${escapeHTML(first(item, ["order_id", "orderId"], "Not associated with an order"))}
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:9px;margin-top:17px">
+            ${!read
+              ? '<button class="btn btn-primary" id="detailMarkRead" type="button">Mark as read</button>'
+              : '<button class="btn btn-outline" id="detailMarkUnread" type="button">Mark as unread</button>'}
+            ${actionUrl(item)
+              ? '<a class="btn btn-outline" href="' + escapeHTML(actionUrl(item)) + '">Open related page ↗</a>'
+              : ''}
+          </div>`;
+
+        $("detailBackdrop").classList.add("open");
+
+        const readButton = $("detailMarkRead");
+        const unreadButton = $("detailMarkUnread");
+
+        if (readButton) readButton.addEventListener("click", async () => {
+          await markRead(id, true);
+          closeDetails();
+        });
+
+        if (unreadButton) unreadButton.addEventListener("click", async () => {
+          await markRead(id, false);
+          closeDetails();
+        });
+      }
+
+      function closeDetails() {
+        $("detailBackdrop").classList.remove("open");
+      }
+
+      async function loadNotifications() {
+        if (state.loading) return;
+
+        state.loading = true;
+        $("refreshBtn").disabled = true;
+        $("refreshBtn").textContent = "Loading…";
+        showMessage("pageMessage", "Loading notifications…");
+
+        try {
+          const data = await apiGet("/api/notifications");
+          state.notifications = arrayFrom(data, ["notifications", "data", "results"]);
+          state.page = 1;
+
+          $("syncLabel").textContent = "Loaded successfully";
+          renderNotifications();
+
+          showMessage(
+            "pageMessage",
+            "Loaded " + state.notifications.length + " notification(s) from the backend.",
+            "success"
+          );
+        } catch (error) {
+          console.error("Notification loading failed:", error);
+          state.notifications = [];
+          renderNotifications();
+
+          $("syncLabel").textContent = "Connection issue";
+
+          showMessage(
+            "pageMessage",
+            "Could not load notifications. Confirm that GET /api/notifications exists and your Java backend is running. " +
+            (error.message || ""),
+            "error"
+          );
+        } finally {
+          state.loading = false;
+          $("refreshBtn").disabled = false;
+          $("refreshBtn").textContent = "↻ Refresh";
+        }
+      }
+
+      $("searchInput").addEventListener("input", () => {
+        state.search = $("searchInput").value.trim();
+        state.page = 1;
+        renderNotifications();
+      });
+
+      $("sortSelect").addEventListener("change", () => {
+        state.sort = $("sortSelect").value;
+        state.page = 1;
+        renderNotifications();
+      });
+
+      $("categoryTabs").addEventListener("click", event => {
+        const button = event.target.closest("[data-category]");
+        if (!button) return;
+
+        state.category = button.dataset.category;
+        state.page = 1;
+        setActiveTabs();
+        renderNotifications();
+      });
+
+      $("readTabs").addEventListener("click", event => {
+        const button = event.target.closest("[data-read]");
+        if (!button) return;
+
+        state.readFilter = button.dataset.read;
+        state.page = 1;
+        setActiveTabs();
+        renderNotifications();
+      });
+
+      $("notificationList").addEventListener("click", async event => {
+        const open = event.target.closest("[data-open]");
+        const read = event.target.closest("[data-mark-read]");
+        const unread = event.target.closest("[data-mark-unread]");
+
+        if (open) openDetails(open.dataset.open);
+        else if (read) await markRead(read.dataset.markRead, true);
+        else if (unread) await markRead(unread.dataset.markUnread, false);
+      });
+
+      $("markVisibleRead").addEventListener("click", () => {
+        const results = filteredNotifications();
+        const start = (state.page - 1) * PAGE_SIZE;
+        markManyRead(results.slice(start, start + PAGE_SIZE));
+      });
+
+      $("heroMarkAll").addEventListener("click", () => {
+        markManyRead(state.notifications.filter(item => !isRead(item)));
+      });
+
+      $("clearSearch").addEventListener("click", () => {
+        state.category = "all";
+        state.readFilter = "all";
+        state.search = "";
+        state.sort = "newest";
+        state.page = 1;
+
+        $("searchInput").value = "";
+        $("sortSelect").value = "newest";
+
+        setActiveTabs();
+        renderNotifications();
+        showMessage("pageMessage", "Filters cleared.");
+      });
+
+      $("refreshBtn").addEventListener("click", loadNotifications);
+      $("closeDetail").addEventListener("click", closeDetails);
+
+      $("detailBackdrop").addEventListener("click", event => {
+        if (event.target === $("detailBackdrop")) closeDetails();
+      });
+
+      document.addEventListener("keydown", event => {
+        if (event.key === "Escape") closeDetails();
+      });
+
+      $("savePreferences").addEventListener("click", savePreferences);
+
+      readPreferences();
+      setActiveTabs();
+      loadNotifications();
+    })();
+  </script>
+</body>
+</html>

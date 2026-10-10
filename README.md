@@ -1,23 +1,936 @@
-# Mobile Spare Parts Management System
 
-Team 01 project. Sprint 1 foundation + Sprint 2 completed work implementation.
+============================================================
+                  PARTPULSE MSP
+       MOBILE SPARE PARTS MANAGEMENT SYSTEM
+============================================================
 
-## Sprint 2
+Project Type : App
+Frontend     : HTML, CSS, JavaScript
+Backend      : Java
+Database     : MySQL
+Build Tool   : Maven
+Project Name : PartPulse MSP
+Repository   : MobileSparePartsRecommendationSystem
 
-MSPR-3 User Registration; MSPR-4 User Login; MSPR-5 Browse Mobile Spare Parts; MSPR-6 Select Mobile Brand and Model; MSPR-7 Search Spare Parts; MSPR-9 View Product Details; MSPR-10 Check Spare-Part Compatibility; MSPR-26 Part Out of Stock Notifications; MSPR-27 Integrated Repair Guides; MSPR-29 Defective Part Return & Replacement; MSPR-20 Price Tracking.
+------------------------------------------------------------
+1. ABOUT THE PROJECT
+------------------------------------------------------------
 
-Supporting features include product reviews/ratings, order tracking, comparison and recommendations.
+PartPulse MSP is a web-based Mobile Spare Parts Management
+System designed to help users discover, compare, and manage
+mobile phone spare parts.
 
-## Run
+The application provides a central platform for browsing
+spare parts, selecting mobile brands and models, checking
+compatibility, comparing products, viewing recommendations,
+reading reviews, and accessing repair guides.
 
-Requires JDK 17+ and Maven.
+The frontend uses HTML, CSS, and JavaScript. In the current
+demo configuration, the Java backend serves illustrative
+in-memory catalogue records; it does not read or write MySQL.
 
-```bash
-mvn clean test
-mvn clean compile
-java -cp target/classes com.msp.App
-```
+IMPORTANT:
+The actual functionality available depends on the Java
+backend routes, database schema, and frontend implementation.
+Features with missing backend endpoints may require additional
+development before they can persist data.
 
-Open `http://localhost:8080/`.
 
-The current implementation uses an in-memory service layer for the web demo. `database/schema.sql` remains the database schema reference.
+------------------------------------------------------------
+2. PROJECT OBJECTIVES
+------------------------------------------------------------
+
+1. Provide a simple and responsive spare-parts interface.
+2. Allow users to explore supported mobile brands and models.
+3. Display available spare parts and their prices.
+4. Help users compare available spare parts.
+5. Provide a compatibility-checking interface.
+6. Present recommendations based on available product data.
+7. Allow users to register and log in.
+8. Provide product reviews and ratings.
+9. Offer repair guides and safety information.
+10. Support future expansion of ordering, tracking, and
+    inventory-management functionality.
+
+
+------------------------------------------------------------
+3. TECHNOLOGIES USED
+------------------------------------------------------------
+
+FRONTEND
+--------
+HTML5
+CSS3
+JavaScript
+Responsive Web Design
+Fetch API
+
+BACKEND
+-------
+Java
+JDBC
+Maven
+HTTP server / API routes
+
+DATABASE
+--------
+MySQL
+Relational database tables
+
+DEVELOPMENT TOOLS
+-----------------
+JDK
+Apache Maven
+MySQL Server
+MySQL Workbench or another MySQL client
+Visual Studio Code or another code editor
+Web browser
+Git and GitHub
+
+
+------------------------------------------------------------
+4. SYSTEM REQUIREMENTS
+------------------------------------------------------------
+
+Required software:
+
+[ ] Java Development Kit (JDK)
+[ ] Apache Maven
+[ ] MySQL Server
+[ ] Web browser
+[ ] Code editor
+[ ] Git (optional, for version control)
+
+Recommended:
+- A modern version of Chrome, Edge, or Firefox.
+- A stable internet connection if external resources are used.
+- A Windows terminal such as PowerShell or Command Prompt.
+
+Verify Java:
+
+    java -version
+
+Verify the Java compiler:
+
+    javac -version
+
+Verify Maven:
+
+    mvn -version
+
+If any command is not recognized, install the required
+software and configure its PATH environment variable.
+
+Use a JDK version compatible with the project's pom.xml.
+
+
+------------------------------------------------------------
+5. PROJECT DIRECTORY STRUCTURE
+------------------------------------------------------------
+
+The exact directory structure may differ depending on the
+current Git branch and project version.
+
+A typical structure is:
+
+Mobile-Spare-Parts-Management/
+|
+|-- pom.xml
+|-- README_SETUP.txt
+|
+|-- src/
+|   |-- main/
+|   |   |-- java/
+|   |   |   |-- com/
+|   |   |       |-- msp/
+|   |   |           |-- App.java
+|   |   |           |-- Database.java
+|   |   |
+|   |   |-- resources/
+|   |
+|   |-- test/
+|
+|-- frontend/
+|   |-- index.html
+|   |-- register.html
+|   |-- login.html
+|   |-- models.html
+|   |-- browse.html
+|   |-- cart.html
+|   |-- checkout.html
+|   |-- details.html
+|   |-- compatibility.html
+|   |-- compare.html
+|   |-- recommendations.html
+|   |-- reviews.html
+|   |-- orders.html
+|   |-- returns.html
+|   |-- notifications.html
+|   |-- price-tracking.html
+|   |-- repair-guides.html
+|   |-- style.css
+|   |-- app.js
+|
+|-- target/
+    |-- compiled files and build output
+
+NOTE:
+The target directory is generated by Maven. Do not manually
+edit compiled class files inside target.
+
+
+------------------------------------------------------------
+6. DATABASE CONFIGURATION
+------------------------------------------------------------
+
+Configured database name:
+
+    mobispares
+
+The current default JDBC URL is:
+
+    jdbc:mysql://localhost:3306/mobispares?serverTimezone=UTC
+
+The default account is `root` with an empty password. This did
+not authenticate against the MySQL server in the last local
+connection check. Set the credentials that work for your MySQL
+installation in the same PowerShell window used to launch Java:
+
+    $env:MSP_DB_URL='jdbc:mysql://localhost:3306/mobispares?serverTimezone=UTC'
+    $env:MSP_DB_USER='root'
+    $env:MSP_DB_PASSWORD='your-local-password'
+
+These environment variables apply to the current PowerShell
+session. Set them again in a new terminal if required.
+
+Replace the placeholders locally; never commit or send the
+password. No database changes are performed by the current
+demo backend. Do not run `database/schema.sql` against
+`mobispares` as part of this demo: it selects a different
+database name and inserts sample rows.
+
+
+------------------------------------------------------------
+7. START MYSQL
+------------------------------------------------------------
+
+Before running the application:
+
+1. Open MySQL Workbench or your MySQL management tool.
+2. Connect to the local MySQL server.
+3. Verify that the server is running.
+4. Confirm that the database exists or that the application
+   can create it.
+5. Confirm that the application user has the necessary
+   permissions.
+
+To inspect the database, execute:
+
+    SHOW DATABASES;
+
+To select the project database:
+
+    USE mobispares;
+
+To list the tables:
+
+    SHOW TABLES;
+
+Expected application tables may include:
+
+    users
+    mobile_brands
+    mobile_models
+    spare_parts
+    compatibility
+    reviews
+    cart_items
+    orders
+    order_items
+    recommendation_rules
+
+First inspect the actual tables and columns in `mobispares`.
+The repository's `database/schema.sql` describes a separate
+`mobile_spare_parts` database and should not be run against
+the existing `mobispares` database without review.
+
+Do not drop or recreate an existing database without backing
+up any important data.
+
+
+------------------------------------------------------------
+8. RUN THE BACKEND
+------------------------------------------------------------
+
+STEP 1: Open PowerShell or Command Prompt.
+
+STEP 2: Navigate to the project root.
+
+Example:
+
+    cd "C:\Users\MANIGANDAN C\Downloads\Mobile-Spare-Parts-Management"
+
+Use your actual project folder if it is different.
+
+STEP 3: Check the project files.
+
+    dir
+
+Confirm that pom.xml is present.
+
+STEP 4: Build the project and run available tests.
+
+    mvn clean test
+
+STEP 5: If the tests pass, package the project.
+
+    mvn package
+
+STEP 6: Start the application using the method supported by
+the project's pom.xml.
+
+If the project is configured with an appropriate Maven
+execution plugin, the command may be:
+
+    mvn exec:java -Dexec.mainClass="com.msp.App"
+
+Otherwise, use the project's documented startup command.
+
+For a project that has already been compiled and has its
+required dependencies available, a previous working command
+was:
+
+    java -cp "target\classes;target\dependency\*" com.msp.App
+
+This command is for Windows and requires the compiled classes
+and dependency files to exist at those paths.
+
+Do not run multiple copies of the backend on the same port.
+
+SUCCESS INDICATOR
+-----------------
+
+The backend should print messages similar to:
+
+    PartPulse MSP running at http://localhost:8080
+
+The current backend does not test or connect to MySQL at
+startup. `/api/health` reports `dataMode: "DEMO"`.
+
+Keep the terminal running while testing the website.
+
+
+------------------------------------------------------------
+9. RUN THE FRONTEND
+------------------------------------------------------------
+
+The recommended approach is to serve the frontend through
+the Java application if it already serves static HTML files.
+
+Open the browser:
+
+    http://localhost:8080/
+
+If the homepage is available at the root route, it should
+display index.html.
+
+If the application does not serve the frontend automatically,
+check the Java server's static-file configuration.
+
+Alternative:
+You can temporarily serve static files with a development
+server, but the frontend API base URL must point to the
+running Java backend if the two servers use different ports.
+
+Do not assume that opening an HTML file directly with
+file:/// will work for API requests.
+
+
+------------------------------------------------------------
+10. USER JOURNEY
+------------------------------------------------------------
+
+The intended user journey is:
+
+    HOME PAGE
+       |
+       v
+    REGISTER OR LOGIN
+       |
+       v
+    SELECT MOBILE BRAND
+       |
+       v
+    SELECT MOBILE MODEL
+       |
+       v
+    BROWSE SPARE PARTS
+       |
+       v
+    VIEW PART DETAILS
+       |
+       v
+    CHECK COMPATIBILITY
+       |
+       v
+    COMPARE AVAILABLE PARTS
+       |
+       v
+    VIEW RECOMMENDATIONS
+       |
+       v
+    REVIEWS / REPAIR GUIDES
+       |
+       v
+    ORDERS AND OTHER FEATURES
+
+Users may also navigate between pages using the links
+provided in each HTML page.
+
+IMPORTANT:
+The navigation above describes the intended workflow.
+Authentication enforcement, checkout, order placement, and
+other protected operations must be implemented and verified
+in the backend. A frontend redirect alone is not security.
+
+
+------------------------------------------------------------
+11. FRONTEND PAGE GUIDE
+------------------------------------------------------------
+
+index.html
+----------
+The homepage and main entry point.
+
+register.html
+-------------
+Registration interface for new users.
+
+login.html
+----------
+Login interface for existing users.
+
+models.html
+-----------
+Brand and model selection.
+
+browse.html
+-----------
+Search and filter the sample spare-parts catalogue.
+
+cart.html
+---------
+Browser-local demo cart. Cart contents are not sent to or
+persisted by the Java server.
+
+checkout.html
+-------------
+Validates demo delivery fields and shows configured payment
+choices. It does not create orders or payments.
+
+details.html
+------------
+View individual spare-part details.
+
+compatibility.html
+------------------
+Check whether a spare part is compatible with a selected
+mobile model. Current demo data is not verified.
+
+compare.html
+------------
+Compare product information side by side.
+
+recommendations.html
+--------------------
+Display recommended spare parts based on the available
+filtering and recommendation logic.
+
+reviews.html
+------------
+Display reviews and provide the review-submission interface.
+
+orders.html
+-----------
+Order-related user interface.
+
+returns.html
+------------
+Return-related user interface.
+
+notifications.html
+-------------------
+Display application notifications.
+
+price-tracking.html
+-------------------
+Track target prices and display price information.
+
+repair-guides.html
+------------------
+Display repair guides, tools, safety information, and steps.
+
+style.css
+---------
+Shared styling, responsive layouts, animations, cards,
+forms, navigation, and reusable visual components.
+
+app.js
+------
+Shared JavaScript utilities, API requests, notifications,
+storage helpers, modal interactions, and reusable UI features.
+
+
+------------------------------------------------------------
+12. API ENDPOINTS
+------------------------------------------------------------
+
+The frontend has been designed around API routes such as:
+
+METHOD    ENDPOINT
+------    --------------------
+GET       /api/brands
+GET       /api/models
+GET       /api/spare-parts
+GET       /api/reviews
+GET       /api/orders
+POST      /api/auth/register
+POST      /api/auth/login
+
+These routes must exist in the running Java backend and
+return data in a format the frontend understands.
+
+`GET /api/models` returns illustrative catalog entries with
+both `brand` and `name`, for example
+`{"brand":"Apple","name":"iPhone 15"}`. Add `?brand=Apple`
+to return models for one brand. The built-in brands, models,
+spare-part inventory, quantities, and prices are demo data,
+not verified records from MySQL.
+
+`GET /api/compatibility` currently returns `status: "unverified"`
+and does not claim a part is compatible. `POST /api/orders`
+returns HTTP 503 in demo mode; order creation is disabled.
+`GET /api/cart` returns an empty server cart. The browser demo
+cart uses local storage and does not create server orders.
+Online payment methods are display-only; checkout permits a
+COD demo preview but does not create an order or accept payment.
+
+Some pages may expect additional routes, for example:
+
+GET       /api/product?id=...
+GET       /api/compatibility
+POST      /api/reviews
+GET       /api/price-tracking
+POST      /api/price-tracking
+DELETE    /api/price-tracking?id=...
+GET       /api/repair-guides
+
+The additional routes are integration expectations, not a
+guarantee that the Java backend already implements them.
+
+Before relying on a route:
+1. Search the Java source code for the route.
+2. Verify its HTTP method and parameter names.
+3. Check whether the response is JSON or plain text.
+4. Test it using the browser or an API client.
+5. Update the frontend if the route differs.
+
+The shared `app.js` helper sends JSON for POST requests and
+surfaces HTTP errors to the page.
+
+
+------------------------------------------------------------
+13. SHARED JAVASCRIPT API EXAMPLES
+------------------------------------------------------------
+
+Fetch spare parts:
+
+    const result = await API.get("/api/spare-parts");
+
+Submit a URL-encoded login request:
+
+    const result = await API.post("/api/auth/login", {
+        username: "your_username",
+        password: "your_password"
+    });
+
+Submit JSON when required by a backend route:
+
+    const result = await API.postJSON("/your-endpoint", {
+        example: "value"
+    });
+
+Display a notification:
+
+    PartPulse.toast("Operation completed", "success");
+
+Format a price:
+
+    PartPulse.formatMoney(1299);
+
+Read a URL parameter:
+
+    const id = PartPulse.getParam("id");
+
+These examples demonstrate the shared frontend helpers.
+They do not guarantee successful server operations unless
+the corresponding route is implemented correctly.
+
+
+------------------------------------------------------------
+14. INTERACTIVE FEATURES
+------------------------------------------------------------
+
+The shared frontend may provide:
+
+[ ] Responsive navigation
+[ ] Product cards and hover effects
+[ ] Search and filtering controls
+[ ] Brand and model selection
+[ ] Product comparison
+[ ] Loading indicators
+[ ] Error and success notifications
+[ ] Modal dialogs
+[ ] Password visibility controls
+[ ] Character counters
+[ ] Cart storage in the browser
+[ ] Saved-parts storage in the browser
+[ ] Keyboard shortcuts for search
+[ ] Form submission helpers
+[ ] Responsive mobile layouts
+
+The behavior of individual pages also depends on their
+own HTML and page-specific JavaScript.
+
+Local browser storage is not a substitute for server-side
+persistence. Clearing browser data may remove locally saved
+cart or preference information.
+
+
+------------------------------------------------------------
+15. TESTING CHECKLIST
+------------------------------------------------------------
+
+DATABASE
+--------
+[ ] MySQL service is running.
+[ ] mobispares database is accessible using the configured account.
+[ ] Required tables exist.
+[ ] Sample data is available where expected.
+[ ] Database credentials are configured correctly.
+
+BACKEND
+-------
+[ ] Maven build completes successfully.
+[ ] Tests pass or known failures are understood.
+[ ] Java application starts.
+[ ] Database connection succeeds.
+[ ] Server listens on the expected port.
+[ ] API routes return the expected responses.
+
+FRONTEND
+--------
+[ ] Homepage loads correctly.
+[ ] Registration form validates input.
+[ ] Login form displays useful errors.
+[ ] Brand list loads.
+[ ] Model list updates correctly.
+[ ] Spare parts load.
+[ ] Search and filters work.
+[ ] Product detail links work.
+[ ] Compatibility results are based on real data.
+[ ] Comparison page displays correct prices.
+[ ] Reviews load and submit if the API supports it.
+[ ] Repair guide controls work.
+[ ] Responsive layout works on mobile.
+[ ] Browser console has no unexpected errors.
+
+INTEGRATION
+-----------
+[ ] Frontend requests reach the correct backend.
+[ ] HTTP methods match backend route definitions.
+[ ] Request parameters use the expected names.
+[ ] API responses match frontend data parsing.
+[ ] Error messages appear if the server is unavailable.
+[ ] Important operations are validated on the server.
+
+
+------------------------------------------------------------
+16. COMMON ERRORS AND SOLUTIONS
+------------------------------------------------------------
+
+ERROR: java is not recognized
+-----------------------------
+Install a compatible JDK and configure JAVA_HOME and PATH.
+Open a new terminal and run:
+
+    java -version
+    javac -version
+
+
+ERROR: mvn is not recognized
+----------------------------
+Install Apache Maven or configure the Maven installation
+directory in PATH.
+
+Verify:
+
+    mvn -version
+
+
+ERROR: ECONNREFUSED / CONNECTION REFUSED
+----------------------------------------
+Check that MySQL is running and that the JDBC URL points
+to the correct host and port.
+
+Check that the Java backend is also running before testing
+frontend API calls.
+
+
+ERROR: ACCESS DENIED FOR MYSQL USER
+----------------------------------
+Verify the database username, password, and permissions.
+Do not expose real database credentials in source control.
+
+
+ERROR: PAGE SHOWS AN EMPTY PRODUCT LIST
+---------------------------------------
+1. Open browser Developer Tools using F12.
+2. Select the Network tab.
+3. Reload the page.
+4. Find the /api/spare-parts request.
+5. Inspect its status code and response body.
+6. Confirm the route and JSON field names match the
+   frontend implementation.
+
+
+ERROR: API RETURNS 404
+----------------------
+The requested route may not be implemented, or the URL
+may be incorrect.
+
+Check the Java route definitions and the browser's Network
+tab. Do not assume every frontend route has a backend.
+
+
+ERROR: API RETURNS 405 METHOD NOT ALLOWED
+-----------------------------------------
+The endpoint exists but may not support the requested
+HTTP method. Verify GET, POST, PUT, PATCH, or DELETE
+against the Java implementation.
+
+
+ERROR: LOGIN OR REGISTRATION FAILS
+----------------------------------
+Verify:
+- The backend route exists.
+- Field names match the Java code.
+- The request body format is correct.
+- Database tables and constraints are valid.
+- The backend returns an appropriate success or error code.
+
+Do not store passwords in localStorage.
+
+
+ERROR: CSS OR JAVASCRIPT DOES NOT LOAD
+--------------------------------------
+Check that the files are located in the correct directory.
+
+For example, if an HTML file and app.js are both inside
+frontend/, use:
+
+    <script src="app.js"></script>
+
+For the shared stylesheet, use:
+
+    <link rel="stylesheet" href="style.css">
+
+
+ERROR: PORT 8080 IS ALREADY IN USE
+----------------------------------
+Stop the previous server process or configure the application
+to use an available port. Ensure the frontend uses the same
+base URL as the backend when required.
+
+
+------------------------------------------------------------
+17. SECURITY NOTES
+------------------------------------------------------------
+
+1. Never commit real database passwords or API secrets.
+2. Never store user passwords in browser storage.
+3. Validate user input on both frontend and backend.
+4. Use secure password hashing in the backend.
+5. Use parameterized SQL queries to prevent SQL injection.
+6. Enforce authorization for user-specific orders and data.
+7. Validate price, quantity, compatibility, and order data
+   on the server.
+8. Do not trust browser-submitted prices or user IDs.
+9. Use HTTPS in a deployed production environment.
+10. Configure CORS and cookies appropriately if frontend and
+    backend run on different origins.
+
+Client-side validation improves usability but does not
+replace backend security.
+
+
+------------------------------------------------------------
+18. VERSION CONTROL WITH GIT
+------------------------------------------------------------
+
+Check the current branch:
+
+    git branch
+
+Check working changes:
+
+    git status
+
+Review changes:
+
+    git diff
+
+Stage only the intended files:
+
+    git add frontend/app.js frontend/style.css README_SETUP.txt
+
+Commit the changes:
+
+    git commit -m "Improve PartPulse frontend and setup documentation"
+
+Push the current branch:
+
+    git push
+
+If the push fails, inspect the current branch, remote URL,
+repository permissions, and upstream configuration before
+retrying.
+
+Avoid force-pushing shared branches without team approval.
+
+
+------------------------------------------------------------
+19. TROUBLESHOOTING WORKFLOW
+------------------------------------------------------------
+
+When a feature fails, follow this sequence:
+
+STEP 1:
+Check the browser Console for JavaScript errors.
+
+STEP 2:
+Check the browser Network tab for failed requests.
+
+STEP 3:
+Check the Java backend terminal for route or database errors.
+
+STEP 4:
+Verify the HTTP method, URL, request body, and response.
+
+STEP 5:
+Inspect the relevant Java route and database schema.
+
+STEP 6:
+Fix the specific issue and retest the entire user journey.
+
+
+------------------------------------------------------------
+20. FUTURE IMPROVEMENTS
+------------------------------------------------------------
+
+Possible enhancements include:
+
+- Secure session management and authorization.
+- Server-side cart and order persistence.
+- Payment gateway integration.
+- Inventory quantity management.
+- Real price-history storage and scheduled updates.
+- Email or in-app price-drop notifications.
+- Verified product compatibility rules.
+- Product image management.
+- Review moderation and verified-purchase checks.
+- Repair-guide administration.
+- Analytics dashboards.
+- Automated backend and frontend tests.
+- Deployment with HTTPS and production configuration.
+
+
+------------------------------------------------------------
+21. PROJECT STATUS
+------------------------------------------------------------
+
+This README describes the intended application structure
+and the setup workflow.
+
+Before submitting or deploying the project, verify each
+feature against the actual Java source code, MySQL schema,
+and frontend implementation.
+
+A visible button or frontend page does not necessarily mean
+that the corresponding backend operation is implemented.
+
+Confirm all important routes and database operations before
+claiming that a feature is fully functional.
+
+CURRENT LOCAL STATE
+-------------------
+
+The current application deliberately runs in DEMO mode:
+
+- Brand/model records and spare-part quantities/prices are
+  illustrative in-memory data, not verified `mobispares` rows.
+- The cart is saved in this browser's local storage only.
+- Checkout validates the form and displays a preview. It does
+  not create an order, save an address, or collect payment.
+- UPI, card, and net-banking options are not connected to a
+  gateway. No card information is requested or stored.
+- The compatibility API returns `unverified` until real
+  compatibility records are connected.
+- `POST /api/orders` is disabled and returns HTTP 503.
+- No database migration has been applied.
+
+To configure credentials locally and start the current demo,
+open PowerShell in the project root and run:
+
+    $env:MSP_DB_URL='jdbc:mysql://localhost:3306/mobispares?serverTimezone=UTC'
+    $env:MSP_DB_USER='root'
+    $env:MSP_DB_PASSWORD='your-local-password'
+    mvn test
+    mvn package
+    mvn dependency:build-classpath "-Dmdep.outputFile=target/classpath.txt"
+    $dependencies = Get-Content target/classpath.txt -Raw
+    $classpath = "target\classes;$dependencies"
+    java -cp $classpath com.msp.App
+
+Replace the local username/password as required by your MySQL
+installation. Do not share the password or add it to a file
+that is committed.
+
+To test JDBC credentials from the same PowerShell window
+after building, run:
+
+    $dependencies = Get-Content target/classpath.txt -Raw
+    $classpath = "target\classes;$dependencies"
+    @'
+    import com.msp.Database;
+    System.out.println(Database.testConnection());
+    /exit
+    '@ | jshell --class-path $classpath
+
+Confirm the printed database name is `mobispares` and the
+result is `true`. This tests connectivity only: setting these
+variables does not switch the catalogue, orders, cart, or
+compatibility services from demo mode to MySQL. Inspect the
+real tables and columns before designing a non-destructive
+mapping or migration; do not run `database/schema.sql` against
+`mobispares` without reviewing its database name and inserts.
+
+Open `http://localhost:8080/` to use the application. The
+banner labels pages as demo data. COD checkout is preview
+only, and online payment remains unavailable until a gateway
+is configured and its server-side verification is implemented.
+
+
+------------------------------------------------------------
+                      END OF README
+============================================================

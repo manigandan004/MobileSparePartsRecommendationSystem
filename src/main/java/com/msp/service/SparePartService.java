@@ -6,15 +6,29 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class SparePartService {
     private final List<SparePart> parts = new ArrayList<>();
+    private int nextId = 1;
 
     public SparePartService() {
-        parts.add(new SparePart(1, "Display Assembly", "iPhone 15", 10, 8500.00));
-        parts.add(new SparePart(2, "Battery", "Samsung S24", 15, 4200.00));
-        parts.add(new SparePart(3, "Charging Port", "OnePlus 12", 12, 1800.00));
-        parts.add(new SparePart(4, "Back Glass", "iPhone 14", 8, 3500.00));
+        this(new ModelService());
+    }
+
+    public SparePartService(ModelService modelService) {
+        addSeedPart("Display Assembly", "iPhone 15", 10, 8500.00);
+        addSeedPart("Battery", "Samsung S24", 15, 4200.00);
+        addSeedPart("Charging Port", "OnePlus 12", 12, 1800.00);
+        addSeedPart("Back Glass", "iPhone 14", 8, 3500.00);
+
+        for (Map<String, String> device : modelService.getModelCatalog()) {
+            String model = device.get("name");
+            addSeedPartIfMissing("Battery", model, 8, 1800.00);
+            addSeedPartIfMissing("Display Assembly", model, 6, 5200.00);
+            addSeedPartIfMissing("Charging Port", model, 8, 1400.00);
+            addSeedPartIfMissing("Rear Camera", model, 5, 3200.00);
+        }
     }
 
     public synchronized void addPart(String model, int quantity) {
@@ -29,8 +43,7 @@ public class SparePartService {
             }
         }
 
-        int nextId = parts.stream().mapToInt(SparePart::getId).max().orElse(0) + 1;
-        parts.add(new SparePart(nextId, "General Spare Part", model.trim(), quantity, 0.0));
+        parts.add(new SparePart(nextId++, "General Spare Part", model.trim(), quantity, 0.0));
     }
 
     public synchronized boolean isAvailable(String model, int requiredQuantity) {
@@ -42,9 +55,8 @@ public class SparePartService {
         String normalized = model.trim().toLowerCase(Locale.ROOT);
         return parts.stream()
                 .filter(p -> p.getModel().toLowerCase(Locale.ROOT).equals(normalized))
-                .findFirst()
-                .map(p -> p.getQuantity() >= requiredQuantity)
-                .orElse(false);
+                .mapToInt(SparePart::getQuantity)
+                .sum() >= requiredQuantity;
     }
 
     public synchronized int getStock(String model) {
@@ -52,9 +64,8 @@ public class SparePartService {
         String normalized = model.trim().toLowerCase(Locale.ROOT);
         return parts.stream()
                 .filter(p -> p.getModel().toLowerCase(Locale.ROOT).equals(normalized))
-                .findFirst()
-                .map(SparePart::getQuantity)
-                .orElse(0);
+                .mapToInt(SparePart::getQuantity)
+                .sum();
     }
 
     public synchronized List<SparePart> getAllParts() {
@@ -74,5 +85,18 @@ public class SparePartService {
                 && (m.isBlank() || p.getModel().toLowerCase(Locale.ROOT).contains(m))
                 && (c.isBlank() || p.getPartName().toLowerCase(Locale.ROOT).contains(c))
         ).toList();
+    }
+
+    private void addSeedPartIfMissing(String partName, String model, int quantity, double price) {
+        boolean exists = parts.stream().anyMatch(part ->
+                part.getModel().equalsIgnoreCase(model)
+                        && part.getPartName().equalsIgnoreCase(partName));
+        if (!exists) {
+            addSeedPart(partName, model, quantity, price);
+        }
+    }
+
+    private void addSeedPart(String partName, String model, int quantity, double price) {
+        parts.add(new SparePart(nextId++, partName, model, quantity, price));
     }
 }
