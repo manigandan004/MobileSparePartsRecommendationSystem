@@ -1,0 +1,1509 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Repair Guides | PartPulse MSP</title>
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    :root {
+      --blue: #2563eb;
+      --blue-dark: #1d4ed8;
+      --ink: #172033;
+      --muted: #64748b;
+      --line: #e2e8f0;
+      --bg: #f5f7fb;
+      --green: #15803d;
+      --amber: #b45309;
+      --red: #b91c1c;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+    }
+
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    a { color: inherit; text-decoration: none; }
+
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      padding: 15px 6%;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255,255,255,.97);
+      backdrop-filter: blur(12px);
+    }
+
+    .logo { color: var(--blue); font-size: 23px; font-weight: 900; letter-spacing: -.8px; }
+    .logo span { color: var(--ink); }
+
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 17px;
+      color: #475569;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .nav-links a:hover, .nav-links a.active { color: var(--blue); }
+
+    .account-btn {
+      padding: 10px 13px;
+      border-radius: 10px;
+      background: var(--blue);
+      color: white;
+      font-size: 11px;
+      font-weight: 850;
+    }
+
+    .page { width: min(1180px, 93%); margin: auto; }
+
+    .breadcrumb {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      padding: 22px 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 36px;
+      border-radius: 23px;
+      background: linear-gradient(120deg, #102044, #1d4ed8 70%, #60a5fa);
+      color: white;
+    }
+
+    .hero::after {
+      content: "⚙";
+      position: absolute;
+      top: -78px;
+      right: 25px;
+      color: rgba(255,255,255,.10);
+      font-size: 260px;
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      position: relative;
+      z-index: 1;
+      display: inline-block;
+      padding: 7px 10px;
+      border-radius: 8px;
+      background: rgba(255,255,255,.14);
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 1px;
+    }
+
+    .hero h1 {
+      position: relative;
+      z-index: 1;
+      margin: 16px 0 10px;
+      font-size: clamp(29px, 4vw, 43px);
+      letter-spacing: -1px;
+    }
+
+    .hero p {
+      position: relative;
+      z-index: 1;
+      max-width: 650px;
+      color: #dbeafe;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .hero-actions {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .hero-actions a {
+      padding: 11px 14px;
+      border: 1px solid rgba(255,255,255,.45);
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 850;
+    }
+
+    .hero-actions a:first-child { background: white; color: var(--blue); }
+
+    .section-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      flex-wrap: wrap;
+      gap: 13px;
+      margin: 29px 0 16px;
+    }
+
+    .section-heading h2 { margin: 0; font-size: 22px; letter-spacing: -.5px; }
+
+    .section-heading p {
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 7px 10px;
+      border-radius: 8px;
+      background: #eff6ff;
+      color: var(--blue);
+      font-size: 10px;
+      font-weight: 900;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 13px;
+    }
+
+    .stat {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: white;
+      transition: .2s;
+    }
+
+    .stat:hover { transform: translateY(-3px); box-shadow: 0 9px 25px rgba(15,23,42,.05); }
+    .stat-top { display: flex; justify-content: space-between; gap: 8px; }
+    .stat-label { color: var(--muted); font-size: 10px; font-weight: 850; }
+    .stat-icon { font-size: 22px; }
+    .stat-number { display: block; margin-top: 12px; font-size: 26px; font-weight: 900; }
+    .stat-note { display: block; margin-top: 6px; color: var(--muted); font-size: 10px; }
+
+    .panel {
+      min-width: 0;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 17px;
+      background: white;
+    }
+
+    .panel-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 17px;
+    }
+
+    .panel-heading h2 { margin: 0; font-size: 18px; }
+    .panel-heading p { margin: 7px 0 0; color: var(--muted); font-size: 11px; line-height: 1.7; }
+
+    .btn {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 7px;
+      min-height: 38px;
+      padding: 10px 13px;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 850;
+      transition: .2s;
+    }
+
+    .btn-primary { background: var(--blue); color: white; }
+    .btn-primary:hover { background: var(--blue-dark); }
+    .btn-outline { border-color: #d7dfeb; background: white; color: #334155; }
+    .btn-outline:hover { border-color: #93b4fb; background: #eff6ff; color: var(--blue); }
+    .btn:disabled { opacity: .55; cursor: not-allowed; }
+
+    .control {
+      width: 100%;
+      min-width: 0;
+      padding: 12px;
+      border: 1px solid #d7dfeb;
+      border-radius: 10px;
+      outline: none;
+      background: white;
+      color: var(--ink);
+      font-size: 11px;
+    }
+
+    .control:focus { border-color: var(--blue); box-shadow: 0 0 0 3px #dbeafe; }
+
+    .filters {
+      display: grid;
+      grid-template-columns: minmax(150px, 1fr) 170px 155px;
+      gap: 9px;
+      margin-bottom: 15px;
+    }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 17px; }
+
+    .chip {
+      padding: 8px 11px;
+      border: 1px solid #dce3ed;
+      border-radius: 20px;
+      background: white;
+      color: #475569;
+      font-size: 10px;
+      font-weight: 850;
+    }
+
+    .chip.active { border-color: var(--blue); background: var(--blue); color: white; }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 310px;
+      align-items: start;
+      gap: 18px;
+      margin-top: 25px;
+    }
+
+    .main-column, .side-column { display: grid; gap: 18px; min-width: 0; }
+
+    .guide-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 13px;
+    }
+
+    .guide-card {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      padding: 17px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: white;
+      transition: .2s;
+    }
+
+    .guide-card:hover { transform: translateY(-3px); border-color: #b9cdf8; box-shadow: 0 8px 22px rgba(15,23,42,.05); }
+
+    .guide-cover {
+      display: grid;
+      place-items: center;
+      min-height: 112px;
+      margin-bottom: 15px;
+      border: 1px solid #e6edfb;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #eff6ff, #f8fafc);
+      font-size: 43px;
+    }
+
+    .guide-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 9px; }
+
+    .tag {
+      padding: 5px 8px;
+      border-radius: 7px;
+      background: #f1f5f9;
+      color: #475569;
+      font-size: 9px;
+      font-weight: 850;
+    }
+
+    .tag.easy { background: #dcfce7; color: #166534; }
+    .tag.medium { background: #fef3c7; color: #92400e; }
+    .tag.advanced { background: #fee2e2; color: #991b1b; }
+
+    .guide-card h3 { margin: 0; font-size: 14px; line-height: 1.6; }
+    .guide-card .description { margin: 8px 0 13px; color: var(--muted); font-size: 11px; line-height: 1.8; }
+    .guide-info { display: flex; flex-wrap: wrap; gap: 11px; margin-top: auto; color: var(--muted); font-size: 10px; }
+    .guide-card .btn { width: 100%; margin-top: 15px; }
+
+    .empty-state {
+      padding: 35px 18px;
+      border: 1px dashed #cbd5e1;
+      border-radius: 14px;
+      background: #f8fafc;
+      text-align: center;
+    }
+
+    .empty-state .empty-icon { font-size: 38px; }
+    .empty-state h3 { margin: 12px 0 7px; font-size: 14px; }
+    .empty-state p { color: var(--muted); font-size: 11px; line-height: 1.8; }
+
+    .status-message {
+      margin: 12px 0;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-size: 11px;
+      line-height: 1.8;
+      overflow-wrap: anywhere;
+    }
+
+    .status-message.error { background: #fef2f2; color: #b91c1c; }
+    .status-message.success { background: #f0fdf4; color: #166534; }
+    .status-message[hidden] { display: none; }
+
+    .check-list { display: grid; gap: 11px; }
+
+    .check-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 11px;
+      border: 1px solid #edf0f5;
+      border-radius: 10px;
+      background: #fff;
+    }
+
+    .check-item input { margin-top: 3px; accent-color: var(--blue); }
+    .check-item strong { display: block; font-size: 11px; }
+    .check-item small { display: block; margin-top: 5px; color: var(--muted); font-size: 10px; line-height: 1.7; }
+
+    .progress-track { height: 7px; margin-top: 12px; overflow: hidden; border-radius: 20px; background: #e2e8f0; }
+    .progress-fill { width: 0; height: 100%; border-radius: inherit; background: var(--blue); transition: width .2s; }
+
+    .tool-list { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 12px; }
+
+    .tool-pill {
+      padding: 8px 10px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      background: #f8fafc;
+      color: #475569;
+      font-size: 10px;
+    }
+
+    .safety-box {
+      padding: 15px;
+      border: 1px solid #fecaca;
+      border-radius: 12px;
+      background: #fef2f2;
+      color: #991b1b;
+      font-size: 11px;
+      line-height: 1.8;
+    }
+
+    .safety-box strong { display: block; margin-bottom: 5px; }
+
+    .quick-link {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      padding: 13px 0;
+      border-bottom: 1px solid #edf0f5;
+    }
+
+    .quick-link:last-child { border-bottom: 0; }
+    .quick-link-icon { font-size: 21px; }
+    .quick-link strong { display: block; font-size: 11px; }
+    .quick-link small { display: block; margin-top: 5px; color: var(--muted); font-size: 10px; }
+    .quick-link .arrow { margin-left: auto; color: var(--blue); }
+
+    .tip {
+      padding: 15px;
+      border: 1px solid #bfdbfe;
+      border-radius: 12px;
+      background: #eff6ff;
+      color: #1e40af;
+      font-size: 11px;
+      line-height: 1.8;
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      background: rgba(15,23,42,.60);
+    }
+
+    .modal-backdrop.open { display: flex; }
+
+    .modal {
+      width: min(780px, 100%);
+      max-height: 90vh;
+      overflow-y: auto;
+      border-radius: 17px;
+      background: white;
+      box-shadow: 0 25px 80px rgba(0,0,0,.25);
+    }
+
+    .modal-header {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 17px 20px;
+      border-bottom: 1px solid var(--line);
+      background: white;
+    }
+
+    .modal-header h2 { margin: 0; font-size: 17px; line-height: 1.6; }
+
+    .close-button {
+      width: 35px;
+      height: 35px;
+      flex-shrink: 0;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: white;
+      font-size: 19px;
+    }
+
+    .modal-body { padding: 20px; }
+    .modal-body p { color: #475569; font-size: 12px; line-height: 1.9; }
+
+    .detail-meta { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 14px; }
+
+    .detail-step {
+      display: grid;
+      grid-template-columns: 36px minmax(0, 1fr);
+      gap: 12px;
+      padding: 15px 0;
+      border-bottom: 1px solid #edf0f5;
+    }
+
+    .detail-step:last-child { border-bottom: 0; }
+
+    .step-number {
+      display: grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      background: #dbeafe;
+      color: var(--blue);
+      font-size: 12px;
+      font-weight: 900;
+    }
+
+    .detail-step h4 { margin: 0; font-size: 12px; line-height: 1.7; }
+    .detail-step p { margin: 5px 0 0; color: #526078; font-size: 11px; line-height: 1.9; }
+    .step-warning { margin-top: 9px; padding: 10px; border-radius: 9px; background: #fffbeb; color: #92400e; font-size: 10px; line-height: 1.8; }
+
+    .detail-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding-top: 17px;
+      border-top: 1px solid var(--line);
+    }
+
+    footer { padding: 25px; background: #101b32; color: #cbd5e1; text-align: center; font-size: 12px; }
+    footer strong { color: white; }
+
+    @media (max-width: 1000px) {
+      .layout { grid-template-columns: 1fr; }
+      .side-column { grid-template-columns: 1fr 1fr; align-items: start; }
+    }
+
+    @media (max-width: 760px) {
+      .stats { grid-template-columns: 1fr 1fr; }
+      .filters { grid-template-columns: 1fr 1fr; }
+      .filters input { grid-column: 1 / -1; }
+    }
+
+    @media (max-width: 560px) {
+      .navbar { padding: 13px 4%; }
+      .nav-links { width: 100%; justify-content: space-between; gap: 6px; }
+      .nav-links a { font-size: 9px; }
+      .account-btn { display: none; }
+      .hero { padding: 25px 20px; }
+      .panel { padding: 15px; }
+      .guide-grid, .side-column { grid-template-columns: 1fr; }
+      .filters { grid-template-columns: 1fr; }
+      .filters input { grid-column: auto; }
+      .modal-body { padding: 15px; }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="navbar">
+    <a href="index.html" class="logo">PartPulse<span> MSP</span></a>
+
+    <nav class="nav-links" aria-label="Main navigation">
+      <a href="index.html">Home</a>
+      <a href="models.html">My Device</a>
+      <a href="browse.html">Spare Parts</a>
+      <a href="compatibility.html">Compatibility</a>
+      <a href="orders.html">Orders</a>
+      <a class="active" href="repair-guides.html">Repair Guides</a>
+    </nav>
+
+    <a href="login.html" class="account-btn">My Account ↗</a>
+  </header>
+
+  <main class="page">
+    <div class="breadcrumb">
+      <a href="index.html">Home</a>
+      <span>›</span>
+      <strong>Repair Guides</strong>
+    </div>
+
+    <section class="hero">
+      <span class="eyebrow">🔧 REPAIR KNOWLEDGE CENTER</span>
+      <h1>Understand the repair before you begin.</h1>
+      <p>Explore repair guides, review the tools you'll need, follow each step, and keep track of your progress. Always check the instructions for your exact phone model before opening a device.</p>
+      <div class="hero-actions">
+        <a href="#guideLibrary">Explore repair guides ↓</a>
+        <a href="#repairChecklist">Safety checklist</a>
+        <a href="browse.html">Find spare parts ↗</a>
+      </div>
+    </section>
+
+    <section class="section-heading">
+      <div>
+        <h2>Your repair workspace</h2>
+        <p>Browse guides and keep your checklist progress organized in this browser.</p>
+      </div>
+      <span class="badge" id="guideStatus">Preparing guides…</span>
+    </section>
+
+    <section class="stats">
+      <article class="stat">
+        <div class="stat-top">
+          <span class="stat-label">AVAILABLE GUIDES</span>
+          <span class="stat-icon">📚</span>
+        </div>
+        <strong class="stat-number" id="totalGuides">0</strong>
+        <span class="stat-note">Guides available to browse</span>
+      </article>
+
+      <article class="stat">
+        <div class="stat-top">
+          <span class="stat-label">BEGINNER FRIENDLY</span>
+          <span class="stat-icon">🌱</span>
+        </div>
+        <strong class="stat-number" id="beginnerGuides">0</strong>
+        <span class="stat-note">Guides marked easy</span>
+      </article>
+
+      <article class="stat">
+        <div class="stat-top">
+          <span class="stat-label">SAVED GUIDES</span>
+          <span class="stat-icon">🔖</span>
+        </div>
+        <strong class="stat-number" id="savedGuides">0</strong>
+        <span class="stat-note">Saved in this browser</span>
+      </article>
+
+      <article class="stat">
+        <div class="stat-top">
+          <span class="stat-label">CHECKLIST PROGRESS</span>
+          <span class="stat-icon">✅</span>
+        </div>
+        <strong class="stat-number" id="checkProgress">0%</strong>
+        <span class="stat-note">Preparation checklist complete</span>
+      </article>
+    </section>
+
+    <div class="layout">
+      <div class="main-column">
+        <section class="panel" id="guideLibrary">
+          <div class="panel-heading">
+            <div>
+              <h2>Repair guide library</h2>
+              <p>Search by repair type, filter by difficulty, and open a guide for detailed steps.</p>
+            </div>
+            <button class="btn btn-outline" id="resetFilters" type="button">Reset filters</button>
+          </div>
+
+          <div id="guideMessage" class="status-message" role="status" hidden></div>
+
+          <div class="filters">
+            <input class="control" id="searchInput" type="search" placeholder="Search battery, display, charging port…" aria-label="Search guides">
+
+            <select class="control" id="difficultyFilter" aria-label="Filter by difficulty">
+              <option value="all">All difficulty levels</option>
+              <option value="easy">Easy</option>
+              <option value="medium">Intermediate</option>
+              <option value="advanced">Advanced</option>
+            </select>
+
+            <select class="control" id="sortSelect" aria-label="Sort guides">
+              <option value="title">Title A–Z</option>
+              <option value="time">Shortest first</option>
+              <option value="difficulty">Difficulty</option>
+            </select>
+          </div>
+
+          <div class="chips" id="typeChips">
+            <button class="chip active" data-type="all" type="button">All repairs</button>
+            <button class="chip" data-type="battery" type="button">🔋 Battery</button>
+            <button class="chip" data-type="display" type="button">📱 Display</button>
+            <button class="chip" data-type="charging" type="button">🔌 Charging</button>
+            <button class="chip" data-type="back-glass" type="button">🪟 Back glass</button>
+            <button class="chip" data-type="saved" type="button">🔖 Saved</button>
+          </div>
+
+          <div id="guideCount" style="margin-bottom:13px;color:var(--muted);font-size:11px">Loading guides…</div>
+
+          <div class="guide-grid" id="guideGrid"></div>
+
+          <div class="empty-state" id="emptyState" hidden>
+            <div class="empty-icon">🔍</div>
+            <h3>No matching guides</h3>
+            <p>Try another search term or reset the filters.</p>
+            <button class="btn btn-primary" id="emptyReset" type="button">Clear filters</button>
+          </div>
+        </section>
+
+        <section class="panel" id="repairChecklist">
+          <div class="panel-heading">
+            <div>
+              <h2>Before you begin</h2>
+              <p>Check these preparation tasks before starting a repair.</p>
+            </div>
+            <button class="btn btn-outline" id="resetChecklist" type="button">Reset checklist</button>
+          </div>
+
+          <div class="check-list" id="checklist">
+            <label class="check-item">
+              <input type="checkbox" data-check="model">
+              <span><strong>Confirm the exact phone model</strong><small>Check the model number and use instructions that match your exact device revision.</small></span>
+            </label>
+
+            <label class="check-item">
+              <input type="checkbox" data-check="power">
+              <span><strong>Power off the device</strong><small>Disconnect charging cables and follow model-specific battery safety instructions.</small></span>
+            </label>
+
+            <label class="check-item">
+              <input type="checkbox" data-check="backup">
+              <span><strong>Back up important data</strong><small>Back up photos, contacts, and other important files before servicing.</small></span>
+            </label>
+
+            <label class="check-item">
+              <input type="checkbox" data-check="tools">
+              <span><strong>Prepare suitable tools</strong><small>Use the correct drivers, non-metal opening tools, and model-specific repair equipment.</small></span>
+            </label>
+
+            <label class="check-item">
+              <input type="checkbox" data-check="workspace">
+              <span><strong>Prepare a clean workspace</strong><small>Keep screws organized and use appropriate ESD protection to reduce static damage.</small></span>
+            </label>
+
+            <label class="check-item">
+              <input type="checkbox" data-check="guide">
+              <span><strong>Review all repair steps first</strong><small>Confirm the replacement part, adhesive requirements, and risks before opening the phone.</small></span>
+            </label>
+          </div>
+
+          <div class="progress-track"><div class="progress-fill" id="checkProgressBar"></div></div>
+          <p id="checkProgressText" style="margin:10px 0 0;color:var(--muted);font-size:11px">0 of 6 preparation tasks complete</p>
+        </section>
+      </div>
+
+      <aside class="side-column">
+        <section class="panel">
+          <div class="panel-heading">
+            <div>
+              <h2>Essential repair tools</h2>
+              <p>Tool requirements vary by device and repair.</p>
+            </div>
+          </div>
+
+          <div class="tool-list">
+            <span class="tool-pill">🪛 Precision drivers</span>
+            <span class="tool-pill">🧰 Opening picks</span>
+            <span class="tool-pill">🪪 Plastic spudger</span>
+            <span class="tool-pill">🧲 Screw organizer</span>
+            <span class="tool-pill">🛡️ ESD protection</span>
+            <span class="tool-pill">🔦 Inspection light</span>
+            <span class="tool-pill">🧤 Suitable protection</span>
+          </div>
+
+          <p class="hint">Do not use a tool simply because it is listed here. Check the manufacturer's service instructions for the correct tool and procedure.</p>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading">
+            <div>
+              <h2>Repair safety</h2>
+              <p>Know when to stop and get professional help.</p>
+            </div>
+          </div>
+
+          <div class="safety-box">
+            <strong>⚠️ Battery and heat warning</strong>
+            Never puncture, crush, bend, or pry aggressively against a lithium-ion battery. Do not heat a swollen, leaking, smoking, or damaged battery. Stop work if you notice unusual heat, smell, smoke, or swelling.
+          </div>
+
+          <div style="margin-top:14px;color:#475569;font-size:11px;line-height:1.9">
+            • Avoid metal tools near exposed batteries and connectors.<br>
+            • Do not continue if the battery appears damaged.<br>
+            • Follow the exact model's service manual.<br>
+            • Seek a qualified technician for high-risk repairs.
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading">
+            <div>
+              <h2>Related pages</h2>
+              <p>Find parts and check whether they match your phone.</p>
+            </div>
+          </div>
+
+          <a href="browse.html" class="quick-link">
+            <span class="quick-link-icon">🔧</span>
+            <span><strong>Browse spare parts</strong><small>Find replacement components</small></span>
+            <span class="arrow">↗</span>
+          </a>
+
+          <a href="compatibility.html" class="quick-link">
+            <span class="quick-link-icon">📱</span>
+            <span><strong>Compatibility checker</strong><small>Check part and model compatibility</small></span>
+            <span class="arrow">↗</span>
+          </a>
+
+          <a href="price-tracking.html" class="quick-link">
+            <span class="quick-link-icon">💰</span>
+            <span><strong>Price tracking</strong><small>Track replacement-part prices</small></span>
+            <span class="arrow">↗</span>
+          </a>
+
+          <a href="reviews.html" class="quick-link">
+            <span class="quick-link-icon">⭐</span>
+            <span><strong>Customer reviews</strong><small>Read product feedback</small></span>
+            <span class="arrow">↗</span>
+          </a>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading">
+            <div>
+              <h2>Your saved guides</h2>
+              <p>Keep frequently used repair guides handy.</p>
+            </div>
+          </div>
+          <div id="savedSummary" style="color:var(--muted);font-size:11px;line-height:1.8">No guides saved yet.</div>
+          <button class="btn btn-primary" id="showSaved" type="button" style="width:100%;margin-top:12px">View saved guides</button>
+        </section>
+      </aside>
+    </div>
+
+    <div style="margin:24px 0 40px;padding:17px;border:1px solid #fde68a;border-radius:13px;background:#fffbeb;color:#92400e;font-size:11px;line-height:1.8">
+      <strong>Important:</strong> The sample guides below are general educational examples, not official manufacturer service manuals. Repair complexity and procedures vary by exact model. Manufacturer instructions and qualified professional guidance take priority.
+    </div>
+  </main>
+
+  <footer>
+    <strong>PartPulse MSP</strong> · Mobile Spare Parts Management
+    <p>Learn, prepare, and repair responsibly.</p>
+  </footer>
+
+  <div class="modal-backdrop" id="guideModal" role="presentation">
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-header">
+        <h2 id="modalTitle">Repair guide</h2>
+        <button class="close-button" id="closeModal" type="button" aria-label="Close guide">×</button>
+      </div>
+      <div class="modal-body" id="modalBody"></div>
+    </section>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    (() => {
+      "use strict";
+
+      const $ = id => document.getElementById(id);
+      const SAVED_KEY = "partpulse_saved_repair_guides";
+      const CHECK_KEY = "partpulse_repair_preparation";
+
+      const state = {
+        guides: [],
+        search: "",
+        difficulty: "all",
+        sort: "title",
+        type: "all",
+        activeGuide: null
+      };
+
+      // General educational examples. Replace or supplement these with
+      // verified, model-specific instructions from your repair-guide source.
+      const sampleGuides = [
+        {
+          id: "battery-basics",
+          title: "Smartphone Battery Replacement: Preparation",
+          type: "battery",
+          icon: "🔋",
+          difficulty: "advanced",
+          minutes: 60,
+          description: "Understand battery replacement planning, safety checks, and post-repair testing.",
+          devices: "Model-specific procedure required",
+          tools: ["Manufacturer-approved tools", "Plastic opening tools", "ESD protection", "Screw organizer"],
+          parts: ["Correct model-specific replacement battery", "Specified replacement adhesive, if required"],
+          warnings: [
+            "Do not puncture, bend, crush, or pry against a lithium-ion battery.",
+            "Never heat a swollen, leaking, or damaged battery.",
+            "If the battery is swollen, stop and use a qualified repair service."
+          ],
+          steps: [
+            {
+              title: "Identify the exact device",
+              detail: "Record the phone model and revision. Confirm that the replacement battery and service instructions are specifically intended for that device."
+            },
+            {
+              title: "Review battery safety",
+              detail: "Inspect for swelling, leakage, unusual heat, or physical damage. Do not attempt DIY removal of a swollen or damaged battery."
+            },
+            {
+              title: "Prepare the work area",
+              detail: "Power off the device, disconnect external cables, organize tools, and use suitable electrostatic-discharge precautions."
+            },
+            {
+              title: "Consult the model-specific service procedure",
+              detail: "Battery access, connector locations, adhesive release, and disassembly order vary substantially. Follow verified instructions for your exact model instead of improvising."
+            },
+            {
+              title: "Verify the repair professionally",
+              detail: "Before returning a device to service, verify battery detection, charging behavior, temperature, and any required safety checks. Stop if the device heats unusually or behaves unexpectedly."
+            }
+          ],
+          completion: "A battery replacement is not complete until the device passes appropriate safety and functional checks."
+        },
+        {
+          id: "display-basics",
+          title: "Display Assembly Replacement: Preparation",
+          type: "display",
+          icon: "📱",
+          difficulty: "advanced",
+          minutes: 75,
+          description: "Prepare for screen replacement and understand display, connector, and sealing risks.",
+          devices: "Model-specific procedure required",
+          tools: ["Correct precision drivers", "Plastic opening tools", "ESD protection", "Display-safe repair equipment"],
+          parts: ["Compatible display assembly", "Model-specific adhesive or seals, if specified"],
+          warnings: [
+            "Glass fragments can cause cuts; use suitable eye and hand protection.",
+            "Display cables and connectors are fragile.",
+            "Water resistance may be reduced after the device is opened."
+          ],
+          steps: [
+            {
+              title: "Confirm display compatibility",
+              detail: "Match the exact phone model, display assembly, connector configuration, and any manufacturer-specific requirements before purchasing a replacement."
+            },
+            {
+              title: "Back up data and power off",
+              detail: "Back up important files and turn off the device before service. Follow the manufacturer's battery-disconnection procedure."
+            },
+            {
+              title: "Inspect the damaged screen",
+              detail: "Look for sharp glass, frame distortion, liquid damage, or a swollen battery. Stop if structural or battery damage makes opening unsafe."
+            },
+            {
+              title: "Follow verified disassembly instructions",
+              detail: "Opening methods, fasteners, adhesives, and connector locations differ by model. Do not force the screen or insert tools blindly into the frame."
+            },
+            {
+              title: "Test before final sealing",
+              detail: "Follow the model-specific procedure to verify display, touch response, brightness, proximity behavior, and other relevant functions before final assembly."
+            }
+          ],
+          completion: "Use the specified sealing materials and understand that opening a phone can compromise its original water resistance."
+        },
+        {
+          id: "charging-basics",
+          title: "Charging Port Troubleshooting and Service",
+          type: "charging",
+          icon: "🔌",
+          difficulty: "medium",
+          minutes: 35,
+          description: "Rule out cable and power issues before deciding whether the charging port needs service.",
+          devices: "General troubleshooting; repair is model-specific",
+          tools: ["Known-good compatible cable", "Suitable light", "Manufacturer-approved tools, if servicing"],
+          parts: ["Compatible charging-port assembly, only if diagnosis confirms it is needed"],
+          warnings: [
+            "Never insert metal objects into a charging connector.",
+            "Do not charge a device that is wet, unusually hot, or visibly damaged.",
+            "Liquid damage and board-level faults may require professional diagnosis."
+          ],
+          steps: [
+            {
+              title: "Check the power source",
+              detail: "Try a known-good compatible cable, adapter, and outlet. Inspect accessories for damage and follow the device manufacturer's charging guidance."
+            },
+            {
+              title: "Inspect the connector externally",
+              detail: "With the device disconnected and powered off, inspect the port using good lighting. Do not scrape contacts or push tools into the connector."
+            },
+            {
+              title: "Consider moisture and temperature",
+              detail: "If a moisture warning appears or the device is unusually hot, disconnect it and follow the manufacturer's instructions. Do not use heat to force-dry the port."
+            },
+            {
+              title: "Determine whether service is needed",
+              detail: "Intermittent charging can also be caused by the cable, battery, software, or charging circuitry. A professional diagnosis may be needed before replacing the port."
+            },
+            {
+              title: "Verify charging after service",
+              detail: "Use compatible equipment and check that charging is stable and the device does not heat unusually. Stop if charging behavior remains abnormal."
+            }
+          ],
+          completion: "Do not assume the port is faulty until the cable, adapter, and other likely causes have been considered."
+        },
+        {
+          id: "back-glass-basics",
+          title: "Back Glass Damage: Inspection and Repair Planning",
+          type: "back-glass",
+          icon: "🪟",
+          difficulty: "advanced",
+          minutes: 70,
+          description: "Assess broken back glass, frame damage, and the risks of heat-assisted adhesive removal.",
+          devices: "Model-specific procedure required",
+          tools: ["Suitable eye protection", "Model-approved opening equipment", "ESD protection", "Qualified repair tools"],
+          parts: ["Model-compatible back glass or rear housing", "Specified adhesive or seals"],
+          warnings: [
+            "Broken glass can shed sharp fragments.",
+            "Heat can damage batteries, cameras, displays, and other internal components.",
+            "Do not use improvised high heat or force near the battery."
+          ],
+          steps: [
+            {
+              title: "Assess the damage",
+              detail: "Check whether only the glass is damaged or whether the frame, camera, wireless charging system, or battery may also be affected."
+            },
+            {
+              title: "Protect yourself and the device",
+              detail: "Avoid loose glass, use appropriate eye protection, and power off the device. Do not continue if the battery is swollen or damaged."
+            },
+            {
+              title: "Confirm the correct replacement",
+              detail: "Verify the exact model and whether the repair requires a glass panel, complete rear housing, camera rings, or other model-specific components."
+            },
+            {
+              title: "Use a verified repair method",
+              detail: "Adhesive release and opening procedures differ across phones. Avoid improvised heat and do not force tools near the battery or delicate components."
+            },
+            {
+              title: "Inspect and verify",
+              detail: "Check the fit, camera area, wireless charging behavior where applicable, and any seals specified by the manufacturer. Water resistance should not be assumed after repair."
+            }
+          ],
+          completion: "Professional service is recommended when the glass is extensively shattered or the repair requires specialized heating equipment."
+        }
+      ];
+
+      function escapeHTML(value) {
+        return String(value ?? "").replace(/[&<>"']/g, char => ({
+          "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+        })[char]);
+      }
+
+      function first(obj, keys, fallback = "") {
+        for (const key of keys) {
+          if (obj && obj[key] !== undefined && obj[key] !== null && obj[key] !== "") return obj[key];
+        }
+        return fallback;
+      }
+
+      function arrayFrom(data, keys = []) {
+        if (Array.isArray(data)) return data;
+        for (const key of keys) {
+          if (Array.isArray(data?.[key])) return data[key];
+        }
+        return [];
+      }
+
+      function guideId(guide) {
+        return String(first(guide, ["guide_id", "guideId", "id"], ""));
+      }
+
+      function guideTitle(guide) {
+        return String(first(guide, ["title", "name", "guide_title", "guideTitle"], "Repair guide"));
+      }
+
+      function guideDescription(guide) {
+        return String(first(guide, ["description", "summary", "overview"], "Review the device-specific service instructions before beginning."));
+      }
+
+      function guideType(guide) {
+        const raw = String(first(guide, ["type", "category", "repair_type", "repairType"], "general")).toLowerCase();
+        if (raw.includes("batter")) return "battery";
+        if (raw.includes("display") || raw.includes("screen")) return "display";
+        if (raw.includes("charg") || raw.includes("port")) return "charging";
+        if (raw.includes("glass") || raw.includes("back panel")) return "back-glass";
+        return raw;
+      }
+
+      function guideDifficulty(guide) {
+        const raw = String(first(guide, ["difficulty", "level", "skill_level", "skillLevel"], "medium")).toLowerCase();
+        if (raw.includes("easy") || raw.includes("beginner")) return "easy";
+        if (raw.includes("advanced") || raw.includes("expert") || raw.includes("hard")) return "advanced";
+        return "medium";
+      }
+
+      function guideMinutes(guide) {
+        const raw = first(guide, ["estimated_minutes", "estimatedMinutes", "duration", "time_minutes", "timeMinutes"], 0);
+        const n = Number(raw);
+        return Number.isFinite(n) && n > 0 ? n : 0;
+      }
+
+      function guideIcon(guide) {
+        const type = guideType(guide);
+        return {
+          battery: "🔋",
+          display: "📱",
+          charging: "🔌",
+          "back-glass": "🪟"
+        }[type] || "🔧";
+      }
+
+      function difficultyLabel(value) {
+        return { easy: "Easy", medium: "Intermediate", advanced: "Advanced" }[value] || "General";
+      }
+
+      function difficultyClass(value) {
+        return ["easy", "medium", "advanced"].includes(value) ? value : "";
+      }
+
+      function getSaved() {
+        try {
+          const parsed = JSON.parse(localStorage.getItem(SAVED_KEY) || "[]");
+          return Array.isArray(parsed) ? parsed.map(String) : [];
+        } catch {
+          return [];
+        }
+      }
+
+      function setSaved(ids) {
+        try {
+          localStorage.setItem(SAVED_KEY, JSON.stringify(ids));
+        } catch (error) {
+          console.warn("Could not save guide bookmarks.", error);
+        }
+      }
+
+      function saved(guide) {
+        return getSaved().includes(guideId(guide));
+      }
+
+      function getChecks() {
+        try {
+          return JSON.parse(localStorage.getItem(CHECK_KEY) || "{}");
+        } catch {
+          return {};
+        }
+      }
+
+      function saveChecks() {
+        const checks = {};
+        document.querySelectorAll("[data-check]").forEach(input => {
+          checks[input.dataset.check] = input.checked;
+        });
+
+        try {
+          localStorage.setItem(CHECK_KEY, JSON.stringify(checks));
+        } catch (error) {
+          console.warn("Could not save checklist.", error);
+        }
+
+        renderChecklistProgress();
+      }
+
+      function restoreChecks() {
+        const checks = getChecks();
+        document.querySelectorAll("[data-check]").forEach(input => {
+          input.checked = Boolean(checks[input.dataset.check]);
+          input.addEventListener("change", saveChecks);
+        });
+
+        renderChecklistProgress();
+      }
+
+      function renderChecklistProgress() {
+        const inputs = [...document.querySelectorAll("[data-check]")];
+        const completed = inputs.filter(input => input.checked).length;
+        const percent = inputs.length ? Math.round(completed / inputs.length * 100) : 0;
+
+        $("checkProgress").textContent = percent + "%";
+        $("checkProgressBar").style.width = percent + "%";
+        $("checkProgressText").textContent = completed + " of " + inputs.length + " preparation tasks complete";
+      }
+
+      function updateStats() {
+        $("totalGuides").textContent = state.guides.length;
+        $("beginnerGuides").textContent = state.guides.filter(guide => guideDifficulty(guide) === "easy").length;
+        $("savedGuides").textContent = getSaved().length;
+      }
+
+      function filteredGuides() {
+        let guides = state.guides.filter(guide => {
+          const text = [
+            guideTitle(guide), guideDescription(guide), guideType(guide),
+            first(guide, ["device", "model", "device_model", "deviceModel"], ""),
+            guideDifficulty(guide)
+          ].join(" ").toLowerCase();
+
+          if (state.search && !text.includes(state.search.toLowerCase())) return false;
+          if (state.difficulty !== "all" && guideDifficulty(guide) !== state.difficulty) return false;
+
+          if (state.type === "saved" && !saved(guide)) return false;
+          if (state.type !== "all" && state.type !== "saved" && guideType(guide) !== state.type) return false;
+
+          return true;
+        });
+
+        guides.sort((a, b) => {
+          if (state.sort === "time") {
+            return (guideMinutes(a) || Infinity) - (guideMinutes(b) || Infinity);
+          }
+
+          if (state.sort === "difficulty") {
+            const rank = { easy: 1, medium: 2, advanced: 3 };
+            return (rank[guideDifficulty(a)] || 4) - (rank[guideDifficulty(b)] || 4);
+          }
+
+          return guideTitle(a).localeCompare(guideTitle(b));
+        });
+
+        return guides;
+      }
+
+      function renderGuides() {
+        const guides = filteredGuides();
+        $("guideCount").textContent = "Showing " + guides.length + " of " + state.guides.length + " guides";
+
+        $("guideGrid").innerHTML = guides.map(guide => {
+          const id = guideId(guide);
+          const type = guideType(guide);
+          const difficulty = guideDifficulty(guide);
+          const minutes = guideMinutes(guide);
+          const device = first(guide, ["device", "model", "device_model", "deviceModel"], "Model-specific instructions required");
+
+          return `
+            <article class="guide-card">
+              <div class="guide-cover">${escapeHTML(guideIcon(guide))}</div>
+              <div class="guide-meta">
+                <span class="tag ${difficultyClass(difficulty)}">${escapeHTML(difficultyLabel(difficulty))}</span>
+                <span class="tag">${escapeHTML(type.replace("-", " "))}</span>
+              </div>
+              <h3>${escapeHTML(guideTitle(guide))}</h3>
+              <p class="description">${escapeHTML(guideDescription(guide))}</p>
+              <div class="guide-info">
+                <span>⏱ ${minutes ? escapeHTML(minutes + " min estimate") : "Time varies"}</span>
+                <span>📱 ${escapeHTML(device)}</span>
+              </div>
+              <button class="btn btn-primary" type="button" data-open-guide="${escapeHTML(id)}">Read guide →</button>
+              <button class="btn btn-outline" type="button" data-save-guide="${escapeHTML(id)}" style="margin-top:8px">
+                ${saved(guide) ? "🔖 Saved — remove bookmark" : "＋ Save guide"}
+              </button>
+            </article>`;
+        }).join("");
+
+        $("guideGrid").style.display = guides.length ? "grid" : "none";
+        $("emptyState").hidden = guides.length > 0;
+
+        updateStats();
+        renderSavedSummary();
+      }
+
+      function renderSavedSummary() {
+        const ids = getSaved();
+        const guides = state.guides.filter(guide => ids.includes(guideId(guide)));
+
+        if (!guides.length) {
+          $("savedSummary").textContent = "No guides saved yet. Bookmark a guide to find it here.";
+          return;
+        }
+
+        $("savedSummary").innerHTML = guides.slice(0, 4).map(guide =>
+          "🔖 " + escapeHTML(guideTitle(guide))
+        ).join("<br>") + (guides.length > 4 ? "<br>+" + (guides.length - 4) + " more" : "");
+      }
+
+      function safeSteps(guide) {
+        const raw = first(guide, ["steps", "instructions", "procedure"], null);
+
+        if (Array.isArray(raw)) {
+          return raw.map((step, index) => {
+            if (typeof step === "string") return { title: "Step " + (index + 1), detail: step };
+            return {
+              title: String(first(step, ["title", "heading", "name"], "Step " + (index + 1))),
+              detail: String(first(step, ["detail", "description", "instruction", "content"], "Follow the verified service procedure for this step.")),
+              warning: String(first(step, ["warning", "caution"], ""))
+            };
+          });
+        }
+
+        return [];
+      }
+
+      function listFrom(value) {
+        if (Array.isArray(value)) return value.map(String);
+        if (typeof value === "string" && value.trim()) return value.split(/[,;\n]/).map(item => item.trim()).filter(Boolean);
+        return [];
+      }
+
+      function openGuide(id) {
+        const guide = state.guides.find(item => guideId(item) === String(id));
+        if (!guide) return;
+
+        state.activeGuide = guide;
+
+        const difficulty = guideDifficulty(guide);
+        const steps = safeSteps(guide);
+        const tools = listFrom(first(guide, ["tools", "required_tools", "requiredTools"], []));
+        const parts = listFrom(first(guide, ["parts", "required_parts", "requiredParts"], []));
+        const warnings = listFrom(first(guide, ["warnings", "safety_warnings", "safetyWarnings"], []));
+        const device = first(guide, ["device", "model", "device_model", "deviceModel"], "Confirm your exact device model");
+        const minutes = guideMinutes(guide);
+
+        $("modalTitle").textContent = guideTitle(guide);
+
+        let content = `
+          <div class="detail-meta">
+            <span class="tag ${difficultyClass(difficulty)}">${escapeHTML(difficultyLabel(difficulty))}</span>
+            <span class="tag">${escapeHTML(guideType(guide).replace("-", " "))}</span>
+            <span class="tag">${minutes ? escapeHTML(minutes + " minute estimate") : "Time varies"}</span>
+          </div>
+
+          <p>${escapeHTML(guideDescription(guide))}</p>
+
+          <div class="tip">
+            <strong>Device:</strong> ${escapeHTML(device)}<br>
+            Confirm the exact model and use verified service instructions before opening the device.
+          </div>`;
+
+        if (tools.length) {
+          content += `<h3 style="margin:20px 0 8px;font-size:13px">Tools to prepare</h3><div class="tool-list">` +
+            tools.map(tool => `<span class="tool-pill">${escapeHTML(tool)}</span>`).join("") + `</div>`;
+        }
+
+        if (parts.length) {
+          content += `<h3 style="margin:20px 0 8px;font-size:13px">Parts and materials</h3><div class="tool-list">` +
+            parts.map(part => `<span class="tool-pill">${escapeHTML(part)}</span>`).join("") + `</div>`;
+        }
+
+        if (warnings.length) {
+          content += `<div class="safety-box" style="margin-top:18px"><strong>⚠️ Safety warnings</strong>` +
+            warnings.map(warning => `<div style="margin-top:6px">• ${escapeHTML(warning)}</div>`).join("") +
+            `</div>`;
+        }
+
+        content += `<h3 style="margin:22px 0 5px;font-size:15px">Repair preparation and steps</h3>`;
+
+        if (steps.length) {
+          content += steps.map((step, index) => `
+            <div class="detail-step">
+              <div class="step-number">${index + 1}</div>
+              <div>
+                <h4>${escapeHTML(step.title)}</h4>
+                <p>${escapeHTML(step.detail)}</p>
+                ${step.warning ? `<div class="step-warning">⚠️ ${escapeHTML(step.warning)}</div>` : ""}
+              </div>
+            </div>`).join("");
+        } else {
+          content += `
+            <div class="tip">
+              Detailed model-specific steps are not available in the current record. Do not improvise from a title alone. Consult a verified service manual or qualified technician before beginning.
+            </div>`;
+        }
+
+        const completion = first(guide, ["completion", "final_check", "finalCheck"], "");
+        if (completion) content += `<div class="tip" style="margin-top:16px"><strong>Final check:</strong> ${escapeHTML(completion)}</div>`;
+
+        content += `
+          <div class="detail-footer">
+            <span style="color:var(--muted);font-size:10px">Progress checklist is stored in this browser.</span>
+            <button class="btn btn-outline" id="modalSaveGuide" type="button">${saved(guide) ? "🔖 Remove bookmark" : "＋ Save guide"}</button>
+            <button class="btn btn-primary" id="modalChecklist" type="button">Go to checklist ↓</button>
+          </div>`;
+
+        $("modalBody").innerHTML = content;
+        $("guideModal").classList.add("open");
+
+        $("modalSaveGuide").addEventListener("click", () => toggleSaved(id));
+        $("modalChecklist").addEventListener("click", () => {
+          closeModal();
+          $("repairChecklist").scrollIntoView({ behavior: "smooth", block: "start" });
+        });
+      }
+
+      function closeModal() {
+        $("guideModal").classList.remove("open");
+        state.activeGuide = null;
+      }
+
+      function toggleSaved(id) {
+        let ids = getSaved();
+        const isSaved = ids.includes(String(id));
+
+        ids = isSaved ? ids.filter(value => value !== String(id)) : [...ids, String(id)];
+        setSaved(ids);
+
+        renderGuides();
+
+        if (state.activeGuide && guideId(state.activeGuide) === String(id)) {
+          openGuide(id);
+        }
+
+        setMessage("guideMessage", isSaved ? "Guide removed from saved guides." : "Guide saved in this browser.", "success");
+      }
+
+      function setActiveChip() {
+        $("typeChips").querySelectorAll("[data-type]").forEach(button => {
+          button.classList.toggle("active", button.dataset.type === state.type);
+        });
+      }
+
+      async function apiGet(path) {
+        if (window.API && typeof window.API.get === "function") {
+          return await window.API.get(path);
+        }
+
+        const response = await fetch(path);
+        if (!response.ok) throw new Error("Request failed (" + response.status + ")");
+        return response.json();
+      }
+
+      async function loadGuides() {
+        $("guideStatus").textContent = "Loading guides…";
+
+        try {
+          const data = await apiGet("/api/repair-guides");
+          const remote = arrayFrom(data, ["guides", "repairGuides", "data", "results"]);
+
+          // Use server guides if available. Otherwise, display the clearly
+          // labelled educational examples included in this page.
+          state.guides = remote.length ? remote : sampleGuides;
+
+          $("guideStatus").textContent = remote.length
+            ? "Backend guides loaded"
+            : "Educational examples";
+
+          if (remote.length) {
+            setMessage("guideMessage", "Loaded " + remote.length + " repair guide(s) from the backend.", "success");
+          } else {
+            setMessage(
+              "guideMessage",
+              "The repair-guide endpoint returned no records or is unavailable. Showing built-in general educational examples, not official model-specific manuals.",
+              "error"
+            );
+          }
+        } catch (error) {
+          console.info("Repair guide API unavailable; using educational examples.", error);
+          state.guides = sampleGuides;
+          $("guideStatus").textContent = "Educational examples";
+
+          setMessage(
+            "guideMessage",
+            "Could not load GET /api/repair-guides. Showing built-in educational examples. Add verified model-specific guides to your backend for production use.",
+            "error"
+          );
+        }
+
+        renderGuides();
+      }
+
+      function resetFilters() {
+        state.search = "";
+        state.difficulty = "all";
+        state.sort = "title";
+        state.type = "all";
+
+        $("searchInput").value = "";
+        $("difficultyFilter").value = "all";
+        $("sortSelect").value = "title";
+
+        setActiveChip();
+        renderGuides();
+      }
+
+      $("searchInput").addEventListener("input", () => {
+        state.search = $("searchInput").value.trim();
+        renderGuides();
+      });
+
+      $("difficultyFilter").addEventListener("change", () => {
+        state.difficulty = $("difficultyFilter").value;
+        renderGuides();
+      });
+
+      $("sortSelect").addEventListener("change", () => {
+        state.sort = $("sortSelect").value;
+        renderGuides();
+      });
+
+      $("typeChips").addEventListener("click", event => {
+        const button = event.target.closest("[data-type]");
+        if (!button) return;
+
+        state.type = button.dataset.type;
+        setActiveChip();
+        renderGuides();
+      });
+
+      $("guideGrid").addEventListener("click", event => {
+        const open = event.target.closest("[data-open-guide]");
+        const save = event.target.closest("[data-save-guide]");
+
+        if (open) openGuide(open.dataset.openGuide);
+        else if (save) toggleSaved(save.dataset.saveGuide);
+      });
+
+      $("resetFilters").addEventListener("click", resetFilters);
+      $("emptyReset").addEventListener("click", resetFilters);
+
+      $("showSaved").addEventListener("click", () => {
+        state.type = "saved";
+        setActiveChip();
+        renderGuides();
+        $("guideLibrary").scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+
+      $("resetChecklist").addEventListener("click", () => {
+        if (!window.confirm("Reset all preparation checklist items?")) return;
+
+        document.querySelectorAll("[data-check]").forEach(input => {
+          input.checked = false;
+        });
+
+        saveChecks();
+      });
+
+      $("closeModal").addEventListener("click", closeModal);
+
+      $("guideModal").addEventListener("click", event => {
+        if (event.target === $("guideModal")) closeModal();
+      });
+
+      document.addEventListener("keydown", event => {
+        if (event.key === "Escape") closeModal();
+      });
+
+      restoreChecks();
+      setActiveChip();
+      loadGuides();
+    })();
+  </script>
+</body>
+</html>
