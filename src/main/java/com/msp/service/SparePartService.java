@@ -23,7 +23,7 @@ public class SparePartService {
         addSeedPart("Back Glass", "iPhone 14", 8, 3500.00);
 
         for (Map<String, String> device : modelService.getModelCatalog()) {
-            String model = device.get("name");
+            String model = device.get("model");
             addSeedPartIfMissing("Battery", model, 8, 1800.00);
             addSeedPartIfMissing("Display Assembly", model, 6, 5200.00);
             addSeedPartIfMissing("Charging Port", model, 8, 1400.00);
