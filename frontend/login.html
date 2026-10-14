@@ -1,55 +1,518 @@
 <!DOCTYPE html>
-
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Login - MSP Management</title>
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-<header class="navbar">
-    <div class="brand">MSP Management</div>
-    <nav>
-        <a href="index.html">Home</a>
-        <a href="register.html">Register</a>
-        <a href="login.html">Login</a>
-        <a href="models.html">Models</a>
-    </nav>
-</header>
 
-<main class="form-page">
-    <form id="loginForm" class="card-form">
-        <h1>Login</h1>
-        <label>Username
-            <input name="username" required autocomplete="username">
-        </label>
-        <label>Password
-            <input name="password" type="password" required autocomplete="current-password">
-        </label>
-        <button class="button" type="submit">Login</button>
-        <div id="message" class="message" role="alert"></div>
-    </form>
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Login | MobiSpares Connect
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+</head>
+
+<body>
+
+
+<div class="topbar">
+
+    <div class="container">
+
+        <span>
+            Specialized mobile spare-parts marketplace
+        </span>
+
+        <span>
+            Secure mobile spare-parts marketplace
+        </span>
+
+    </div>
+
+</div>
+
+
+<nav class="navbar">
+
+    <div class="container nav-inner">
+
+
+        <a
+            class="brand"
+            href="index.html"
+        >
+
+            <span class="brand-mark">
+                MS
+            </span>
+
+            MobiSpares
+            <span style="color:#2563eb">
+                Connect
+            </span>
+
+        </a>
+
+
+        <div class="nav-links">
+
+            <a href="index.html">
+                Home
+            </a>
+
+            <a href="browse.html">
+                Browse Parts
+            </a>
+
+            <a href="models.html">
+                Select Model
+            </a>
+
+        </div>
+
+
+        <div class="nav-actions">
+
+            <a
+                class="btn btn-secondary"
+                href="register.html"
+            >
+                Register
+            </a>
+
+            <a
+                class="btn btn-primary"
+                href="login.html"
+            >
+                Sign in
+            </a>
+
+            <button
+                class="icon-btn menu-btn"
+                onclick="toggleMenu()"
+            >
+                ☰
+            </button>
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+<main class="page">
+
+    <div class="auth-page">
+
+        <div class="auth-card">
+
+
+            <div class="auth-logo">
+
+                <a
+                    class="brand"
+                    href="index.html"
+                >
+
+                    <span class="brand-mark">
+                        MS
+                    </span>
+
+                    MobiSpares
+                    <span style="color:#2563eb">
+                        Connect
+                    </span>
+
+                </a>
+
+
+                <p class="muted">
+
+                    Sign in to continue finding
+                    the right spare parts.
+
+                </p>
+
+            </div>
+
+
+            <form id="loginForm">
+
+
+                <div class="field">
+
+                    <label for="email">
+                        Email
+                    </label>
+
+                    <input
+                        id="email"
+                        class="input"
+                        type="email"
+                        required
+                        placeholder="you@example.com"
+                    >
+
+                </div>
+
+
+                <div class="field mt">
+
+                    <label for="password">
+                        Password
+                    </label>
+
+                    <input
+                        id="password"
+                        class="input"
+                        type="password"
+                        required
+                        placeholder="••••••••"
+                    >
+
+                </div>
+
+
+                <div
+                    style="
+                    display:flex;
+                    justify-content:space-between;
+                    align-items:center;
+                    margin-top:10px;
+                    "
+                >
+
+                    <label style="font-size:13px">
+
+                        <input
+                            type="checkbox"
+                            id="rememberMe"
+                        >
+
+                        Remember me
+
+                    </label>
+
+
+                    <a
+                        href="#"
+                        onclick="
+                        event.preventDefault();
+                        toast('Password reset is not available yet.')
+                        "
+                        style="
+                        color:#2563eb;
+                        font-size:13px;
+                        "
+                    >
+                        Forgot password?
+                    </a>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                    style="
+                    width:100%;
+                    margin-top:20px;
+                    "
+                >
+                    Sign in
+                </button>
+
+
+            </form>
+
+
+            <p
+                class="text-center muted"
+                style="
+                font-size:13px;
+                margin-top:20px;
+                "
+            >
+
+                New here?
+
+                <a
+                    href="register.html"
+                    style="
+                    color:#2563eb;
+                    font-weight:700;
+                    "
+                >
+                    Create an account
+                </a>
+
+            </p>
+
+
+        </div>
+
+    </div>
+
 </main>
 
+
+<footer class="footer">
+
+    <div class="container">
+
+        <div class="footer-grid">
+
+
+            <div>
+
+                <div
+                    class="brand"
+                    style="color:#fff"
+                >
+
+                    <span class="brand-mark">
+                        MS
+                    </span>
+
+                    MobiSpares Connect
+
+                </div>
+
+                <p
+                    style="
+                    font-size:13px;
+                    max-width:360px;
+                    "
+                >
+
+                    A focused platform for finding
+                    mobile spare parts by brand,
+                    model and component.
+
+                </p>
+
+            </div>
+
+
+            <div>
+
+                <h3>
+                    Shop
+                </h3>
+
+                <a href="browse.html">
+                    Browse parts
+                </a>
+
+                <a href="models.html">
+                    Mobile models
+                </a>
+
+            </div>
+
+
+            <div>
+
+                <h3>
+                    Explore
+                </h3>
+
+                <a href="index.html">
+                    Home
+                </a>
+
+                <a href="models.html">
+                    Choose mobile
+                </a>
+
+            </div>
+
+
+            <div>
+
+                <h3>
+                    Account
+                </h3>
+
+                <a href="login.html">
+                    Sign in
+                </a>
+
+                <a href="register.html">
+                    Create account
+                </a>
+
+            </div>
+
+
+        </div>
+
+
+        <div class="copyright">
+
+            © 2026 MobiSpares Connect
+            • Mobile spare-parts marketplace
+
+        </div>
+
+    </div>
+
+</footer>
+
+
+<div
+    id="toast"
+    class="toast"
+></div>
+
+
 <script>
-document.getElementById("loginForm").addEventListener("submit", async (event) => {
-    event.preventDefault();
-    const message = document.getElementById("message");
-    try {
-        const response = await fetch("/api/login", {
-            method: "POST",
-            headers: {"Content-Type": "application/x-www-form-urlencoded"},
-            body: new URLSearchParams(new FormData(event.target))
-        });
-        const data = await response.json();
-        message.textContent = data.message;
-        message.className = response.ok ? "message success" : "message error";
-    } catch (error) {
-        message.textContent = "Unable to connect to the server.";
-        message.className = "message error";
+
+function toast(message) {
+
+    const t =
+        document.getElementById("toast");
+
+    t.textContent = message;
+
+    t.style.display = "block";
+
+    clearTimeout(window.__toast);
+
+    window.__toast =
+        setTimeout(function() {
+
+            t.style.display = "none";
+
+        }, 2400);
+
+}
+
+
+document
+    .getElementById("loginForm")
+    .addEventListener(
+        "submit",
+        function(event) {
+
+            event.preventDefault();
+
+
+            const email =
+                document
+                    .getElementById("email")
+                    .value
+                    .trim();
+
+
+            const password =
+                document
+                    .getElementById("password")
+                    .value
+                    .trim();
+
+
+            if (!email || !password) {
+
+                toast(
+                    "Please enter email and password"
+                );
+
+                return;
+
+            }
+
+
+            /*
+                Frontend login for now.
+                This will later connect
+                to your Java backend.
+            */
+
+            localStorage.setItem(
+                "loggedIn",
+                "true"
+            );
+
+            localStorage.setItem(
+                "userEmail",
+                email
+            );
+
+
+            toast(
+                "Login successful! Redirecting..."
+            );
+
+
+            setTimeout(function() {
+
+                window.location.href =
+                    "browse.html";
+
+            }, 700);
+
+        }
+    );
+
+
+function toggleMenu() {
+
+    const n =
+        document.querySelector(
+            ".nav-links"
+        );
+
+    if (!n) return;
+
+
+    if (n.style.display === "flex") {
+
+        n.style.display = "none";
+
+    } else {
+
+        n.style.display = "flex";
+
+        n.style.position = "absolute";
+
+        n.style.top = "64px";
+
+        n.style.left = "12px";
+
+        n.style.right = "12px";
+
+        n.style.flexDirection = "column";
+
+        n.style.alignItems = "stretch";
+
+        n.style.padding = "10px";
+
+        n.style.background = "#fff";
+
+        n.style.border =
+            "1px solid #e2e8f0";
+
+        n.style.borderRadius = "16px";
+
+        n.style.boxShadow =
+            "0 15px 35px rgba(15,23,42,.12)";
+
     }
-});
+
+}
+
 </script>
+
 </body>
 </html>

@@ -1,85 +1,797 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Registration - MSP Management</title>
-    <link rel="stylesheet" href="style.css">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Register | MobiSpares Connect
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
 </head>
+
 <body>
-<header class="navbar">
-    <div class="brand">MSP Management</div>
-    <nav>
-        <a href="index.html">Home</a>
-        <a href="register.html">Register</a>
-        <a href="login.html">Login</a>
-        <a href="models.html">Models</a>
-    </nav>
-</header>
 
-<main class="form-page">
-    <form id="registerForm" class="card-form">
-        <h1>Create Account</h1>
-        <p>Register for the Mobile Spare Parts Management System.</p>
 
-        <label>Username
-            <input id="username" name="username" required minlength="3" maxlength="50" autocomplete="username">
-        </label>
+<!-- =====================================================
+     TOP BAR
+===================================================== -->
 
-        <label>Email
-            <input id="email" name="email" type="email" required maxlength="100" autocomplete="email">
-        </label>
+<div class="topbar">
 
-        <label>Password
-            <input id="password" name="password" type="password" required minlength="6" autocomplete="new-password">
-        </label>
+    <div class="container">
 
-        <label>Confirm Password
-            <input id="confirmPassword" type="password" required minlength="6" autocomplete="new-password">
-        </label>
+        <span>
+            Specialized mobile spare-parts marketplace
+        </span>
 
-        <button class="button" type="submit">Register</button>
-        <div id="message" class="message" role="alert"></div>
-    </form>
+        <span>
+            Secure mobile spare-parts marketplace
+        </span>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     NAVBAR
+===================================================== -->
+
+<nav class="navbar">
+
+    <div class="container nav-inner">
+
+
+        <a
+            class="brand"
+            href="index.html"
+        >
+
+            <span class="brand-mark">
+                MS
+            </span>
+
+            MobiSpares
+            <span style="color:#2563eb">
+                Connect
+            </span>
+
+        </a>
+
+
+        <div class="nav-links">
+
+            <a href="index.html">
+                Home
+            </a>
+
+            <a href="browse.html">
+                Browse Parts
+            </a>
+
+            <a href="models.html">
+                Select Model
+            </a>
+
+        </div>
+
+
+        <div class="nav-actions">
+
+            <a
+                class="btn btn-secondary"
+                href="register.html"
+            >
+                Register
+            </a>
+
+            <a
+                class="btn btn-primary"
+                href="login.html"
+            >
+                Sign in
+            </a>
+
+            <button
+                class="icon-btn menu-btn"
+                onclick="toggleMenu()"
+                type="button"
+            >
+                ☰
+            </button>
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+<!-- =====================================================
+     REGISTER PAGE
+===================================================== -->
+
+<main class="page">
+
+    <div class="auth-page">
+
+        <div class="auth-card">
+
+
+            <!-- LOGO -->
+
+            <div class="auth-logo">
+
+                <a
+                    class="brand"
+                    href="index.html"
+                >
+
+                    <span class="brand-mark">
+                        MS
+                    </span>
+
+                    MobiSpares
+                    <span style="color:#2563eb">
+                        Connect
+                    </span>
+
+                </a>
+
+
+                <p class="muted">
+
+                    Create your MobiSpares Connect
+                    account.
+
+                </p>
+
+            </div>
+
+
+            <!-- =================================================
+                 REGISTRATION FORM
+            ================================================== -->
+
+            <form id="registerForm">
+
+
+                <div class="form-grid">
+
+
+                    <!-- FIRST NAME -->
+
+                    <div class="field">
+
+                        <label for="firstName">
+                            First name
+                        </label>
+
+                        <input
+                            id="firstName"
+                            class="input"
+                            type="text"
+                            required
+                            autocomplete="given-name"
+                            placeholder="Enter your first name"
+                        >
+
+                    </div>
+
+
+                    <!-- LAST NAME -->
+
+                    <div class="field">
+
+                        <label for="lastName">
+                            Last name
+                        </label>
+
+                        <input
+                            id="lastName"
+                            class="input"
+                            type="text"
+                            required
+                            autocomplete="family-name"
+                            placeholder="Enter your last name"
+                        >
+
+                    </div>
+
+
+                    <!-- EMAIL -->
+
+                    <div class="field full">
+
+                        <label for="registerEmail">
+                            Email address
+                        </label>
+
+                        <input
+                            id="registerEmail"
+                            class="input"
+                            type="email"
+                            required
+                            autocomplete="email"
+                            placeholder="Enter your email address"
+                        >
+
+                    </div>
+
+
+                    <!-- PASSWORD -->
+
+                    <div class="field">
+
+                        <label for="registerPassword">
+                            Password
+                        </label>
+
+                        <input
+                            id="registerPassword"
+                            class="input"
+                            type="password"
+                            minlength="6"
+                            required
+                            autocomplete="new-password"
+                            placeholder="Enter your password"
+                        >
+
+                    </div>
+
+
+                    <!-- CONFIRM PASSWORD -->
+
+                    <div class="field">
+
+                        <label for="confirmPassword">
+                            Confirm password
+                        </label>
+
+                        <input
+                            id="confirmPassword"
+                            class="input"
+                            type="password"
+                            minlength="6"
+                            required
+                            autocomplete="new-password"
+                            placeholder="Confirm your password"
+                        >
+
+                    </div>
+
+
+                </div>
+
+
+                <!-- TERMS -->
+
+                <label
+                    style="
+                    display:flex;
+                    gap:8px;
+                    align-items:flex-start;
+                    font-size:13px;
+                    margin-top:18px;
+                    color:#475569;
+                    "
+                >
+
+                    <input
+                        type="checkbox"
+                        id="terms"
+                        required
+                        style="margin-top:3px"
+                    >
+
+                    <span>
+                        I agree to the terms and
+                        privacy policy.
+                    </span>
+
+                </label>
+
+
+                <!-- REGISTER BUTTON -->
+
+                <button
+                    type="submit"
+                    class="btn btn-primary"
+                    style="
+                    width:100%;
+                    margin-top:20px;
+                    "
+                >
+
+                    Create account
+
+                </button>
+
+
+            </form>
+
+
+            <!-- LOGIN LINK -->
+
+            <p
+                class="text-center muted"
+                style="
+                font-size:13px;
+                margin-top:20px;
+                "
+            >
+
+                Already have an account?
+
+                <a
+                    href="login.html"
+                    style="
+                    color:#2563eb;
+                    font-weight:700;
+                    "
+                >
+                    Sign in
+                </a>
+
+            </p>
+
+
+        </div>
+
+    </div>
+
 </main>
 
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+
+<footer class="footer">
+
+    <div class="container">
+
+
+        <div class="footer-grid">
+
+
+            <!-- BRAND -->
+
+            <div>
+
+                <div
+                    class="brand"
+                    style="color:#fff"
+                >
+
+                    <span class="brand-mark">
+                        MS
+                    </span>
+
+                    MobiSpares Connect
+
+                </div>
+
+
+                <p
+                    style="
+                    font-size:13px;
+                    max-width:360px;
+                    "
+                >
+
+                    A focused platform for finding
+                    mobile spare parts by brand,
+                    model and component.
+
+                </p>
+
+            </div>
+
+
+            <!-- SHOP -->
+
+            <div>
+
+                <h3>
+                    Shop
+                </h3>
+
+                <a href="browse.html">
+                    Browse parts
+                </a>
+
+                <a href="models.html">
+                    Mobile models
+                </a>
+
+            </div>
+
+
+            <!-- EXPLORE -->
+
+            <div>
+
+                <h3>
+                    Explore
+                </h3>
+
+                <a href="index.html">
+                    Home
+                </a>
+
+                <a href="models.html">
+                    Choose mobile
+                </a>
+
+            </div>
+
+
+            <!-- ACCOUNT -->
+
+            <div>
+
+                <h3>
+                    Account
+                </h3>
+
+                <a href="login.html">
+                    Sign in
+                </a>
+
+                <a href="register.html">
+                    Create account
+                </a>
+
+            </div>
+
+
+        </div>
+
+
+        <div class="copyright">
+
+            © 2026 MobiSpares Connect
+            • Mobile spare-parts marketplace
+
+        </div>
+
+
+    </div>
+
+</footer>
+
+
+<!-- =====================================================
+     TOAST
+===================================================== -->
+
+<div
+    id="toast"
+    class="toast"
+></div>
+
+
+<!-- =====================================================
+     JAVASCRIPT
+===================================================== -->
+
 <script>
-const form = document.getElementById("registerForm");
-const message = document.getElementById("message");
 
-form.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    message.textContent = "";
 
-    const password = document.getElementById("password").value;
-    const confirmPassword = document.getElementById("confirmPassword").value;
+/* =====================================================
+   TOAST MESSAGE
+===================================================== */
 
-    if (password !== confirmPassword) {
-        message.textContent = "Passwords do not match.";
-        message.className = "message error";
+function toast(message) {
+
+    const toastBox =
+        document.getElementById("toast");
+
+
+    if (!toastBox) {
         return;
     }
 
-    try {
-        const body = new URLSearchParams(new FormData(form));
-        const response = await fetch("/api/register", {
-            method: "POST",
-            headers: {"Content-Type": "application/x-www-form-urlencoded"},
-            body
-        });
 
-        const data = await response.json();
-        message.textContent = data.message;
-        message.className = response.ok ? "message success" : "message error";
+    toastBox.textContent =
+        message;
 
-        if (response.ok) {
-            form.reset();
+
+    toastBox.style.display =
+        "block";
+
+
+    clearTimeout(
+        window.__toastTimer
+    );
+
+
+    window.__toastTimer =
+        setTimeout(
+            function() {
+
+                toastBox.style.display =
+                    "none";
+
+            },
+            2500
+        );
+
+}
+
+
+
+/* =====================================================
+   REGISTRATION
+===================================================== */
+
+document
+    .getElementById("registerForm")
+    .addEventListener(
+        "submit",
+        function(event) {
+
+            event.preventDefault();
+
+
+            /* Get values */
+
+            const firstName =
+                document
+                    .getElementById("firstName")
+                    .value
+                    .trim();
+
+
+            const lastName =
+                document
+                    .getElementById("lastName")
+                    .value
+                    .trim();
+
+
+            const email =
+                document
+                    .getElementById("registerEmail")
+                    .value
+                    .trim();
+
+
+            const password =
+                document
+                    .getElementById("registerPassword")
+                    .value;
+
+
+            const confirmPassword =
+                document
+                    .getElementById("confirmPassword")
+                    .value;
+
+
+            const terms =
+                document
+                    .getElementById("terms")
+                    .checked;
+
+
+
+            /* =================================================
+               VALIDATION
+            ================================================= */
+
+
+            if (
+                !firstName ||
+                !lastName ||
+                !email ||
+                !password ||
+                !confirmPassword
+            ) {
+
+                toast(
+                    "Please fill all the fields."
+                );
+
+                return;
+
+            }
+
+
+            /* Password length */
+
+            if (
+                password.length < 6
+            ) {
+
+                toast(
+                    "Password must contain at least 6 characters."
+                );
+
+                return;
+
+            }
+
+
+            /* Password matching */
+
+            if (
+                password !==
+                confirmPassword
+            ) {
+
+                toast(
+                    "Passwords do not match."
+                );
+
+                return;
+
+            }
+
+
+            /* Terms */
+
+            if (!terms) {
+
+                toast(
+                    "Please accept the terms and privacy policy."
+                );
+
+                return;
+
+            }
+
+
+
+            /* =================================================
+               TEMPORARY FRONTEND REGISTRATION
+
+               This is currently stored locally.
+               Later it can be replaced with
+               your Java + MySQL backend.
+            ================================================= */
+
+
+            localStorage.setItem(
+                "registeredName",
+                firstName + " " + lastName
+            );
+
+
+            localStorage.setItem(
+                "registeredEmail",
+                email
+            );
+
+
+            localStorage.setItem(
+                "registeredPassword",
+                password
+            );
+
+
+
+            /* Success message */
+
+            toast(
+                "Account created successfully!"
+            );
+
+
+
+            /* Redirect to login */
+
+            setTimeout(
+                function() {
+
+                    window.location.href =
+                        "login.html";
+
+                },
+                900
+            );
+
         }
-    } catch (error) {
-        message.textContent = "Unable to connect to the server.";
-        message.className = "message error";
+    );
+
+
+
+/* =====================================================
+   MOBILE MENU
+===================================================== */
+
+function toggleMenu() {
+
+    const navLinks =
+        document.querySelector(
+            ".nav-links"
+        );
+
+
+    if (!navLinks) {
+        return;
     }
-});
+
+
+    if (
+        navLinks.style.display ===
+        "flex"
+    ) {
+
+        navLinks.style.display =
+            "none";
+
+    }
+
+    else {
+
+        navLinks.style.display =
+            "flex";
+
+
+        navLinks.style.position =
+            "absolute";
+
+
+        navLinks.style.top =
+            "64px";
+
+
+        navLinks.style.left =
+            "12px";
+
+
+        navLinks.style.right =
+            "12px";
+
+
+        navLinks.style.flexDirection =
+            "column";
+
+
+        navLinks.style.alignItems =
+            "stretch";
+
+
+        navLinks.style.padding =
+            "10px";
+
+
+        navLinks.style.background =
+            "#ffffff";
+
+
+        navLinks.style.border =
+            "1px solid #e2e8f0";
+
+
+        navLinks.style.borderRadius =
+            "16px";
+
+
+        navLinks.style.boxShadow =
+            "0 15px 35px rgba(15,23,42,.12)";
+
+    }
+
+}
+
 </script>
+
+
 </body>
+
 </html>

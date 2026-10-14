@@ -1,1 +1,708 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Mobile Spare Parts Management</title><link rel="stylesheet" href="style.css"></head><body><main class="container"><h1>Mobile Spare Parts Management</h1><p class="muted">Sprint 2 feature dashboard</p><div class="grid"><a class="card" href="register.html"><h3>MSPR-3</h3>User Registration</a><a class="card" href="login.html"><h3>MSPR-4</h3>User Login</a><a class="card" href="browse.html"><h3>MSPR-5 / 7</h3>Browse & Search Parts</a><a class="card" href="models.html"><h3>MSPR-6</h3>Brand & Model</a><a class="card" href="details.html?id=1"><h3>MSPR-9</h3>Product Details</a><a class="card" href="compatibility.html"><h3>MSPR-10</h3>Compatibility</a><a class="card" href="notifications.html"><h3>MSPR-26</h3>Stock Notifications</a><a class="card" href="repair-guides.html"><h3>MSPR-27</h3>Repair Guides</a><a class="card" href="returns.html"><h3>MSPR-29</h3>Returns</a><a class="card" href="price-tracking.html"><h3>MSPR-20</h3>Price Tracking</a><a class="card" href="reviews.html"><h3>Reviews</h3>Add/View Ratings</a><a class="card" href="orders.html"><h3>Orders</h3>Track Order</a><a class="card" href="compare.html"><h3>Compare</h3>Compare Parts</a><a class="card" href="recommendations.html"><h3>Recommendations</h3>Compatible Suggestions</a></div></main></body></html>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Home | MobiSpares Connect</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+
+    <div class="container">
+
+        <span>
+            Specialized mobile spare-parts marketplace
+        </span>
+
+        <span>
+            Compatible parts • Simple search • Trusted choices
+        </span>
+
+    </div>
+
+</div>
+
+
+<!-- NAVBAR -->
+<nav class="navbar">
+
+    <div class="container nav-inner">
+
+        <a class="brand" href="index.html">
+
+            <span class="brand-mark">
+                MS
+            </span>
+
+            MobiSpares
+            <span style="color:#2563eb">
+                Connect
+            </span>
+
+        </a>
+
+
+        <div class="nav-links">
+
+            <a class="active" href="index.html">
+                Home
+            </a>
+
+            <a href="browse.html">
+                Browse Parts
+            </a>
+
+            <a href="models.html">
+                Select Model
+            </a>
+
+        </div>
+
+
+        <div class="nav-actions">
+
+            <a
+                class="btn btn-secondary"
+                href="register.html"
+            >
+                Register
+            </a>
+
+            <a
+                class="btn btn-primary"
+                href="login.html"
+            >
+                Sign in
+            </a>
+
+            <button
+                class="icon-btn menu-btn"
+                onclick="toggleMenu()"
+            >
+                ☰
+            </button>
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+<!-- MAIN -->
+<main>
+
+
+    <!-- HERO -->
+    <section class="hero">
+
+        <div class="container hero-grid">
+
+
+            <!-- LEFT -->
+            <div>
+
+                <div class="eyebrow">
+                    MOBILE SPARE PARTS MADE SIMPLE
+                </div>
+
+
+                <h1>
+
+                    Find the right spare part
+                    for your
+                    <span style="color:#2563eb">
+                        mobile.
+                    </span>
+
+                </h1>
+
+
+                <p>
+
+                    Browse mobile spare parts,
+                    choose your phone brand and
+                    model, and quickly find
+                    components that match your
+                    device.
+
+                </p>
+
+
+                <div class="hero-actions">
+
+                    <a
+                        class="btn btn-primary"
+                        href="browse.html"
+                    >
+                        Browse Spare Parts →
+                    </a>
+
+
+                    <a
+                        class="btn btn-outline"
+                        href="models.html"
+                    >
+                        Choose My Mobile
+                    </a>
+
+                </div>
+
+
+                <div class="hero-trust">
+
+                    <span>
+                        ✓ Multiple mobile brands
+                    </span>
+
+                    <span>
+                        ✓ Model-based search
+                    </span>
+
+                    <span>
+                        ✓ Clear pricing
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- RIGHT -->
+            <div class="hero-panel">
+
+                <div class="mini">
+                    MOBISPARES CONNECT
+                </div>
+
+
+                <div class="big">
+
+                    Your mobile.
+                    Your part.
+                    One simple search.
+
+                </div>
+
+
+                <div class="stat-grid">
+
+                    <div class="stat">
+
+                        <strong>
+                            9+
+                        </strong>
+
+                        <span>
+                            Popular brands
+                        </span>
+
+                    </div>
+
+
+                    <div class="stat">
+
+                        <strong>
+                            20+
+                        </strong>
+
+                        <span>
+                            Device models
+                        </span>
+
+                    </div>
+
+
+                    <div class="stat">
+
+                        <strong>
+                            4
+                        </strong>
+
+                        <span>
+                            Part categories
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    style="
+                    margin-top:18px;
+                    padding:15px;
+                    border-radius:14px;
+                    background:rgba(255,255,255,.07);
+                    color:#cbd5e1;
+                    "
+                >
+
+                    🔎 Search by brand,
+                    model or spare-part category.
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- FEATURES -->
+    <section class="section">
+
+        <div class="container">
+
+
+            <div class="section-head">
+
+                <div>
+
+                    <div class="eyebrow">
+                        WHAT YOU CAN DO
+                    </div>
+
+                    <h2>
+                        Everything you need
+                        to find a part
+                    </h2>
+
+                </div>
+
+            </div>
+
+
+            <div class="grid grid-3">
+
+
+                <a
+                    class="card"
+                    href="models.html"
+                >
+
+                    <div style="font-size:34px">
+                        📱
+                    </div>
+
+                    <h3>
+                        Choose your mobile
+                    </h3>
+
+                    <p class="muted">
+
+                        Select your phone brand
+                        and exact model before
+                        searching for parts.
+
+                    </p>
+
+                </a>
+
+
+                <a
+                    class="card"
+                    href="browse.html"
+                >
+
+                    <div style="font-size:34px">
+                        🔍
+                    </div>
+
+                    <h3>
+                        Browse spare parts
+                    </h3>
+
+                    <p class="muted">
+
+                        Find displays, batteries,
+                        cameras, charging parts
+                        and more.
+
+                    </p>
+
+                </a>
+
+
+                <a
+                    class="card"
+                    href="browse.html"
+                >
+
+                    <div style="font-size:34px">
+                        ⚡
+                    </div>
+
+                    <h3>
+                        Search quickly
+                    </h3>
+
+                    <p class="muted">
+
+                        Use the search and category
+                        filters to find available
+                        parts.
+
+                    </p>
+
+                </a>
+
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- BRANDS -->
+    <section
+        class="section"
+        style="padding-top:10px"
+    >
+
+        <div class="container">
+
+
+            <div class="section-head">
+
+                <div>
+
+                    <div class="eyebrow">
+                        POPULAR BRANDS
+                    </div>
+
+                    <h2>
+                        Shop by mobile brand
+                    </h2>
+
+                </div>
+
+
+                <a
+                    class="btn btn-secondary"
+                    href="models.html"
+                >
+                    View all models →
+                </a>
+
+            </div>
+
+
+            <div class="brand-grid">
+
+
+                <a
+                    class="brand-tile"
+                    href="models.html?brand=Apple"
+                >
+                    <strong></strong>
+                    <span>Apple</span>
+                </a>
+
+
+                <a
+                    class="brand-tile"
+                    href="models.html?brand=Samsung"
+                >
+                    <strong>▣</strong>
+                    <span>Samsung</span>
+                </a>
+
+
+                <a
+                    class="brand-tile"
+                    href="models.html?brand=OnePlus"
+                >
+                    <strong>＋</strong>
+                    <span>OnePlus</span>
+                </a>
+
+
+                <a
+                    class="brand-tile"
+                    href="models.html?brand=Xiaomi"
+                >
+                    <strong>◆</strong>
+                    <span>Xiaomi</span>
+                </a>
+
+
+                <a
+                    class="brand-tile"
+                    href="models.html?brand=Vivo"
+                >
+                    <strong>V</strong>
+                    <span>Vivo</span>
+                </a>
+
+
+                <a
+                    class="brand-tile"
+                    href="models.html?brand=Oppo"
+                >
+                    <strong>O</strong>
+                    <span>Oppo</span>
+                </a>
+
+
+                <a
+                    class="brand-tile"
+                    href="models.html?brand=Realme"
+                >
+                    <strong>R</strong>
+                    <span>Realme</span>
+                </a>
+
+
+                <a
+                    class="brand-tile"
+                    href="models.html?brand=Motorola"
+                >
+                    <strong>M</strong>
+                    <span>Motorola</span>
+                </a>
+
+
+                <a
+                    class="brand-tile"
+                    href="models.html?brand=Google"
+                >
+                    <strong>G</strong>
+                    <span>Google</span>
+                </a>
+
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- CTA -->
+    <section class="section">
+
+        <div class="container">
+
+            <div class="cta-card">
+
+
+                <div>
+
+                    <div class="eyebrow">
+                        READY TO START?
+                    </div>
+
+                    <h2>
+                        Find a spare part
+                        for your phone.
+                    </h2>
+
+                    <p class="muted">
+
+                        Choose your brand and model
+                        to see the parts available
+                        for that device.
+
+                    </p>
+
+                </div>
+
+
+                <div
+                    class="hero-actions"
+                    style="margin-top:0"
+                >
+
+                    <a
+                        class="btn btn-primary"
+                        href="models.html"
+                    >
+                        Choose Brand & Model →
+                    </a>
+
+                    <a
+                        class="btn btn-outline"
+                        href="register.html"
+                    >
+                        Create account
+                    </a>
+
+                </div>
+
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<!-- FOOTER -->
+<footer class="footer">
+
+    <div class="container">
+
+
+        <div class="footer-grid">
+
+
+            <div>
+
+                <div
+                    class="brand"
+                    style="color:#fff"
+                >
+
+                    <span class="brand-mark">
+                        MS
+                    </span>
+
+                    MobiSpares Connect
+
+                </div>
+
+
+                <p
+                    style="
+                    font-size:13px;
+                    max-width:360px;
+                    "
+                >
+
+                    A focused platform for finding
+                    mobile spare parts by brand,
+                    model and component.
+
+                </p>
+
+            </div>
+
+
+            <div>
+
+                <h3>
+                    Shop
+                </h3>
+
+                <a href="browse.html">
+                    Browse parts
+                </a>
+
+                <a href="models.html">
+                    Mobile models
+                </a>
+
+            </div>
+
+
+            <div>
+
+                <h3>
+                    Account
+                </h3>
+
+                <a href="login.html">
+                    Sign in
+                </a>
+
+                <a href="register.html">
+                    Create account
+                </a>
+
+            </div>
+
+
+            <div>
+
+                <h3>
+                    Explore
+                </h3>
+
+                <a href="index.html">
+                    Home
+                </a>
+
+                <a href="models.html">
+                    Choose mobile
+                </a>
+
+            </div>
+
+
+        </div>
+
+
+        <div class="copyright">
+
+            © 2026 MobiSpares Connect
+            • Mobile spare-parts marketplace
+
+        </div>
+
+
+    </div>
+
+</footer>
+
+
+<script>
+
+function toggleMenu() {
+
+    const n =
+        document.querySelector(".nav-links");
+
+    if (!n) return;
+
+
+    if (n.style.display === "flex") {
+
+        n.style.display = "none";
+
+    } else {
+
+        n.style.display = "flex";
+
+        n.style.position = "absolute";
+
+        n.style.top = "64px";
+
+        n.style.left = "12px";
+
+        n.style.right = "12px";
+
+        n.style.flexDirection = "column";
+
+        n.style.alignItems = "stretch";
+
+        n.style.padding = "10px";
+
+        n.style.background = "#fff";
+
+        n.style.border =
+            "1px solid #e2e8f0";
+
+        n.style.borderRadius = "16px";
+
+        n.style.boxShadow =
+            "0 15px 35px rgba(15,23,42,.12)";
+    }
+
+}
+
+</script>
+
+</body>
+</html>
