@@ -1,1 +1,645 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Returns</title><link rel="stylesheet" href="style.css"></head><body><main class="container"><a href="index.html">← Home</a><h1>Defective Part Return & Replacement</h1><input id="orderId" type="number" value="1001"><input id="reason" placeholder="Reason"><button onclick="submitReturn()">Request Return</button><div id="out"></div></main><script>async function submitReturn(){const f=new URLSearchParams({orderId:orderId.value,reason:reason.value});const x=await fetch('/api/returns',{method:'POST',body:f}).then(r=>r.json());out.innerHTML='<div class="card">Return request created: '+(x.id||x.message)+'</div>'}</script></body></html>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Defective Part Return &amp; Replacement | PartPulse MSP</title>
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    :root {
+      --return-primary: #2457dc;
+      --return-bg: #f4f7fc;
+      --return-border: #e1e7f0;
+      --return-text: #18243a;
+      --return-muted: #64748b;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--return-bg);
+      color: var(--return-text);
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+    }
+
+    .returns-page {
+      width: min(1120px, 94%);
+      margin: 0 auto;
+      padding: 26px 0 55px;
+    }
+
+    .returns-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 28px;
+    }
+
+    .returns-brand {
+      color: var(--return-text);
+      text-decoration: none;
+      font-size: 21px;
+      font-weight: 800;
+    }
+
+    .returns-links {
+      display: flex;
+      gap: 17px;
+      flex-wrap: wrap;
+    }
+
+    .returns-links a {
+      color: var(--return-muted);
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .returns-links a:hover { color: var(--return-primary); }
+
+    .returns-hero {
+      padding: 34px;
+      border-radius: 22px;
+      color: white;
+      background: linear-gradient(125deg, #153c9d, #3876f4);
+      box-shadow: 0 12px 35px #2457dc22;
+      margin-bottom: 24px;
+    }
+
+    .returns-hero .eyebrow {
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      opacity: .85;
+    }
+
+    .returns-hero h1 {
+      margin: 12px 0;
+      font-size: clamp(27px, 4vw, 39px);
+    }
+
+    .returns-hero p {
+      max-width: 680px;
+      line-height: 1.7;
+      margin-bottom: 0;
+      color: #eaf0ff;
+    }
+
+    .returns-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(300px, .9fr);
+      gap: 22px;
+      align-items: start;
+    }
+
+    .returns-card {
+      background: white;
+      border: 1px solid var(--return-border);
+      border-radius: 18px;
+      padding: 25px;
+      box-shadow: 0 6px 22px #15264a08;
+      min-width: 0;
+    }
+
+    .returns-card h2 {
+      font-size: 21px;
+      margin: 0 0 7px;
+    }
+
+    .returns-subtitle {
+      color: var(--return-muted);
+      font-size: 14px;
+      line-height: 1.6;
+      margin: 0 0 23px;
+    }
+
+    .returns-field { margin-bottom: 18px; }
+
+    .returns-field label {
+      display: block;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .returns-field input,
+    .returns-field select,
+    .returns-field textarea {
+      display: block;
+      width: 100%;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 12px 13px;
+      background: white;
+      color: var(--return-text);
+      font: inherit;
+      font-size: 14px;
+      outline: none;
+    }
+
+    .returns-field input:focus,
+    .returns-field select:focus,
+    .returns-field textarea:focus {
+      border-color: var(--return-primary);
+      box-shadow: 0 0 0 3px #2457dc18;
+    }
+
+    .returns-field textarea {
+      min-height: 105px;
+      resize: vertical;
+    }
+
+    .returns-field small {
+      display: block;
+      margin-top: 6px;
+      color: var(--return-muted);
+      line-height: 1.5;
+    }
+
+    .returns-choice-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .returns-choice {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+      padding: 14px;
+      border: 1px solid var(--return-border);
+      border-radius: 12px;
+      cursor: pointer;
+    }
+
+    .returns-choice:has(input:checked) {
+      border-color: var(--return-primary);
+      background: #f2f6ff;
+    }
+
+    .returns-choice input {
+      margin-top: 4px;
+      accent-color: var(--return-primary);
+    }
+
+    .returns-choice strong {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 5px;
+    }
+
+    .returns-choice span {
+      display: block;
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--return-muted);
+    }
+
+    .returns-button {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      border: 0;
+      border-radius: 10px;
+      padding: 13px 17px;
+      font-weight: 750;
+      font-size: 14px;
+      cursor: pointer;
+      transition: transform .15s, opacity .15s;
+    }
+
+    .returns-button:hover { transform: translateY(-1px); }
+    .returns-button:disabled { opacity: .6; cursor: wait; }
+
+    .returns-button-primary {
+      width: 100%;
+      background: var(--return-primary);
+      color: white;
+    }
+
+    .returns-button-secondary {
+      color: var(--return-primary);
+      background: #edf3ff;
+    }
+
+    .returns-notice {
+      display: none;
+      margin: 0 0 18px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-size: 13px;
+      line-height: 1.6;
+      overflow-wrap: anywhere;
+    }
+
+    .returns-notice.success {
+      display: block;
+      color: #166534;
+      background: #dcfce7;
+    }
+
+    .returns-notice.error {
+      display: block;
+      color: #991b1b;
+      background: #fee2e2;
+    }
+
+    .returns-notice.info {
+      display: block;
+      color: #1e40af;
+      background: #dbeafe;
+    }
+
+    .returns-list {
+      display: grid;
+      gap: 13px;
+    }
+
+    .returns-request {
+      border: 1px solid var(--return-border);
+      border-radius: 12px;
+      padding: 15px;
+    }
+
+    .returns-request-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .returns-request h3 {
+      margin: 0;
+      font-size: 14px;
+    }
+
+    .returns-request p {
+      color: var(--return-muted);
+      font-size: 13px;
+      line-height: 1.6;
+      margin: 9px 0 0;
+      overflow-wrap: anywhere;
+    }
+
+    .returns-status {
+      display: inline-block;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: #fef3c7;
+      color: #92400e;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .returns-empty {
+      padding: 24px 12px;
+      text-align: center;
+      color: var(--return-muted);
+      font-size: 14px;
+      line-height: 1.7;
+      border: 1px dashed #cbd5e1;
+      border-radius: 12px;
+    }
+
+    .returns-footnote {
+      margin-top: 17px;
+      font-size: 12px;
+      line-height: 1.7;
+      color: var(--return-muted);
+    }
+
+    .returns-loading {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid #ffffff70;
+      border-top-color: white;
+      border-radius: 50%;
+      animation: returns-spin .7s linear infinite;
+    }
+
+    @keyframes returns-spin { to { transform: rotate(360deg); } }
+
+    @media (max-width: 780px) {
+      .returns-grid { grid-template-columns: 1fr; }
+      .returns-hero { padding: 25px; }
+      .returns-card { padding: 19px; }
+    }
+
+    @media (max-width: 460px) {
+      .returns-choice-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="returns-page">
+    <nav class="returns-nav" aria-label="Main navigation">
+      <a class="returns-brand" href="index.html">PartPulse MSP</a>
+      <div class="returns-links">
+        <a href="browse.html">Browse parts</a>
+        <a href="orders.html">My orders</a>
+        <a href="notifications.html">Notifications</a>
+      </div>
+    </nav>
+
+    <section class="returns-hero">
+      <div class="eyebrow">Customer support · MSPR-29</div>
+      <h1>Defective Part Return &amp; Replacement</h1>
+      <p>
+        Received a damaged or faulty spare part? Submit a return or replacement
+        request and keep track of its current status from this page.
+      </p>
+    </section>
+
+    <div id="pageNotice" class="returns-notice" role="status" aria-live="polite"></div>
+
+    <div class="returns-grid">
+      <section class="returns-card">
+        <h2>Submit a request</h2>
+        <p class="returns-subtitle">
+          Provide the order ID and describe the problem so your request can be reviewed.
+        </p>
+
+        <form id="returnForm">
+          <div class="returns-field">
+            <label for="orderId">Order ID *</label>
+            <input id="orderId" name="orderId" type="number" min="1"
+                   step="1" required placeholder="e.g. 1024">
+            <small>Enter the ID shown in your order details.</small>
+          </div>
+
+          <div class="returns-field">
+            <label for="partId">Spare-part ID *</label>
+            <input id="partId" name="partId" type="number" min="1"
+                   step="1" placeholder="Enter the part ID" required>
+          </div>
+
+          <div class="returns-field">
+            <label>What would you like? *</label>
+            <div class="returns-choice-grid">
+              <label class="returns-choice">
+                <input type="radio" name="requestType" value="RETURN" required>
+                <div>
+                  <strong>Return the part</strong>
+                  <span>Request a return for review and refund eligibility.</span>
+                </div>
+              </label>
+              <label class="returns-choice">
+                <input type="radio" name="requestType" value="REPLACEMENT" required>
+                <div>
+                  <strong>Replace the part</strong>
+                  <span>Request a replacement for a defective item.</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div class="returns-field">
+            <label for="reason">Reason for request *</label>
+            <select id="reason" name="reason" required>
+              <option value="">Choose a reason</option>
+              <option value="DEFECTIVE">Part is defective or not working</option>
+              <option value="DAMAGED">Part arrived damaged</option>
+              <option value="WRONG_ITEM">Wrong part received</option>
+              <option value="INCOMPATIBLE">Part is incompatible with the selected model</option>
+              <option value="MISSING_COMPONENT">Component or accessory is missing</option>
+              <option value="OTHER">Other issue</option>
+            </select>
+          </div>
+
+          <div class="returns-field">
+            <label for="description">Describe the issue *</label>
+            <textarea id="description" name="description" minlength="10"
+                      maxlength="1000" required
+                      placeholder="Describe the defect, when you noticed it, and any troubleshooting you tried."></textarea>
+            <small><span id="characterCount">0</span>/1000 characters · Minimum 10 characters.</small>
+          </div>
+
+          <div class="returns-field">
+            <label for="contact">Contact email (optional)</label>
+            <input id="contact" name="contact" type="email"
+                   placeholder="you@example.com">
+          </div>
+
+          <button id="submitButton" class="returns-button returns-button-primary" type="submit">
+            Submit return / replacement request →
+          </button>
+        </form>
+
+        <p class="returns-footnote">
+          Submitting a request does not automatically approve a return or refund.
+          Keep the defective item and its packaging until you receive instructions.
+        </p>
+      </section>
+
+      <section class="returns-card">
+        <h2>Request tracking</h2>
+        <p class="returns-subtitle">
+          View the requests currently available from the return service.
+        </p>
+
+        <div id="requestNotice" class="returns-notice" role="status" aria-live="polite"></div>
+
+        <div class="returns-list" id="requestList">
+          <div class="returns-empty">Loading return requests…</div>
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:17px;flex-wrap:wrap">
+          <button id="refreshButton" class="returns-button returns-button-secondary" type="button">
+            ↻ Refresh requests
+          </button>
+        </div>
+
+        <p class="returns-footnote">
+          Status values are provided by the backend. This page does not approve
+          requests or claim a refund/replacement has been completed.
+        </p>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    (() => {
+      "use strict";
+
+      const API_BASE = "";
+      const form = document.getElementById("returnForm");
+      const submitButton = document.getElementById("submitButton");
+      const pageNotice = document.getElementById("pageNotice");
+      const requestNotice = document.getElementById("requestNotice");
+      const requestList = document.getElementById("requestList");
+      const description = document.getElementById("description");
+      const characterCount = document.getElementById("characterCount");
+
+      function showNotice(element, message, type) {
+        element.textContent = message;
+        element.className = "returns-notice " + type;
+      }
+
+      function clearNotice(element) {
+        element.textContent = "";
+        element.className = "returns-notice";
+      }
+
+      function escapeHTML(value) {
+        return String(value ?? "").replace(/[&<>"']/g, character => ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;"
+        })[character]);
+      }
+
+      async function apiRequest(path, options = {}) {
+        const response = await fetch(API_BASE + path, {
+          ...options,
+          headers: {
+            ...(options.body ? {
+              "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+            } : {}),
+            ...(options.headers || {})
+          }
+        });
+
+        const text = await response.text();
+        let data;
+
+        try {
+          data = text ? JSON.parse(text) : null;
+        } catch {
+          data = { message: text || "The server returned an invalid response." };
+        }
+
+        if (!response.ok) {
+          throw new Error(data?.message || `Request failed (${response.status}).`);
+        }
+
+        return data;
+      }
+
+      function renderRequests(requests) {
+        if (!Array.isArray(requests) || requests.length === 0) {
+          requestList.innerHTML =
+            '<div class="returns-empty">No return requests were returned by the backend.</div>';
+          return;
+        }
+
+        requestList.innerHTML = requests.map(request => {
+          const id = request.id ?? "—";
+          const orderId = request.orderId ?? request.order_id ?? "—";
+          const reason = request.reason ?? "Not provided";
+          const status = request.status ?? "UNKNOWN";
+          const type = request.requestType ?? request.request_type ?? "RETURN";
+
+          return `
+            <article class="returns-request">
+              <div class="returns-request-top">
+                <h3>Request #${escapeHTML(id)}</h3>
+                <span class="returns-status">${escapeHTML(status)}</span>
+              </div>
+              <p><strong>Order:</strong> ${escapeHTML(orderId)}</p>
+              <p><strong>Request type:</strong> ${escapeHTML(type)}</p>
+              <p><strong>Reason:</strong> ${escapeHTML(reason)}</p>
+              ${request.description
+                ? `<p><strong>Description:</strong> ${escapeHTML(request.description)}</p>`
+                : ""}
+            </article>`;
+        }).join("");
+      }
+
+      async function loadRequests() {
+        clearNotice(requestNotice);
+        requestList.innerHTML =
+          '<div class="returns-empty">Loading return requests…</div>';
+
+        try {
+          const requests = await apiRequest("/api/returns");
+          renderRequests(requests);
+        } catch (error) {
+          requestList.innerHTML =
+            '<div class="returns-empty">Could not load return requests.</div>';
+          showNotice(
+            requestNotice,
+            error.message + " Make sure the Java backend is running on the same origin.",
+            "error"
+          );
+        }
+      }
+
+      description.addEventListener("input", () => {
+        characterCount.textContent = String(description.value.length);
+      });
+
+      form.addEventListener("submit", async event => {
+        event.preventDefault();
+        clearNotice(pageNotice);
+
+        if (!form.reportValidity()) return;
+
+        const selectedType = form.querySelector(
+          'input[name="requestType"]:checked'
+        );
+
+        if (!selectedType) {
+          showNotice(pageNotice, "Choose return or replacement.", "error");
+          return;
+        }
+
+        const formData = new FormData(form);
+        const payload = new URLSearchParams();
+
+        // Send each field separately to match the backend API.
+        payload.set("orderId", String(formData.get("orderId") || "").trim());
+        payload.set("partId", String(formData.get("partId") || "").trim());
+        payload.set("requestType", String(formData.get("requestType") || ""));
+        payload.set("reason", String(formData.get("reason") || ""));
+        payload.set("description", String(formData.get("description") || "").trim());
+        payload.set("contact", String(formData.get("contact") || "").trim());
+
+        submitButton.disabled = true;
+        submitButton.innerHTML = '<span class="returns-loading"></span> Submitting…';
+
+        try {
+          const created = await apiRequest("/api/returns", {
+            method: "POST",
+            body: payload.toString()
+          });
+
+          showNotice(
+            pageNotice,
+            `Request submitted. Backend request ID: ${created.id ?? "received"}. Current status: ${created.status ?? "REQUESTED"}.`,
+            "success"
+          );
+
+          form.reset();
+          characterCount.textContent = "0";
+          await loadRequests();
+        } catch (error) {
+          showNotice(
+            pageNotice,
+            "The request could not be submitted. " + error.message,
+            "error"
+          );
+        } finally {
+          submitButton.disabled = false;
+          submitButton.textContent = "Submit return / replacement request →";
+        }
+      });
+
+      document.getElementById("refreshButton")
+        .addEventListener("click", loadRequests);
+
+      loadRequests();
+    })();
+  </script>
+</body>
+</html>
