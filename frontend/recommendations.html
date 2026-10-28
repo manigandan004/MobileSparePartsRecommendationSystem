@@ -1,0 +1,892 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Recommendations | PartPulse MSP</title>
+<link rel="stylesheet" href="style.css">
+
+<style>
+:root {
+  --primary: #2563eb;
+  --dark: #172033;
+  --muted: #64748b;
+  --bg: #f4f7fb;
+  --border: #e2e8f0;
+  --green: #15803d;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--dark);
+  font-family: "Segoe UI", Arial, sans-serif;
+}
+
+button, input, select { font: inherit; }
+button { cursor: pointer; }
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  flex-wrap: wrap;
+  padding: 17px 6%;
+  background: white;
+  border-bottom: 1px solid var(--border);
+}
+
+.logo {
+  font-size: 23px;
+  font-weight: 900;
+  color: var(--primary);
+}
+
+.logo span { color: var(--dark); }
+
+.nav-links {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.nav-links a {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 14px;
+}
+
+.nav-links a:hover,
+.nav-links a.active { color: var(--primary); }
+
+.container {
+  width: min(1250px, 94%);
+  margin: 30px auto;
+}
+
+.hero {
+  padding: 32px;
+  border-radius: 20px;
+  color: white;
+  background: linear-gradient(120deg, #1d4ed8, #6366f1);
+}
+
+.hero h1 { margin: 0 0 12px; font-size: 32px; }
+.hero p { margin: 0; line-height: 1.7; }
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  margin: 22px 0;
+}
+
+.stat, .panel {
+  padding: 20px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 15px;
+}
+
+.stat small { color: var(--muted); }
+.stat h2 { margin: 8px 0 0; color: var(--primary); }
+
+.toolbar {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: 12px;
+  margin: 22px 0;
+}
+
+input, select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: white;
+  outline: none;
+}
+
+input:focus, select:focus {
+  border-color: var(--primary);
+}
+
+.section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 28px 0 16px;
+}
+
+.section-heading h2 { margin: 0; }
+
+.button {
+  padding: 10px 14px;
+  border: none;
+  border-radius: 9px;
+  background: var(--primary);
+  color: white;
+  font-weight: 700;
+}
+
+.button:hover { opacity: .88; }
+
+.button.secondary {
+  color: var(--dark);
+  background: #eaf0ff;
+}
+
+.button.danger { background: #dc2626; }
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.product {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: white;
+  transition: transform .2s, box-shadow .2s;
+}
+
+.product:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 30px #17203312;
+}
+
+.product-top {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 145px;
+  background: linear-gradient(135deg, #eaf0ff, #f8fafc);
+  font-size: 60px;
+}
+
+.product-body { padding: 18px; }
+
+.badge {
+  display: inline-block;
+  padding: 5px 9px;
+  border-radius: 20px;
+  background: #e0e7ff;
+  color: #3730a3;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.product h3 { margin: 12px 0 6px; }
+
+.muted { color: var(--muted); font-size: 13px; }
+
+.price {
+  margin: 15px 0 5px;
+  font-size: 24px;
+  font-weight: 900;
+}
+
+.stock {
+  margin: 8px 0 14px;
+  color: var(--green);
+  font-size: 13px;
+}
+
+.product-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.product-actions button {
+  flex: 1;
+  min-width: 90px;
+  font-size: 12px;
+}
+
+.empty {
+  padding: 35px;
+  text-align: center;
+  color: var(--muted);
+  background: white;
+  border-radius: 14px;
+  border: 1px dashed var(--border);
+}
+
+.table-wrap { overflow-x: auto; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
+
+th, td {
+  padding: 13px;
+  text-align: left;
+  border-bottom: 1px solid var(--border);
+}
+
+th { background: #f8fafc; }
+
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: #0f172a99;
+}
+
+.modal.open { display: flex; }
+
+.modal-content {
+  width: min(500px, 100%);
+  max-height: 85vh;
+  overflow: auto;
+  padding: 25px;
+  border-radius: 16px;
+  background: white;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.close {
+  border: none;
+  background: transparent;
+  font-size: 25px;
+}
+
+.notice {
+  margin-top: 18px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+footer {
+  padding: 25px;
+  text-align: center;
+  color: var(--muted);
+}
+
+@media (max-width: 900px) {
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .toolbar { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 550px) {
+  .grid, .stats, .toolbar { grid-template-columns: 1fr; }
+  .hero { padding: 23px; }
+  .hero h1 { font-size: 26px; }
+}
+</style>
+</head>
+
+<body>
+
+<header class="navbar">
+  <div class="logo">PartPulse <span>MSP</span></div>
+
+  <nav class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="browse.html">Browse Parts</a>
+    <a href="compare.html">Compare</a>
+    <a href="price-tracking.html">Price Tracking</a>
+    <a class="active" href="recommendations.html">Recommendations</a>
+  </nav>
+</header>
+
+<main class="container">
+
+  <section class="hero">
+    <h1>Smart Product Recommendations</h1>
+    <p>
+      Discover suitable spare parts for your mobile device.
+      Search products, filter by model and category, compare prices,
+      and save your favourite parts.
+    </p>
+  </section>
+
+  <section class="stats">
+    <div class="stat">
+      <small>Available Products</small>
+      <h2 id="totalCount">0</h2>
+    </div>
+
+    <div class="stat">
+      <small>Categories</small>
+      <h2 id="categoryCount">0</h2>
+    </div>
+
+    <div class="stat">
+      <small>Saved Favourites</small>
+      <h2 id="favouriteCount">0</h2>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="section-heading">
+      <h2>Find Your Spare Part</h2>
+      <button class="button secondary" onclick="resetFilters()">
+        Reset Filters
+      </button>
+    </div>
+
+    <div class="toolbar">
+      <input
+        id="searchInput"
+        type="search"
+        placeholder="Search part, brand or model..."
+        aria-label="Search products"
+      >
+
+      <select id="modelFilter" aria-label="Filter by mobile model">
+        <option value="">All Mobile Models</option>
+      </select>
+
+      <select id="categoryFilter" aria-label="Filter by category">
+        <option value="">All Categories</option>
+      </select>
+
+      <select id="sortFilter" aria-label="Sort products">
+        <option value="recommended">Recommended</option>
+        <option value="low">Price: Low to High</option>
+        <option value="high">Price: High to Low</option>
+        <option value="rating">Highest Rated</option>
+        <option value="stock">Stock Available</option>
+      </select>
+    </div>
+
+    <label>
+      <input id="favouritesOnly" type="checkbox" style="width:auto">
+      Show favourites only
+    </label>
+  </section>
+
+  <section>
+    <div class="section-heading">
+      <h2>Recommended Spare Parts</h2>
+      <span id="resultCount" class="muted">Loading products...</span>
+    </div>
+
+    <div id="productGrid" class="grid"></div>
+    <p id="message" class="notice" role="status"></p>
+  </section>
+
+  <section class="panel" style="margin-top:30px">
+    <div class="section-heading">
+      <h2>Compare Selected Parts</h2>
+      <button class="button secondary" onclick="clearComparison()">
+        Clear Comparison
+      </button>
+    </div>
+
+    <p class="muted">Select up to three products using the Compare button.</p>
+
+    <div id="comparisonArea" class="table-wrap">
+      <div class="empty">No products selected for comparison.</div>
+    </div>
+  </section>
+
+  <p class="notice">
+    Recommendations are ranked using available product information, ratings,
+    and stock. Demo data is used if the recommendations API is unavailable.
+    Check product details before purchasing.
+  </p>
+
+</main>
+
+<div id="detailsModal" class="modal" role="dialog" aria-modal="true"
+     aria-labelledby="modalTitle" onclick="closeOnBackdrop(event)">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="modalTitle">Product Details</h2>
+      <button class="close" aria-label="Close details" onclick="closeModal()">
+        &times;
+      </button>
+    </div>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<footer>PartPulse MSP · Mobile Spare Parts Management System</footer>
+
+<script>
+"use strict";
+
+const DEMO_PRODUCTS = [
+  {
+    id: 1,
+    partName: "AMOLED Display",
+    model: "iPhone 15",
+    category: "Display",
+    brand: "Apple",
+    price: 6500,
+    quantity: 12,
+    rating: 4.8,
+    reviews: 125,
+    warranty: "6 months",
+    description: "High-quality replacement AMOLED display."
+  },
+  {
+    id: 2,
+    partName: "Battery Replacement",
+    model: "iPhone 15",
+    category: "Battery",
+    brand: "Apple",
+    price: 2800,
+    quantity: 18,
+    rating: 4.7,
+    reviews: 96,
+    warranty: "6 months",
+    description: "Replacement battery for compatible iPhone 15 devices."
+  },
+  {
+    id: 3,
+    partName: "Rear Camera Module",
+    model: "Samsung Galaxy S24",
+    category: "Camera",
+    brand: "Samsung",
+    price: 4200,
+    quantity: 7,
+    rating: 4.6,
+    reviews: 72,
+    warranty: "3 months",
+    description: "Replacement rear camera module."
+  },
+  {
+    id: 4,
+    partName: "USB-C Charging Port",
+    model: "Samsung Galaxy S24",
+    category: "Charging",
+    brand: "Samsung",
+    price: 950,
+    quantity: 25,
+    rating: 4.5,
+    reviews: 63,
+    warranty: "3 months",
+    description: "Charging-port replacement component."
+  },
+  {
+    id: 5,
+    partName: "OLED Display",
+    model: "OnePlus 12",
+    category: "Display",
+    brand: "OnePlus",
+    price: 5200,
+    quantity: 5,
+    rating: 4.7,
+    reviews: 81,
+    warranty: "6 months",
+    description: "Replacement OLED display for OnePlus 12."
+  },
+  {
+    id: 6,
+    partName: "Battery Pack",
+    model: "OnePlus 12",
+    category: "Battery",
+    brand: "OnePlus",
+    price: 1800,
+    quantity: 0,
+    rating: 4.3,
+    reviews: 39,
+    warranty: "3 months",
+    description: "Compatible replacement battery pack."
+  },
+  {
+    id: 7,
+    partName: "Speaker Module",
+    model: "Redmi Note 13",
+    category: "Audio",
+    brand: "Xiaomi",
+    price: 650,
+    quantity: 14,
+    rating: 4.4,
+    reviews: 44,
+    warranty: "3 months",
+    description: "Replacement loudspeaker module."
+  },
+  {
+    id: 8,
+    partName: "Power Button Flex",
+    model: "Redmi Note 13",
+    category: "Buttons",
+    brand: "Xiaomi",
+    price: 350,
+    quantity: 20,
+    rating: 4.2,
+    reviews: 31,
+    warranty: "3 months",
+    description: "Replacement power-button flex cable."
+  },
+  {
+    id: 9,
+    partName: "Front Camera",
+    model: "iPhone 14",
+    category: "Camera",
+    brand: "Apple",
+    price: 1950,
+    quantity: 9,
+    rating: 4.6,
+    reviews: 58,
+    warranty: "3 months",
+    description: "Replacement front-facing camera module."
+  }
+];
+
+const ICONS = {
+  Display: "📱",
+  Battery: "🔋",
+  Camera: "📷",
+  Charging: "🔌",
+  Audio: "🔊",
+  Buttons: "🔘"
+};
+
+let products = [];
+let favourites = new Set(readStorage("mspRecommendationsFavourites", []));
+let comparison = new Set();
+
+function readStorage(key, fallback) {
+  try {
+    const data = JSON.parse(localStorage.getItem(key));
+    return data ?? fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+function writeStorage(key, value) {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    // The page still works for the current session if storage is disabled.
+  }
+}
+
+function money(value) {
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 2
+  }).format(Number(value) || 0);
+}
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, character => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[character]);
+}
+
+function normalizeProduct(item, index) {
+  return {
+    id: item.id ?? item.partId ?? index + 1,
+    partName: item.partName ?? item.name ?? "Spare Part",
+    model: item.model ?? item.mobileModel ?? "General",
+    category: item.category ?? "Other",
+    brand: item.brand ?? "Compatible",
+    price: Number(item.price ?? item.currentPrice ?? 0),
+    quantity: Number(item.quantity ?? item.stock ?? 0),
+    rating: Number(item.rating ?? 4),
+    reviews: Number(item.reviews ?? item.reviewCount ?? 0),
+    warranty: item.warranty ?? "Check with seller",
+    description: item.description ?? "Spare part for the listed mobile model."
+  };
+}
+
+async function loadProducts() {
+  const message = document.getElementById("message");
+
+  try {
+    const response = await fetch("/api/recommendations");
+
+    if (!response.ok) {
+      throw new Error("Recommendations API is unavailable");
+    }
+
+    const data = await response.json();
+    const list = Array.isArray(data)
+      ? data
+      : data.recommendations ?? data.parts ?? data.items ?? data.data;
+
+    if (!Array.isArray(list) || list.length === 0) {
+      throw new Error("No recommendations returned");
+    }
+
+    products = list.map(normalizeProduct);
+    message.textContent = "Recommendations loaded from the server.";
+  } catch {
+    products = DEMO_PRODUCTS.map(normalizeProduct);
+    message.textContent =
+      "Demo products are displayed because the recommendations API did not return data.";
+  }
+
+  populateFilters();
+  updateStats();
+  renderProducts();
+}
+
+function populateFilters() {
+  const modelFilter = document.getElementById("modelFilter");
+  const categoryFilter = document.getElementById("categoryFilter");
+
+  const selectedModel = modelFilter.value;
+  const selectedCategory = categoryFilter.value;
+
+  const models = [...new Set(products.map(p => p.model))].sort();
+  const categories = [...new Set(products.map(p => p.category))].sort();
+
+  modelFilter.innerHTML = '<option value="">All Mobile Models</option>' +
+    models.map(m => `<option value="${escapeHTML(m)}">${escapeHTML(m)}</option>`).join("");
+
+  categoryFilter.innerHTML = '<option value="">All Categories</option>' +
+    categories.map(c => `<option value="${escapeHTML(c)}">${escapeHTML(c)}</option>`).join("");
+
+  modelFilter.value = models.includes(selectedModel) ? selectedModel : "";
+  categoryFilter.value = categories.includes(selectedCategory) ? selectedCategory : "";
+}
+
+function updateStats() {
+  document.getElementById("totalCount").textContent = products.length;
+  document.getElementById("categoryCount").textContent =
+    new Set(products.map(p => p.category)).size;
+  document.getElementById("favouriteCount").textContent = favourites.size;
+}
+
+function getFilteredProducts() {
+  const query = document.getElementById("searchInput").value.trim().toLowerCase();
+  const model = document.getElementById("modelFilter").value;
+  const category = document.getElementById("categoryFilter").value;
+  const onlyFavourites = document.getElementById("favouritesOnly").checked;
+  const sort = document.getElementById("sortFilter").value;
+
+  let result = products.filter(p => {
+    const searchable = [
+      p.partName, p.model, p.category, p.brand
+    ].join(" ").toLowerCase();
+
+    return (!query || searchable.includes(query)) &&
+      (!model || p.model === model) &&
+      (!category || p.category === category) &&
+      (!onlyFavourites || favourites.has(String(p.id)));
+  });
+
+  if (sort === "low") result.sort((a, b) => a.price - b.price);
+  if (sort === "high") result.sort((a, b) => b.price - a.price);
+  if (sort === "rating") result.sort((a, b) => b.rating - a.rating);
+  if (sort === "stock") result.sort((a, b) => b.quantity - a.quantity);
+
+  if (sort === "recommended") {
+    result.sort((a, b) =>
+      (b.rating * 2 + (b.quantity > 0 ? 1 : 0)) -
+      (a.rating * 2 + (a.quantity > 0 ? 1 : 0))
+    );
+  }
+
+  return result;
+}
+
+function renderProducts() {
+  const grid = document.getElementById("productGrid");
+  const result = getFilteredProducts();
+
+  document.getElementById("resultCount").textContent =
+    `${result.length} product${result.length === 1 ? "" : "s"} found`;
+
+  if (!result.length) {
+    grid.innerHTML = '<div class="empty" style="grid-column:1/-1">No matching products. Try changing your filters.</div>';
+    return;
+  }
+
+  grid.innerHTML = result.map(p => {
+    const favourite = favourites.has(String(p.id));
+    const compared = comparison.has(String(p.id));
+    const icon = ICONS[p.category] || "🧩";
+
+    return `
+      <article class="product">
+        <div class="product-top" aria-hidden="true">${icon}</div>
+        <div class="product-body">
+          <span class="badge">${escapeHTML(p.category)}</span>
+          <h3>${escapeHTML(p.partName)}</h3>
+          <div class="muted">${escapeHTML(p.brand)} · ${escapeHTML(p.model)}</div>
+
+          <div class="price">${money(p.price)}</div>
+          <div class="muted">⭐ ${p.rating.toFixed(1)} / 5 (${p.reviews} reviews)</div>
+
+          <div class="stock">
+            ${p.quantity > 0
+              ? `${p.quantity} available in stock`
+              : "Currently out of stock"}
+          </div>
+
+          <div class="product-actions">
+            <button class="button" onclick="showDetails('${escapeHTML(p.id)}')">
+              Details
+            </button>
+            <button class="button secondary"
+              onclick="toggleFavourite('${escapeHTML(p.id)}')">
+              ${favourite ? "♥ Saved" : "♡ Favourite"}
+            </button>
+            <button class="button secondary"
+              onclick="toggleCompare('${escapeHTML(p.id)}')">
+              ${compared ? "✓ Selected" : "⇄ Compare"}
+            </button>
+          </div>
+        </div>
+      </article>`;
+  }).join("");
+}
+
+function toggleFavourite(id) {
+  id = String(id);
+
+  if (favourites.has(id)) {
+    favourites.delete(id);
+  } else {
+    favourites.add(id);
+  }
+
+  writeStorage("mspRecommendationsFavourites", [...favourites]);
+  updateStats();
+  renderProducts();
+}
+
+function toggleCompare(id) {
+  id = String(id);
+
+  if (comparison.has(id)) {
+    comparison.delete(id);
+  } else {
+    if (comparison.size >= 3) {
+      alert("You can compare a maximum of 3 products.");
+      return;
+    }
+    comparison.add(id);
+  }
+
+  renderProducts();
+  renderComparison();
+}
+
+function clearComparison() {
+  comparison.clear();
+  renderProducts();
+  renderComparison();
+}
+
+function renderComparison() {
+  const area = document.getElementById("comparisonArea");
+  const selected = products.filter(p => comparison.has(String(p.id)));
+
+  if (!selected.length) {
+    area.innerHTML = '<div class="empty">No products selected for comparison.</div>';
+    return;
+  }
+
+  area.innerHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th>Specification</th>
+          ${selected.map(p => `<th>${escapeHTML(p.partName)}</th>`).join("")}
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Mobile Model</td>
+          ${selected.map(p => `<td>${escapeHTML(p.model)}</td>`).join("")}
+        </tr>
+        <tr>
+          <td>Category</td>
+          ${selected.map(p => `<td>${escapeHTML(p.category)}</td>`).join("")}
+        </tr>
+        <tr>
+          <td>Price</td>
+          ${selected.map(p => `<td><strong>${money(p.price)}</strong></td>`).join("")}
+        </tr>
+        <tr>
+          <td>Rating</td>
+          ${selected.map(p => `<td>⭐ ${p.rating.toFixed(1)}</td>`).join("")}
+        </tr>
+        <tr>
+          <td>Stock</td>
+          ${selected.map(p => `<td>${p.quantity > 0 ? p.quantity + " available" : "Out of stock"}</td>`).join("")}
+        </tr>
+      </tbody>
+    </table>`;
+}
+
+function showDetails(id) {
+  const p = products.find(item => String(item.id) === String(id));
+  if (!p) return;
+
+  document.getElementById("modalTitle").textContent = p.partName;
+  document.getElementById("modalBody").innerHTML = `
+    <p><strong>Brand:</strong> ${escapeHTML(p.brand)}</p>
+    <p><strong>Compatible Model:</strong> ${escapeHTML(p.model)}</p>
+    <p><strong>Category:</strong> ${escapeHTML(p.category)}</p>
+    <p><strong>Price:</strong> ${money(p.price)}</p>
+    <p><strong>Rating:</strong> ⭐ ${p.rating.toFixed(1)} / 5</p>
+    <p><strong>Reviews:</strong> ${p.reviews}</p>
+    <p><strong>Availability:</strong> ${p.quantity > 0 ? p.quantity + " in stock" : "Out of stock"}</p>
+    <p><strong>Warranty:</strong> ${escapeHTML(p.warranty)}</p>
+    <p>${escapeHTML(p.description)}</p>
+    <button class="button secondary" onclick="toggleFavourite('${escapeHTML(p.id)}')">
+      ${favourites.has(String(p.id)) ? "Remove Favourite" : "Save Favourite"}
+    </button>`;
+
+  document.getElementById("detailsModal").classList.add("open");
+}
+
+function closeModal() {
+  document.getElementById("detailsModal").classList.remove("open");
+}
+
+function closeOnBackdrop(event) {
+  if (event.target.id === "detailsModal") closeModal();
+}
+
+function resetFilters() {
+  document.getElementById("searchInput").value = "";
+  document.getElementById("modelFilter").value = "";
+  document.getElementById("categoryFilter").value = "";
+  document.getElementById("sortFilter").value = "recommended";
+  document.getElementById("favouritesOnly").checked = false;
+  renderProducts();
+}
+
+["searchInput", "modelFilter", "categoryFilter", "sortFilter", "favouritesOnly"]
+  .forEach(id => {
+    document.getElementById(id).addEventListener("input", renderProducts);
+    document.getElementById(id).addEventListener("change", renderProducts);
+  });
+
+document.addEventListener("keydown", event => {
+  if (event.key === "Escape") closeModal();
+});
+
+loadProducts();
+</script>
+
+</body>
+</html>
