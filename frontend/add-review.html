@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Product Reviews & Ratings | PartPulse MSP</title>
+
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --background: #f4f7fb;
+            --surface: #ffffff;
+            --text: #172033;
+            --muted: #64748b;
+            --border: #e2e8f0;
+            --success: #15803d;
+            --danger: #dc2626;
+            --star: #f59e0b;
+            --radius: 14px;
+            --shadow: 0 5px 20px rgba(15, 23, 42, 0.06);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: var(--background);
+            color: var(--text);
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 1.5;
+        }
+
+        button,
+        input,
+        select,
+        textarea {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        .navbar {
+            background: #111827;
+            color: white;
+            padding: 18px 6%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .brand {
+            font-size: 23px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .brand span {
+            color: #60a5fa;
+        }
+
+        .nav-label {
+            color: #cbd5e1;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 1250px;
+            margin: 32px auto;
+            padding: 0 22px;
+        }
+
+        .page-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+
+        h1 {
+            margin: 0 0 7px;
+            font-size: clamp(25px, 4vw, 34px);
+        }
+
+        .subtitle {
+            color: var(--muted);
+            margin: 0;
+        }
+
+        .button {
+            border: none;
+            border-radius: 9px;
+            padding: 11px 16px;
+            font-weight: 700;
+            transition: 0.2s;
+        }
+
+        .button-primary {
+            color: white;
+            background: var(--primary);
+        }
+
+        .button-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .button-secondary {
+            color: var(--text);
+            background: #e9eef6;
+        }
+
+        .button:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
+
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 23px;
+            margin-bottom: 24px;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.6fr;
+            gap: 25px;
+        }
+
+        .average-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            border-right: 1px solid var(--border);
+            padding-right: 20px;
+        }
+
+        .average-number {
+            font-size: 53px;
+            font-weight: 800;
+            line-height: 1.2;
+        }
+
+        .stars {
+            color: var(--star);
+            letter-spacing: 2px;
+            font-size: 21px;
+        }
+
+        .muted {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .rating-row {
+            display: grid;
+            grid-template-columns: 55px 1fr 35px;
+            align-items: center;
+            gap: 12px;
+            margin: 11px 0;
+            font-size: 14px;
+        }
+
+        .rating-row button {
+            border: none;
+            background: transparent;
+            color: var(--text);
+            text-align: left;
+            padding: 0;
+        }
+
+        .rating-row button:hover {
+            color: var(--primary);
+        }
+
+        .progress-track {
+            background: #e9edf4;
+            height: 10px;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            background: var(--star);
+            height: 100%;
+            width: 0;
+            transition: width 0.3s ease;
+        }
+
+        .filters {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 14px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .field label {
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 11px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 9px;
+            background: white;
+            color: var(--text);
+            outline: none;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+        }
+
+        .section-heading {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+        }
+
+        .section-heading h2 {
+            margin: 0;
+            font-size: 21px;
+        }
+
+        .review-list {
+            display: grid;
+            gap: 16px;
+        }
+
+        .review-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .review-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .reviewer {
+            font-weight: 800;
+            margin-bottom: 3px;
+        }
+
+        .review-date {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .review-title {
+            margin: 14px 0 5px;
+            font-size: 17px;
+        }
+
+        .review-comment {
+            margin: 0;
+            color: #475569;
+            white-space: pre-wrap;
+            overflow-wrap: anywhere;
+        }
+
+        .product-tag {
+            display: inline-block;
+            background: #eff6ff;
+            color: #1d4ed8;
+            border-radius: 6px;
+            padding: 4px 8px;
+            font-size: 12px;
+            margin-top: 12px;
+        }
+
+        .verified {
+            display: inline-block;
+            color: var(--success);
+            font-size: 12px;
+            font-weight: 700;
+            margin-top: 10px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 38px 15px;
+            color: var(--muted);
+            background: white;
+            border: 1px dashed #cbd5e1;
+            border-radius: 12px;
+        }
+
+        .status-message {
+            display: none;
+            padding: 12px 14px;
+            border-radius: 9px;
+            margin-bottom: 16px;
+            font-size: 14px;
+        }
+
+        .status-message.show {
+            display: block;
+        }
+
+        .status-message.success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-message.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .status-message.info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        .star-picker {
+            display: flex;
+            gap: 6px;
+            margin: 2px 0;
+        }
+
+        .star-picker button {
+            padding: 0;
+            border: none;
+            background: transparent;
+            color: #cbd5e1;
+            font-size: 34px;
+            line-height: 1;
+        }
+
+        .star-picker button.active {
+            color: var(--star);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 18px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 25px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        [hidden] {
+            display: none !important;
+        }
+
+        @media (max-width: 760px) {
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .average-box {
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+                padding: 0 0 22px;
+            }
+
+            .filters {
+                grid-template-columns: 1fr;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .full-width {
+                grid-column: auto;
+            }
+
+            .panel {
+                padding: 17px;
+            }
+
+            .container {
+                padding: 0 14px;
+                margin-top: 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="navbar">
+    <div class="brand">PartPulse <span>MSP</span></div>
+    <div class="nav-label">Spare Parts Management System</div>
+</header>
+
+<main class="container">
+
+    <section class="page-heading">
+        <div>
+            <h1>Product Reviews & Ratings</h1>
+            <p class="subtitle">
+                Explore customer feedback before choosing a spare part.
+            </p>
+        </div>
+
+        <button class="button button-primary"
+                id="writeReviewButton"
+                type="button">
+            + Write a Review
+        </button>
+    </section>
+
+    <div id="statusMessage"
+         class="status-message"
+         role="status"
+         aria-live="polite"></div>
+
+    <!-- Rating overview -->
+
+    <section class="panel summary-grid" aria-label="Rating summary">
+
+        <div class="average-box">
+            <div class="average-number" id="averageRating">0.0</div>
+
+            <div class="stars" id="averageStars"
+                 aria-label="Average rating">
+                ☆☆☆☆☆
+            </div>
+
+            <p class="muted" id="totalReviews">
+                No reviews yet
+            </p>
+
+            <span class="muted">Overall customer rating</span>
+        </div>
+
+        <div>
+            <h2>Rating Breakdown</h2>
+            <p class="muted">
+                Select a star rating to filter customer reviews.
+            </p>
+
+            <div id="ratingBreakdown"></div>
+        </div>
+
+    </section>
+
+    <!-- Search and filters -->
+
+    <section class="panel">
+
+        <div class="section-heading">
+            <h2>Find Reviews</h2>
+
+            <button class="button button-secondary"
+                    id="clearFiltersButton"
+                    type="button">
+                Clear Filters
+            </button>
+        </div>
+
+        <div class="filters">
+
+            <div class="field">
+                <label for="searchInput">Search reviews</label>
+                <input type="search"
+                       id="searchInput"
+                       placeholder="Search reviewer, product or comment...">
+            </div>
+
+            <div class="field">
+                <label for="ratingFilter">Filter by rating</label>
+                <select id="ratingFilter">
+                    <option value="all">All ratings</option>
+                    <option value="5">5 stars</option>
+                    <option value="4">4 stars</option>
+                    <option value="3">3 stars</option>
+                    <option value="2">2 stars</option>
+                    <option value="1">1 star</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label for="sortFilter">Sort reviews</label>
+                <select id="sortFilter">
+                    <option value="newest">Newest first</option>
+                    <option value="oldest">Oldest first</option>
+                    <option value="highest">Highest rating</option>
+                    <option value="lowest">Lowest rating</option>
+                </select>
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- Review listing -->
+
+    <section class="panel">
+
+        <div class="section-heading">
+            <h2>Customer Feedback</h2>
+            <span class="muted" id="resultsCount">0 reviews</span>
+        </div>
+
+        <div id="reviewList" class="review-list"></div>
+
+        <div id="emptyState" class="empty-state" hidden>
+            <h3>No reviews found</h3>
+            <p>Try changing your search or rating filter.</p>
+        </div>
+
+    </section>
+
+    <!-- Review submission -->
+
+    <section class="panel" id="reviewFormSection">
+
+        <div class="section-heading">
+            <h2>Share Your Experience</h2>
+        </div>
+
+        <p class="muted">
+            Help other customers choose the right spare part.
+        </p>
+
+        <form id="reviewForm">
+
+            <div class="form-grid">
+
+                <div class="field">
+                    <label for="reviewerName">Your Name *</label>
+                    <input id="reviewerName"
+                           name="reviewerName"
+                           type="text"
+                           minlength="2"
+                           maxlength="60"
+                           required
+                           placeholder="Enter your name">
+                </div>
+
+                <div class="field">
+                    <label for="productName">Spare Part *</label>
+                    <input id="productName"
+                           name="productName"
+                           type="text"
+                           maxlength="100"
+                           required
+                           placeholder="e.g. iPhone 15 Display">
+                </div>
+
+                <div class="field full-width">
+                    <label>Your Rating *</label>
+
+                    <div class="star-picker"
+                         id="starPicker"
+                         role="group"
+                         aria-label="Choose a rating from one to five stars">
+
+                        <button type="button" data-rating="1"
+                                aria-label="1 star">★</button>
+                        <button type="button" data-rating="2"
+                                aria-label="2 stars">★</button>
+                        <button type="button" data-rating="3"
+                                aria-label="3 stars">★</button>
+                        <button type="button" data-rating="4"
+                                aria-label="4 stars">★</button>
+                        <button type="button" data-rating="5"
+                                aria-label="5 stars">★</button>
+
+                    </div>
+
+                    <span class="muted" id="selectedRatingText">
+                        Select your rating
+                    </span>
+                </div>
+
+                <div class="field full-width">
+                    <label for="reviewTitle">Review Title *</label>
+                    <input id="reviewTitle"
+                           name="reviewTitle"
+                           type="text"
+                           minlength="3"
+                           maxlength="100"
+                           required
+                           placeholder="Summarize your experience">
+                </div>
+
+                <div class="field full-width">
+                    <label for="reviewComment">Your Review *</label>
+                    <textarea id="reviewComment"
+                              name="reviewComment"
+                              rows="5"
+                              minlength="10"
+                              maxlength="1500"
+                              required
+                              placeholder="Share details about quality, performance, fit and value..."></textarea>
+                    <span class="muted" id="characterCount">
+                        0 / 1500 characters
+                    </span>
+                </div>
+
+            </div>
+
+            <div class="form-actions">
+                <button class="button button-primary"
+                        id="submitReviewButton"
+                        type="submit">
+                    Submit Review
+                </button>
+
+                <button class="button button-secondary"
+                        id="resetFormButton"
+                        type="reset">
+                    Clear Form
+                </button>
+            </div>
+
+        </form>
+
+    </section>
+
+</main>
+
+<footer class="footer">
+    PartPulse MSP · Mobile Spare Parts Management
+</footer>
+
+<script>
+    /*
+     * API CONTRACT
+     *
+     * GET  /api/reviews
+     * Expected response:
+     * [
+     *   {
+     *     "id": 1,
+     *     "reviewerName": "Arun",
+     *     "productName": "iPhone 15 Display",
+     *     "rating": 5,
+     *     "title": "Excellent quality",
+     *     "comment": "Works perfectly.",
+     *     "date": "2026-10-20T10:30:00",
+     *     "verified": false
+     *   }
+     * ]
+     *
+     * POST /api/reviews
+     * Expected request:
+     * {
+     *   "reviewerName": "Arun",
+     *   "productName": "iPhone 15 Display",
+     *   "rating": 5,
+     *   "title": "Excellent quality",
+     *   "comment": "Works perfectly."
+     * }
+     *
+     * These are proposed routes, not confirmed existing backend routes.
+     */
+
+    const API_URL = "/api/reviews";
+
+    const DEMO_REVIEWS = [
+        {
+            id: "demo-1",
+            reviewerName: "Arun Kumar",
+            productName: "iPhone 15 Display",
+            rating: 5,
+            title: "Excellent display quality",
+            comment: "The display quality is very good and the touch response works smoothly. Installation was straightforward.",
+            date: "2026-10-20T10:30:00",
+            verified: false
+        },
+        {
+            id: "demo-2",
+            reviewerName: "Priya S",
+            productName: "Samsung Battery",
+            rating: 4,
+            title: "Good performance",
+            comment: "The battery works well and provides good backup. Delivery and packaging could be improved.",
+            date: "2026-10-18T14:15:00",
+            verified: false
+        },
+        {
+            id: "demo-3",
+            reviewerName: "Karthik R",
+            productName: "USB-C Charging Port",
+            rating: 5,
+            title: "Worth the price",
+            comment: "The spare part fits correctly and charging works as expected. Good value for money.",
+            date: "2026-10-15T09:00:00",
+            verified: false
+        },
+        {
+            id: "demo-4",
+            reviewerName: "Divya M",
+            productName: "iPhone 15 Display",
+            rating: 3,
+            title: "Average experience",
+            comment: "The display works, but the brightness is slightly different from the original component.",
+            date: "2026-10-10T11:45:00",
+            verified: false
+        },
+        {
+            id: "demo-5",
+            reviewerName: "Rahul P",
+            productName: "Samsung Battery",
+            rating: 2,
+            title: "Needs improvement",
+            comment: "The battery backup was lower than expected in my experience.",
+            date: "2026-10-05T16:20:00",
+            verified: false
+        }
+    ];
+
+    let reviews = [];
+    let selectedRating = 0;
+    let usingDemoData = false;
+
+    const elements = {
+        averageRating: document.getElementById("averageRating"),
+        averageStars: document.getElementById("averageStars"),
+        totalReviews: document.getElementById("totalReviews"),
+        ratingBreakdown: document.getElementById("ratingBreakdown"),
+        searchInput: document.getElementById("searchInput"),
+        ratingFilter: document.getElementById("ratingFilter"),
+        sortFilter: document.getElementById("sortFilter"),
+        reviewList: document.getElementById("reviewList"),
+        emptyState: document.getElementById("emptyState"),
+        resultsCount: document.getElementById("resultsCount"),
+        statusMessage: document.getElementById("statusMessage"),
+        reviewForm: document.getElementById("reviewForm"),
+        submitReviewButton: document.getElementById("submitReviewButton"),
+        characterCount: document.getElementById("characterCount")
+    };
+
+    function escapeHTML(value) {
+        return String(value ?? "").replace(/[&<>"']/g, character => ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#039;"
+        })[character]);
+    }
+
+    function normalizeReview(review, index) {
+        const rating = Number(review.rating);
+
+        return {
+            id: String(review.id ?? `review-${index}`),
+            reviewerName: String(
+                review.reviewerName ?? review.reviewer_name ?? "Customer"
+            ),
+            productName: String(
+                review.productName ?? review.product_name ?? "Spare Part"
+            ),
+            rating: Number.isFinite(rating)
+                ? Math.min(5, Math.max(1, Math.round(rating)))
+                : 1,
+            title: String(review.title ?? "Customer review"),
+            comment: String(review.comment ?? review.review ?? ""),
+            date: review.date ?? review.createdAt ?? review.created_at ?? "",
+            verified: review.verified === true
+        };
+    }
+
+    function showMessage(message, type = "info") {
+        elements.statusMessage.textContent = message;
+        elements.statusMessage.className =
+            `status-message show ${type}`;
+    }
+
+    function hideMessage() {
+        elements.statusMessage.className = "status-message";
+        elements.statusMessage.textContent = "";
+    }
+
+    function formatDate(dateValue) {
+        if (!dateValue) return "Date unavailable";
+
+        const date = new Date(dateValue);
+
+        if (Number.isNaN(date.getTime())) {
+            return "Date unavailable";
+        }
+
+        return new Intl.DateTimeFormat("en-IN", {
+            day: "numeric",
+            month: "short",
+            year: "numeric"
+        }).format(date);
+    }
+
+    function makeStars(rating) {
+        const rounded = Math.round(Number(rating) || 0);
+
+        return "★".repeat(rounded) + "☆".repeat(5 - rounded);
+    }
+
+    function calculateAverage(list) {
+        if (list.length === 0) return 0;
+
+        const total = list.reduce(
+            (sum, review) => sum + review.rating, 0
+        );
+
+        return total / list.length;
+    }
+
+    function renderSummary() {
+        const total = reviews.length;
+        const average = calculateAverage(reviews);
+
+        elements.averageRating.textContent = average.toFixed(1);
+        elements.averageStars.textContent = makeStars(average);
+        elements.totalReviews.textContent =
+            `${total} ${total === 1 ? "review" : "reviews"}`;
+
+        let breakdownHTML = "";
+
+        for (let rating = 5; rating >= 1; rating--) {
+            const count = reviews.filter(
+                review => review.rating === rating
+            ).length;
+
+            const percentage = total === 0
+                ? 0
+                : (count / total) * 100;
+
+            breakdownHTML += `
+                <div class="rating-row">
+                    <button type="button"
+                            data-breakdown-rating="${rating}"
+                            aria-label="Show ${rating}-star reviews">
+                        ${rating} ★
+                    </button>
+
+                    <div class="progress-track"
+                         role="progressbar"
+                         aria-label="${rating}-star reviews"
+                         aria-valuemin="0"
+                         aria-valuemax="100"
+                         aria-valuenow="${Math.round(percentage)}">
+
+                        <div class="progress-fill"
+                             style="width:${percentage}%"></div>
+                    </div>
+
+                    <span>${count}</span>
+                </div>
+            `;
+        }
+
+        elements.ratingBreakdown.innerHTML = breakdownHTML;
+    }
+
+    function getFilteredReviews() {
+        const searchTerm =
+            elements.searchInput.value.trim().toLowerCase();
+
+        const selectedFilter = elements.ratingFilter.value;
+
+        let filtered = reviews.filter(review => {
+            const searchableText = [
+                review.reviewerName,
+                review.productName,
+                review.title,
+                review.comment
+            ].join(" ").toLowerCase();
+
+            const matchesSearch =
+                !searchTerm || searchableText.includes(searchTerm);
+
+            const matchesRating =
+                selectedFilter === "all" ||
+                review.rating === Number(selectedFilter);
+
+            return matchesSearch && matchesRating;
+        });
+
+        switch (elements.sortFilter.value) {
+            case "oldest":
+                filtered.sort((a, b) =>
+                    dateValue(a.date) - dateValue(b.date)
+                );
+                break;
+
+            case "highest":
+                filtered.sort((a, b) =>
+                    b.rating - a.rating ||
+                    dateValue(b.date) - dateValue(a.date)
+                );
+                break;
+
+            case "lowest":
+                filtered.sort((a, b) =>
+                    a.rating - b.rating ||
+                    dateValue(b.date) - dateValue(a.date)
+                );
+                break;
+
+            case "newest":
+            default:
+                filtered.sort((a, b) =>
+                    dateValue(b.date) - dateValue(a.date)
+                );
+        }
+
+        return filtered;
+    }
+
+    function dateValue(value) {
+        const timestamp = new Date(value).getTime();
+
+        return Number.isNaN(timestamp) ? 0 : timestamp;
+    }
+
+    function renderReviews() {
+        const filtered = getFilteredReviews();
+
+        elements.resultsCount.textContent =
+            `${filtered.length} ${filtered.length === 1 ? "review" : "reviews"}`;
+
+        elements.emptyState.hidden = filtered.length !== 0;
+        elements.reviewList.hidden = filtered.length === 0;
+
+        elements.reviewList.innerHTML = filtered.map(review => `
+            <article class="review-card">
+
+                <div class="review-top">
+                    <div>
+                        <div class="reviewer">
+                            ${escapeHTML(review.reviewerName)}
+                        </div>
+
+                        <div class="review-date">
+                            ${escapeHTML(formatDate(review.date))}
+                        </div>
+                    </div>
+
+                    <div class="stars"
+                         aria-label="${review.rating} out of 5 stars">
+                        ${makeStars(review.rating)}
+                    </div>
+                </div>
+
+                <h3 class="review-title">
+                    ${escapeHTML(review.title)}
+                </h3>
+
+                <p class="review-comment">
+                    ${escapeHTML(review.comment)}
+                </p>
+
+                <span class="product-tag">
+                    ${escapeHTML(review.productName)}
+                </span>
+
+                ${review.verified
+                    ? '<div class="verified">✓ Verified purchase</div>'
+                    : ''}
+
+            </article>
+        `).join("");
+    }
+
+    function renderAll() {
+        renderSummary();
+        renderReviews();
+    }
+
+    async function loadReviews() {
+        showMessage("Loading product reviews...", "info");
+
+        try {
+            const response = await fetch(API_URL, {
+                headers: {
+                    "Accept": "application/json"
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error(`API returned HTTP ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            if (!Array.isArray(data)) {
+                throw new Error("The reviews API must return a JSON array.");
+            }
+
+            reviews = data.map(normalizeReview);
+            usingDemoData = false;
+
+            hideMessage();
+            renderAll();
+
+        } catch (error) {
+            /*
+             * DEMO MODE:
+             * Used when the backend endpoint is not available.
+             * Demo reviews are not real customer feedback.
+             */
+            reviews = DEMO_REVIEWS.map(normalizeReview);
+            usingDemoData = true;
+
+            renderAll();
+
+            showMessage(
+                "Demo mode: sample reviews are displayed because the review API is unavailable. Connect the backend to load real reviews.",
+                "info"
+            );
+
+            console.info("Reviews API unavailable:", error.message);
+        }
+    }
+
+    function setSelectedRating(rating) {
+        selectedRating = rating;
+
+        document.querySelectorAll("#starPicker button")
+            .forEach(button => {
+                const value = Number(button.dataset.rating);
+
+                button.classList.toggle(
+                    "active",
+                    value <= selectedRating
+                );
+
+                button.setAttribute(
+                    "aria-pressed",
+                    String(value === selectedRating)
+                );
+            });
+
+        const labels = {
+            1: "Poor",
+            2: "Fair",
+            3: "Good",
+            4: "Very good",
+            5: "Excellent"
+        };
+
+        document.getElementById("selectedRatingText").textContent =
+            selectedRating
+                ? `${selectedRating} / 5 — ${labels[selectedRating]}`
+                : "Select your rating";
+    }
+
+    function resetStarPicker() {
+        setSelectedRating(0);
+    }
+
+    function validateReview(review) {
+        if (review.reviewerName.trim().length < 2) {
+            return "Please enter a valid name.";
+        }
+
+        if (review.productName.trim().length < 2) {
+            return "Please enter a valid spare part name.";
+        }
+
+        if (selectedRating < 1 || selectedRating > 5) {
+            return "Please select a star rating.";
+        }
+
+        if (review.title.trim().length < 3) {
+            return "Review title must contain at least 3 characters.";
+        }
+
+        if (review.comment.trim().length < 10) {
+            return "Your review must contain at least 10 characters.";
+        }
+
+        return null;
+    }
+
+    async function submitReview(event) {
+        event.preventDefault();
+        hideMessage();
+
+        const review = {
+            reviewerName:
+                document.getElementById("reviewerName").value.trim(),
+
+            productName:
+                document.getElementById("productName").value.trim(),
+
+            rating: selectedRating,
+
+            title:
+                document.getElementById("reviewTitle").value.trim(),
+
+            comment:
+                document.getElementById("reviewComment").value.trim()
+        };
+
+        const validationError = validateReview(review);
+
+        if (validationError) {
+            showMessage(validationError, "error");
+            return;
+        }
+
+        elements.submitReviewButton.disabled = true;
+        elements.submitReviewButton.textContent = "Submitting...";
+
+        try {
+            /*
+             * Never report a review as saved permanently unless
+             * the backend confirms that it has been stored.
+             */
+            const response = await fetch(API_URL, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
+                body: JSON.stringify(review)
+            });
+
+            if (!response.ok) {
+                throw new Error(
+                    `Could not save review (HTTP ${response.status}).`
+                );
+            }
+
+            const savedReview = await response.json();
+
+            reviews.unshift(normalizeReview({
+                ...review,
+                ...savedReview,
+                date: savedReview.date ??
+                    savedReview.createdAt ??
+                    new Date().toISOString()
+            }, Date.now()));
+
+            /*
+             * The server is now the source of truth.
+             * Reloading checks that the new review is available.
+             */
+            elements.reviewForm.reset();
+            resetStarPicker();
+            updateCharacterCount();
+
+            renderAll();
+
+            showMessage(
+                "Your review was submitted successfully.",
+                "success"
+            );
+
+        } catch (error) {
+            /*
+             * Demo data is intentionally not saved to the backend
+             * or presented as a successful permanent submission.
+             */
+            showMessage(
+                usingDemoData
+                    ? "Review submission is unavailable in demo mode. Configure POST /api/reviews in your Java backend to save reviews."
+                    : `${error.message} Please try again.`,
+                "error"
+            );
+
+            console.error("Review submission failed:", error);
+
+        } finally {
+            elements.submitReviewButton.disabled = false;
+            elements.submitReviewButton.textContent = "Submit Review";
+        }
+    }
+
+    function updateCharacterCount() {
+        const comment = document.getElementById("reviewComment");
+
+        elements.characterCount.textContent =
+            `${comment.value.length} / 1500 characters`;
+    }
+
+    // Search, filters and sorting
+
+    elements.searchInput.addEventListener("input", renderReviews);
+    elements.ratingFilter.addEventListener("change", renderReviews);
+    elements.sortFilter.addEventListener("change", renderReviews);
+
+    document.getElementById("clearFiltersButton")
+        .addEventListener("click", () => {
+            elements.searchInput.value = "";
+            elements.ratingFilter.value = "all";
+            elements.sortFilter.value = "newest";
+            renderReviews();
+        });
+
+    // Click a rating in the breakdown to filter reviews.
+
+    elements.ratingBreakdown.addEventListener("click", event => {
+        const button = event.target.closest("[data-breakdown-rating]");
+
+        if (!button) return;
+
+        elements.ratingFilter.value =
+            button.dataset.breakdownRating;
+
+        renderReviews();
+
+        document.querySelector(".review-list")
+            .scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+    });
+
+    // Interactive star picker.
+
+    document.getElementById("starPicker")
+        .addEventListener("click", event => {
+            const button = event.target.closest("[data-rating]");
+
+            if (!button) return;
+
+            setSelectedRating(Number(button.dataset.rating));
+        });
+
+    // Open the form from the top button.
+
+    document.getElementById("writeReviewButton")
+        .addEventListener("click", () => {
+            document.getElementById("reviewFormSection")
+                .scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
+
+            document.getElementById("reviewerName").focus({
+                preventScroll: true
+            });
+        });
+
+    elements.reviewForm.addEventListener("submit", submitReview);
+
+    document.getElementById("reviewComment")
+        .addEventListener("input", updateCharacterCount);
+
+    document.getElementById("resetFormButton")
+        .addEventListener("click", () => {
+            setTimeout(() => {
+                resetStarPicker();
+                updateCharacterCount();
+                hideMessage();
+            }, 0);
+        });
+
+    // Start the application.
+
+    loadReviews();
+</script>
+
+</body>
+</html>
