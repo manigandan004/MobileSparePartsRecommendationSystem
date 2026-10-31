@@ -1,1 +1,1122 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Compare Spare Parts</title><link rel="stylesheet" href="style.css"></head><body><main class="container"><a href="index.html">← Home</a><h1>Compare Spare Parts</h1><input id="ids" value="1,2" placeholder="Part IDs e.g. 1,2,3"><button onclick="load()">Compare</button><div id="out"></div></main><script>async function load(){const x=await fetch('/api/compare?ids='+encodeURIComponent(ids.value)).then(r=>r.json());out.innerHTML='<table><tr><th>Part</th><th>Model</th><th>Price</th><th>Stock</th></tr>'+x.map(p=>`<tr><td>${p.partName}</td><td>${p.model}</td><td>₹${p.price}</td><td>${p.quantity}</td></tr>`).join('')+'</table>'}</script></body></html>
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Compare Spare Parts | PartPulse MSP</title>
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --background: #f4f7fb;
+      --surface: #ffffff;
+      --text: #172033;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --success: #15803d;
+      --danger: #dc2626;
+      --radius: 16px;
+      --shadow: 0 8px 25px rgba(15, 23, 42, 0.06);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--background);
+      color: var(--text);
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+    }
+
+    button, input, select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .navbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 18px;
+      padding: 18px 6%;
+      background: white;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      color: var(--primary);
+      font-size: 23px;
+      font-weight: 900;
+    }
+
+    .logo span {
+      color: var(--text);
+    }
+
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--primary);
+    }
+
+    .page {
+      width: min(1250px, 92%);
+      margin: 30px auto 60px;
+    }
+
+    .breadcrumb {
+      margin-bottom: 20px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .hero {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 25px;
+    }
+
+    .hero h1 {
+      margin: 0 0 10px;
+      font-size: clamp(26px, 4vw, 36px);
+      letter-spacing: -1px;
+    }
+
+    .hero p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 7px 12px;
+      border-radius: 30px;
+      background: #dbeafe;
+      color: #1d4ed8;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .panel {
+      padding: 23px;
+      margin-bottom: 24px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+
+    .panel h2 {
+      margin: 0 0 8px;
+      font-size: 20px;
+    }
+
+    .muted {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .field label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .field select,
+    .field input {
+      width: 100%;
+      min-height: 44px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: white;
+      color: var(--text);
+      outline: none;
+    }
+
+    .field select:focus,
+    .field input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, .1);
+    }
+
+    .button-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .btn {
+      padding: 11px 16px;
+      border: 0;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 800;
+      transition: .2s;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-dark);
+    }
+
+    .btn-secondary {
+      background: #eaf0f8;
+      color: var(--text);
+    }
+
+    .btn-danger {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .comparison-summary {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 15px;
+      margin-bottom: 24px;
+    }
+
+    .summary-card {
+      padding: 20px;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .summary-card span {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .summary-card strong {
+      font-size: 23px;
+    }
+
+    .summary-card small {
+      display: block;
+      margin-top: 6px;
+      color: var(--muted);
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+    }
+
+    table {
+      width: 100%;
+      min-width: 650px;
+      border-collapse: collapse;
+      background: white;
+    }
+
+    th, td {
+      padding: 15px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+
+    thead th {
+      background: #f8fafc;
+      font-weight: 800;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody td:first-child {
+      width: 180px;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .best-value {
+      background: #f0fdf4;
+      color: var(--success);
+      font-weight: 800;
+    }
+
+    .price {
+      color: var(--primary);
+      font-size: 19px;
+      font-weight: 900;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 6px 9px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .in-stock {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .low-stock {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .out-stock {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .recommendation {
+      margin-top: 20px;
+      padding: 17px;
+      border: 1px solid #bbf7d0;
+      border-radius: 12px;
+      background: #f0fdf4;
+      line-height: 1.7;
+    }
+
+    .recommendation strong {
+      color: #166534;
+    }
+
+    .empty-state {
+      padding: 35px 20px;
+      text-align: center;
+      color: var(--muted);
+      border: 1px dashed #cbd5e1;
+      border-radius: 12px;
+      background: #f8fafc;
+    }
+
+    .notice {
+      display: none;
+      padding: 12px 14px;
+      margin-top: 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .notice.show {
+      display: block;
+    }
+
+    .notice.info {
+      color: #1e40af;
+      background: #dbeafe;
+    }
+
+    .notice.error {
+      color: #991b1b;
+      background: #fee2e2;
+    }
+
+    .notice.success {
+      color: #166534;
+      background: #dcfce7;
+    }
+
+    .footer {
+      padding: 25px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    @media (max-width: 760px) {
+      .controls,
+      .comparison-summary {
+        grid-template-columns: 1fr;
+      }
+
+      .panel {
+        padding: 17px;
+      }
+
+      .navbar {
+        padding: 16px 4%;
+      }
+    }
+
+    @media print {
+      .navbar,
+      .controls-panel,
+      .button-row,
+      .footer {
+        display: none !important;
+      }
+
+      body {
+        background: white;
+      }
+
+      .page {
+        width: 100%;
+        margin: 0;
+      }
+
+      .panel,
+      .summary-card {
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="navbar">
+    <a class="logo" href="index.html">PartPulse <span>MSP</span></a>
+
+    <nav class="nav-links" aria-label="Main navigation">
+      <a href="index.html">Home</a>
+      <a href="browse.html">Browse Parts</a>
+      <a href="recommendations.html">Recommendations</a>
+      <a href="compare.html" class="active">Compare Parts</a>
+      <a href="cart.html">Cart</a>
+      <a href="orders.html">Orders</a>
+    </nav>
+  </header>
+
+  <main class="page">
+
+    <div class="breadcrumb">
+      Home / Spare Parts / <strong>Compare Spare Parts</strong>
+    </div>
+
+    <section class="hero">
+      <div>
+        <span class="badge">MSPR-14 · Comparison Tool</span>
+        <h1>Compare Spare Parts</h1>
+        <p>
+          Compare prices, compatibility, ratings and stock availability
+          before choosing a spare part.
+        </p>
+      </div>
+
+      <button class="btn btn-secondary" onclick="window.print()">
+        Print Comparison
+      </button>
+    </section>
+
+    <section class="panel controls-panel">
+      <h2>Build Your Comparison</h2>
+      <p class="muted">
+        Select up to three spare parts. The comparison uses available
+        product data and highlights the lowest price and best rating.
+      </p>
+
+      <div class="controls">
+        <div class="field">
+          <label for="part1">Spare Part 1</label>
+          <select id="part1"></select>
+        </div>
+
+        <div class="field">
+          <label for="part2">Spare Part 2</label>
+          <select id="part2"></select>
+        </div>
+
+        <div class="field">
+          <label for="part3">Spare Part 3</label>
+          <select id="part3"></select>
+        </div>
+      </div>
+
+      <div class="button-row">
+        <button class="btn btn-primary" id="compareBtn">
+          Compare Selected Parts
+        </button>
+
+        <button class="btn btn-secondary" id="sampleBtn">
+          Load Sample Comparison
+        </button>
+
+        <button class="btn btn-secondary" id="resetBtn">
+          Reset
+        </button>
+      </div>
+
+      <div id="notice" class="notice" role="status" aria-live="polite"></div>
+    </section>
+
+    <section class="comparison-summary">
+      <div class="summary-card">
+        <span>Lowest Price</span>
+        <strong id="lowestPrice">—</strong>
+        <small id="lowestName">Select parts to compare</small>
+      </div>
+
+      <div class="summary-card">
+        <span>Highest Customer Rating</span>
+        <strong id="highestRating">—</strong>
+        <small id="highestName">Rating information</small>
+      </div>
+
+      <div class="summary-card">
+        <span>Parts Compared</span>
+        <strong id="partsCount">0</strong>
+        <small>Selected products</small>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Detailed Comparison</h2>
+      <p class="muted">
+        Green cells identify the best available value for that specification.
+      </p>
+
+      <div id="comparisonArea">
+        <div class="empty-state">
+          <h3>No comparison yet</h3>
+          <p>Select two or three parts and click Compare Selected Parts.</p>
+        </div>
+      </div>
+
+      <div id="recommendation" class="recommendation" hidden></div>
+    </section>
+
+    <section class="panel">
+      <h2>How the comparison works</h2>
+
+      <p class="muted">
+        <strong>Price:</strong> Compares the listed selling prices.
+      </p>
+
+      <p class="muted">
+        <strong>Compatibility:</strong> Shows the model associated with each
+        spare part. Always confirm compatibility before purchasing.
+      </p>
+
+      <p class="muted">
+        <strong>Stock:</strong> Indicates whether the item is available,
+        running low or out of stock according to the loaded product data.
+      </p>
+
+      <p class="muted">
+        <strong>Recommendation:</strong> Provides a simple comparison based
+        on price, rating and availability. It is not a guarantee of product quality.
+      </p>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    PartPulse MSP · MSPR-14 Compare Spare Parts
+  </footer>
+
+  <script>
+    "use strict";
+
+    const DEMO_PARTS = [
+      {
+        id: 1,
+        partName: "iPhone 15 Display",
+        model: "iPhone 15",
+        category: "Display",
+        price: 6500,
+        quantity: 12,
+        rating: 4.7,
+        warranty: "6 months",
+        condition: "New"
+      },
+      {
+        id: 2,
+        partName: "iPhone 15 Battery",
+        model: "iPhone 15",
+        category: "Battery",
+        price: 2400,
+        quantity: 18,
+        rating: 4.5,
+        warranty: "6 months",
+        condition: "New"
+      },
+      {
+        id: 3,
+        partName: "Samsung S24 Display",
+        model: "Samsung Galaxy S24",
+        category: "Display",
+        price: 7200,
+        quantity: 5,
+        rating: 4.8,
+        warranty: "3 months",
+        condition: "New"
+      }
+    ];
+
+    let allParts = [];
+    let currentComparison = [];
+
+    const $ = id => document.getElementById(id);
+
+    function money(value) {
+      const number = Number(value);
+
+      if (!Number.isFinite(number)) {
+        return "Not available";
+      }
+
+      return new Intl.NumberFormat("en-IN", {
+        style: "currency",
+        currency: "INR",
+        maximumFractionDigits: 2
+      }).format(number);
+    }
+
+    function safeText(value, fallback = "Not available") {
+      if (value === null || value === undefined || value === "") {
+        return fallback;
+      }
+
+      return String(value);
+    }
+
+    function escapeHTML(value) {
+      return String(value).replace(/[&<>"']/g, character => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;"
+      })[character]);
+    }
+
+    function notify(message, type = "info") {
+      const box = $("notice");
+
+      box.textContent = message;
+      box.className = "notice show " + type;
+    }
+
+    async function loadParts() {
+      /*
+       * Uses the shared API helper if it is already available.
+       * Otherwise, tries the existing backend endpoint directly.
+       */
+      const endpoints = [
+        "/api/spare-parts",
+        "/api/parts"
+      ];
+
+      if (window.API && typeof window.API.get === "function") {
+        for (const endpoint of endpoints) {
+          try {
+            const result = await window.API.get(endpoint);
+            const list = extractArray(result);
+
+            if (list.length) {
+              return normalizeParts(list);
+            }
+          } catch (error) {
+            // Try the next endpoint.
+          }
+        }
+      } else {
+        for (const endpoint of endpoints) {
+          try {
+            const response = await fetch(endpoint);
+
+            if (!response.ok) {
+              continue;
+            }
+
+            const result = await response.json();
+            const list = extractArray(result);
+
+            if (list.length) {
+              return normalizeParts(list);
+            }
+          } catch (error) {
+            // The page may be opened without a running backend.
+          }
+        }
+      }
+
+      return DEMO_PARTS.map(part => ({ ...part }));
+    }
+
+    function extractArray(result) {
+      if (Array.isArray(result)) {
+        return result;
+      }
+
+      if (result && typeof result === "object") {
+        for (const key of ["parts", "items", "data", "results"]) {
+          if (Array.isArray(result[key])) {
+            return result[key];
+          }
+        }
+      }
+
+      return [];
+    }
+
+    function normalizeParts(parts) {
+      return parts.map((part, index) => ({
+        id: part.id ?? part.partId ?? index + 1,
+
+        partName: part.partName
+          ?? part.name
+          ?? part.title
+          ?? "Unnamed spare part",
+
+        model: part.model
+          ?? part.modelName
+          ?? "Not specified",
+
+        category: part.category
+          ?? part.type
+          ?? "General",
+
+        price: Number(part.price ?? part.currentPrice ?? 0),
+
+        quantity: Number(
+          part.quantity ?? part.stock ?? part.availableQuantity ?? 0
+        ),
+
+        rating: Number(part.rating ?? part.averageRating ?? 0),
+
+        warranty: part.warranty ?? "Not specified",
+
+        condition: part.condition ?? "Not specified"
+      }));
+    }
+
+    function stockStatus(quantity) {
+      if (quantity <= 0) {
+        return {
+          label: "Out of stock",
+          css: "out-stock"
+        };
+      }
+
+      if (quantity <= 5) {
+        return {
+          label: "Low stock",
+          css: "low-stock"
+        };
+      }
+
+      return {
+        label: "In stock",
+        css: "in-stock"
+      };
+    }
+
+    function populateSelectors() {
+      const selectors = ["part1", "part2", "part3"];
+
+      for (const selectorId of selectors) {
+        const selector = $(selectorId);
+
+        selector.innerHTML =
+          '<option value="">Select a spare part</option>';
+
+        allParts.forEach((part, index) => {
+          const option = document.createElement("option");
+
+          option.value = String(index);
+          option.textContent =
+            `${part.partName} — ${money(part.price)}`;
+
+          selector.appendChild(option);
+        });
+      }
+
+      // Preselect up to three products when available.
+      selectors.forEach((id, index) => {
+        if (allParts[index]) {
+          $(id).value = String(index);
+        }
+      });
+    }
+
+    function selectedParts() {
+      const indexes = ["part1", "part2", "part3"]
+        .map(id => $(id).value)
+        .filter(value => value !== "")
+        .map(Number);
+
+      const uniqueIndexes = [...new Set(indexes)];
+
+      return uniqueIndexes
+        .map(index => allParts[index])
+        .filter(Boolean);
+    }
+
+    function getBestIndex(parts, valueFunction, direction = "min") {
+      const values = parts
+        .map(valueFunction)
+        .filter(value => Number.isFinite(value));
+
+      if (!values.length) {
+        return -1;
+      }
+
+      const target = direction === "max"
+        ? Math.max(...values)
+        : Math.min(...values);
+
+      return parts.findIndex(part => valueFunction(part) === target);
+    }
+
+    function renderSummary(parts) {
+      $("partsCount").textContent = String(parts.length);
+
+      if (!parts.length) {
+        $("lowestPrice").textContent = "—";
+        $("lowestName").textContent = "Select parts to compare";
+        $("highestRating").textContent = "—";
+        $("highestName").textContent = "Rating information";
+        return;
+      }
+
+      const pricedParts = parts.filter(part =>
+        Number.isFinite(part.price) && part.price > 0
+      );
+
+      const lowest = pricedParts.length
+        ? pricedParts.reduce((a, b) => a.price <= b.price ? a : b)
+        : null;
+
+      const ratedParts = parts.filter(part =>
+        Number.isFinite(part.rating) && part.rating > 0
+      );
+
+      const bestRated = ratedParts.length
+        ? ratedParts.reduce((a, b) => a.rating >= b.rating ? a : b)
+        : null;
+
+      $("lowestPrice").textContent =
+        lowest ? money(lowest.price) : "N/A";
+
+      $("lowestName").textContent =
+        lowest ? lowest.partName : "No valid prices available";
+
+      $("highestRating").textContent =
+        bestRated ? `${bestRated.rating.toFixed(1)} / 5` : "N/A";
+
+      $("highestName").textContent =
+        bestRated ? bestRated.partName : "No ratings available";
+    }
+
+    function renderTable(parts) {
+      const rows = [
+        {
+          label: "Product Name",
+          value: p => p.partName
+        },
+        {
+          label: "Model",
+          value: p => p.model
+        },
+        {
+          label: "Category",
+          value: p => p.category
+        },
+        {
+          label: "Price",
+          value: p => money(p.price),
+          best: p => Number.isFinite(p.price) && p.price > 0,
+          direction: "min",
+          number: p => p.price,
+          className: "price"
+        },
+        {
+          label: "Customer Rating",
+          value: p => p.rating > 0
+            ? `${p.rating.toFixed(1)} / 5`
+            : "Not rated",
+          best: p => p.rating > 0,
+          direction: "max",
+          number: p => p.rating
+        },
+        {
+          label: "Stock Quantity",
+          value: p => String(p.quantity),
+          best: p => p.quantity >= 0,
+          direction: "max",
+          number: p => p.quantity
+        },
+        {
+          label: "Availability",
+          value: p => {
+            const status = stockStatus(p.quantity);
+
+            return `<span class="status ${status.css}">` +
+              `${status.label}</span>`;
+          }
+        },
+        {
+          label: "Warranty",
+          value: p => p.warranty
+        },
+        {
+          label: "Condition",
+          value: p => p.condition
+        }
+      ];
+
+      let html = `
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Specification</th>
+                ${parts.map((part, index) => `
+                  <th>Option ${index + 1}</th>
+                `).join("")}
+              </tr>
+            </thead>
+            <tbody>
+      `;
+
+      for (const row of rows) {
+        let bestIndex = -1;
+
+        if (row.number && row.direction) {
+          bestIndex = getBestIndex(
+            parts,
+            row.number,
+            row.direction
+          );
+        }
+
+        html += `<tr><td>${escapeHTML(row.label)}</td>`;
+
+        parts.forEach((part, index) => {
+          const isBest = index === bestIndex;
+          const rawValue = row.value(part);
+          const safeValue = row.label === "Availability"
+            ? rawValue
+            : escapeHTML(rawValue);
+
+          html += `
+            <td class="${isBest ? "best-value" : ""}">
+              ${row.className === "price" && isBest ? "★ " : ""}
+              ${row.className === "price"
+                ? `<span class="price">${safeValue}</span>`
+                : safeValue}
+              ${isBest && row.number ? " ✓ Best" : ""}
+            </td>
+          `;
+        });
+
+        html += "</tr>";
+      }
+
+      html += "</tbody></table></div>";
+
+      $("comparisonArea").innerHTML = html;
+    }
+
+    function renderRecommendation(parts) {
+      const box = $("recommendation");
+
+      if (!parts.length) {
+        box.hidden = true;
+        return;
+      }
+
+      const available = parts.filter(part => part.quantity > 0);
+
+      if (!available.length) {
+        box.innerHTML = `
+          <strong>Availability warning</strong><br>
+          None of the selected parts currently shows available stock.
+          Check inventory before placing an order.
+        `;
+
+        box.hidden = false;
+        return;
+      }
+
+      const ranked = [...available].sort((a, b) => {
+        const priceA = a.price > 0 ? a.price : Infinity;
+        const priceB = b.price > 0 ? b.price : Infinity;
+
+        // Prefer available stock, then higher rating, then lower price.
+        if (b.rating !== a.rating) {
+          return b.rating - a.rating;
+        }
+
+        return priceA - priceB;
+      });
+
+      const best = ranked[0];
+
+      box.innerHTML = `
+        <strong>Comparison insight: ${escapeHTML(best.partName)}</strong><br>
+        This is the highest-rated available option among the selected
+        products with the available data. Listed price:
+        <strong>${money(best.price)}</strong>.
+        Stock quantity: ${best.quantity}.
+        Confirm model compatibility and warranty before purchasing.
+      `;
+
+      box.hidden = false;
+    }
+
+    function compare() {
+      const parts = selectedParts();
+
+      if (parts.length < 2) {
+        notify(
+          "Please select at least two different spare parts to compare.",
+          "error"
+        );
+        return;
+      }
+
+      currentComparison = parts;
+
+      renderSummary(parts);
+      renderTable(parts);
+      renderRecommendation(parts);
+
+      notify(
+        `Successfully compared ${parts.length} spare parts.`,
+        "success"
+      );
+    }
+
+    function resetComparison() {
+      ["part1", "part2", "part3"].forEach(id => {
+        $(id).value = "";
+      });
+
+      currentComparison = [];
+
+      renderSummary([]);
+      $("comparisonArea").innerHTML = `
+        <div class="empty-state">
+          <h3>No comparison yet</h3>
+          <p>Select two or three parts and click Compare Selected Parts.</p>
+        </div>
+      `;
+
+      $("recommendation").hidden = true;
+      $("notice").className = "notice";
+    }
+
+    function loadSampleComparison() {
+      if (allParts.length < 2) {
+        notify(
+          "At least two spare parts are required for comparison.",
+          "error"
+        );
+        return;
+      }
+
+      ["part1", "part2", "part3"].forEach((id, index) => {
+        $(id).value = allParts[index] ? String(index) : "";
+      });
+
+      compare();
+    }
+
+    async function initialize() {
+      $("comparisonArea").innerHTML = `
+        <div class="empty-state">Loading spare parts...</div>
+      `;
+
+      try {
+        allParts = await loadParts();
+        populateSelectors();
+
+        if (allParts.length < 2) {
+          $("comparisonArea").innerHTML = `
+            <div class="empty-state">
+              Not enough spare parts are available to compare.
+            </div>
+          `;
+
+          notify(
+            "Load at least two products into the spare-parts inventory.",
+            "info"
+          );
+          return;
+        }
+
+        notify(
+          "Product data loaded. Select parts and start comparing.",
+          "info"
+        );
+
+        // Display an initial comparison when products are available.
+        compare();
+      } catch (error) {
+        console.error("Comparison initialization failed:", error);
+
+        allParts = DEMO_PARTS.map(part => ({ ...part }));
+        populateSelectors();
+        compare();
+
+        notify(
+          "Live product data could not be loaded. Showing sample data.",
+          "info"
+        );
+      }
+    }
+
+    $("compareBtn").addEventListener("click", compare);
+    $("resetBtn").addEventListener("click", resetComparison);
+    $("sampleBtn").addEventListener("click", loadSampleComparison);
+
+    initialize();
+  </script>
+
+</body>
+</html>
+```
