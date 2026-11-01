@@ -1,0 +1,1393 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Filter Spare Parts | PartPulse MSP</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --background: #f4f7fb;
+            --surface: #ffffff;
+            --text: #172033;
+            --muted: #64748b;
+            --border: #e2e8f0;
+            --success: #15803d;
+            --warning: #b45309;
+            --danger: #b91c1c;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        header {
+            background: #111827;
+            color: white;
+            padding: 18px 6%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .brand {
+            font-size: 23px;
+            font-weight: 800;
+        }
+
+        .brand span {
+            color: #60a5fa;
+        }
+
+        nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+        }
+
+        nav a {
+            color: #dbeafe;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        nav a:hover,
+        nav a.active {
+            color: white;
+            text-decoration: underline;
+        }
+
+        .container {
+            width: min(1300px, 94%);
+            margin: 30px auto;
+        }
+
+        .hero {
+            background: linear-gradient(120deg, #1d4ed8, #4338ca);
+            color: white;
+            padding: 34px;
+            border-radius: 18px;
+            margin-bottom: 25px;
+        }
+
+        .hero h1 {
+            font-size: clamp(27px, 4vw, 38px);
+            margin-bottom: 8px;
+        }
+
+        .hero p {
+            color: #dbeafe;
+            max-width: 700px;
+        }
+
+        .layout {
+            display: grid;
+            grid-template-columns: 285px minmax(0, 1fr);
+            gap: 24px;
+            align-items: start;
+        }
+
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 22px;
+            box-shadow: 0 5px 18px #0f172a08;
+        }
+
+        .filter-panel {
+            position: sticky;
+            top: 15px;
+        }
+
+        .filter-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 22px;
+        }
+
+        h2 {
+            font-size: 20px;
+        }
+
+        .filter-group {
+            margin-bottom: 21px;
+        }
+
+        .filter-group label,
+        .filter-label {
+            display: block;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 11px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            background: white;
+            color: var(--text);
+            font-size: 14px;
+        }
+
+        input:focus,
+        select:focus {
+            outline: 2px solid #93c5fd;
+            border-color: var(--primary);
+        }
+
+        .price-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 9px;
+        }
+
+        .stock-option {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            margin: 10px 0;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .stock-option input {
+            width: auto;
+            accent-color: var(--primary);
+        }
+
+        button {
+            padding: 11px 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #1e293b;
+        }
+
+        .btn-outline {
+            background: white;
+            border: 1px solid #cbd5e1;
+            color: #334155;
+        }
+
+        .full-width {
+            width: 100%;
+        }
+
+        .button-stack {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 10px;
+        }
+
+        .results-area {
+            min-width: 0;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 13px;
+            margin-bottom: 22px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 18px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            min-width: 0;
+        }
+
+        .stat-card p {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .stat-card h3 {
+            font-size: 23px;
+            margin-top: 4px;
+            overflow-wrap: anywhere;
+        }
+
+        .results-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            flex-wrap: wrap;
+            margin-bottom: 17px;
+        }
+
+        .results-toolbar h2 {
+            margin-bottom: 3px;
+        }
+
+        .result-count {
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .toolbar-actions {
+            display: flex;
+            gap: 9px;
+            flex-wrap: wrap;
+        }
+
+        .sort-select {
+            width: auto;
+            min-width: 180px;
+        }
+
+        .active-filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 18px;
+        }
+
+        .filter-chip {
+            background: #dbeafe;
+            color: #1d4ed8;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .product-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 19px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            min-width: 0;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 24px #0f172a10;
+        }
+
+        .product-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .product-icon {
+            display: grid;
+            place-items: center;
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            background: #dbeafe;
+            font-size: 23px;
+            flex-shrink: 0;
+        }
+
+        .badge {
+            display: inline-block;
+            border-radius: 20px;
+            padding: 5px 9px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        .in-stock {
+            color: var(--success);
+            background: #dcfce7;
+        }
+
+        .low-stock {
+            color: var(--warning);
+            background: #fef3c7;
+        }
+
+        .out-stock {
+            color: var(--danger);
+            background: #fee2e2;
+        }
+
+        .product-name {
+            font-size: 17px;
+            font-weight: bold;
+            overflow-wrap: anywhere;
+        }
+
+        .product-model {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .product-price {
+            color: var(--primary);
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        .product-details {
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            padding: 12px 0;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 11px;
+        }
+
+        .detail-label {
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .detail-value {
+            font-size: 13px;
+            font-weight: bold;
+            overflow-wrap: anywhere;
+        }
+
+        .product-actions {
+            margin-top: auto;
+        }
+
+        .product-actions button {
+            width: 100%;
+        }
+
+        .state-box {
+            grid-column: 1 / -1;
+            background: white;
+            border: 1px solid var(--border);
+            padding: 35px 20px;
+            text-align: center;
+            border-radius: 12px;
+            color: var(--muted);
+        }
+
+        .state-box h3 {
+            color: var(--text);
+            margin-bottom: 7px;
+        }
+
+        .message {
+            margin-top: 13px;
+            font-size: 13px;
+            overflow-wrap: anywhere;
+        }
+
+        .message.error {
+            color: var(--danger);
+        }
+
+        .message.warning {
+            color: var(--warning);
+        }
+
+        .message.success {
+            color: var(--success);
+        }
+
+        footer {
+            padding: 28px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        @media (max-width: 1100px) {
+            .layout {
+                grid-template-columns: 250px minmax(0, 1fr);
+            }
+
+            .product-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 760px) {
+            header {
+                padding: 18px 5%;
+            }
+
+            .container {
+                margin: 20px auto;
+            }
+
+            .layout {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-panel {
+                position: static;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .hero {
+                padding: 25px 20px;
+            }
+
+            .sort-select {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .product-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .toolbar-actions {
+                width: 100%;
+            }
+
+            .toolbar-actions button {
+                flex: 1;
+            }
+
+            .panel {
+                padding: 17px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="brand">PartPulse <span>MSP</span></div>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="filter-parts.html" class="active">Filter Parts</a>
+        <a href="recommendations.html">Recommendations</a>
+        <a href="compare.html">Compare Parts</a>
+    </nav>
+</header>
+
+<main class="container">
+
+    <section class="hero">
+        <h1>Find the Right Spare Part</h1>
+        <p>
+            Filter mobile spare parts by model, category, price and stock.
+            Compare the available options and quickly find what you need.
+        </p>
+    </section>
+
+    <div class="layout">
+
+        <!-- FILTER SIDEBAR -->
+        <aside class="panel filter-panel">
+
+            <div class="filter-heading">
+                <h2>Filters</h2>
+                <button id="clearButton" class="btn-outline" type="button">
+                    Clear
+                </button>
+            </div>
+
+            <form id="filterForm">
+
+                <div class="filter-group">
+                    <label for="searchInput">Search Parts</label>
+                    <input
+                        type="search"
+                        id="searchInput"
+                        placeholder="Part name, model or ID..."
+                        maxlength="100"
+                    >
+                </div>
+
+                <div class="filter-group">
+                    <label for="modelFilter">Phone Model</label>
+                    <select id="modelFilter">
+                        <option value="">All Models</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="categoryFilter">Category</label>
+                    <select id="categoryFilter">
+                        <option value="">All Categories</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <span class="filter-label">Price Range (₹)</span>
+
+                    <div class="price-inputs">
+                        <input
+                            type="number"
+                            id="minPrice"
+                            placeholder="Min"
+                            min="0"
+                            step="0.01"
+                            aria-label="Minimum price"
+                        >
+
+                        <input
+                            type="number"
+                            id="maxPrice"
+                            placeholder="Max"
+                            min="0"
+                            step="0.01"
+                            aria-label="Maximum price"
+                        >
+                    </div>
+                </div>
+
+                <div class="filter-group">
+                    <span class="filter-label">Stock Availability</span>
+
+                    <label class="stock-option">
+                        <input type="radio" name="stock" value="all" checked>
+                        All Parts
+                    </label>
+
+                    <label class="stock-option">
+                        <input type="radio" name="stock" value="available">
+                        In Stock Only
+                    </label>
+
+                    <label class="stock-option">
+                        <input type="radio" name="stock" value="low">
+                        Low Stock
+                    </label>
+
+                    <label class="stock-option">
+                        <input type="radio" name="stock" value="out">
+                        Out of Stock
+                    </label>
+                </div>
+
+                <div class="button-stack">
+                    <button type="submit" class="btn-primary full-width">
+                        Apply Filters
+                    </button>
+
+                    <button
+                        type="button"
+                        id="resetButton"
+                        class="btn-secondary full-width"
+                    >
+                        Reset All Filters
+                    </button>
+                </div>
+
+            </form>
+
+            <p id="filterMessage" class="message" role="status"></p>
+
+        </aside>
+
+        <!-- RESULTS -->
+        <section class="results-area">
+
+            <div class="stats">
+                <div class="stat-card">
+                    <p>Matching Parts</p>
+                    <h3 id="matchingCount">0</h3>
+                </div>
+
+                <div class="stat-card">
+                    <p>Available Parts</p>
+                    <h3 id="availableCount">0</h3>
+                </div>
+
+                <div class="stat-card">
+                    <p>Lowest Matching Price</p>
+                    <h3 id="lowestPrice">—</h3>
+                </div>
+            </div>
+
+            <div class="results-toolbar">
+                <div>
+                    <h2>Spare Parts Inventory</h2>
+                    <p id="resultCount" class="result-count">
+                        Loading inventory...
+                    </p>
+                </div>
+
+                <div class="toolbar-actions">
+                    <select id="sortFilter" class="sort-select"
+                            aria-label="Sort spare parts">
+                        <option value="default">Default Order</option>
+                        <option value="priceLow">Price: Low to High</option>
+                        <option value="priceHigh">Price: High to Low</option>
+                        <option value="name">Name: A to Z</option>
+                        <option value="stock">Stock: High to Low</option>
+                    </select>
+
+                    <button
+                        type="button"
+                        id="refreshButton"
+                        class="btn-secondary"
+                    >
+                        Refresh
+                    </button>
+                </div>
+            </div>
+
+            <div id="activeFilters" class="active-filters"></div>
+
+            <p id="dataMessage" class="message" role="status"></p>
+
+            <div id="productGrid" class="product-grid" aria-live="polite">
+                <div class="state-box">
+                    <h3>Loading spare parts...</h3>
+                    <p>Please wait while the inventory is retrieved.</p>
+                </div>
+            </div>
+
+        </section>
+
+    </div>
+</main>
+
+<footer>
+    PartPulse MSP — Mobile Spare Parts Management System
+</footer>
+
+<script>
+    "use strict";
+
+    /*
+     * API CONFIGURATION
+     *
+     * These paths are common examples, not verified routes.
+     * Update API_URLS to match the actual inventory endpoint in App.java.
+     *
+     * Demo data is shown only when the server cannot be reached.
+     */
+
+    const API_URLS = [
+        "/api/spare-parts",
+        "/api/parts"
+    ];
+
+    const DEMO_PARTS = [
+        {
+            id: 101,
+            partName: "Display Assembly",
+            model: "iPhone 15",
+            category: "Display",
+            price: 8500,
+            quantity: 12,
+            rating: 4.8
+        },
+        {
+            id: 102,
+            partName: "Battery",
+            model: "iPhone 15",
+            category: "Battery",
+            price: 3200,
+            quantity: 18,
+            rating: 4.6
+        },
+        {
+            id: 103,
+            partName: "Rear Camera",
+            model: "iPhone 15",
+            category: "Camera",
+            price: 4600,
+            quantity: 7,
+            rating: 4.4
+        },
+        {
+            id: 104,
+            partName: "Display Assembly",
+            model: "Samsung S24",
+            category: "Display",
+            price: 7200,
+            quantity: 5,
+            rating: 4.7
+        },
+        {
+            id: 105,
+            partName: "Charging Port",
+            model: "Samsung S24",
+            category: "Charging",
+            price: 1800,
+            quantity: 8,
+            rating: 4.5
+        },
+        {
+            id: 106,
+            partName: "Battery",
+            model: "Redmi Note 13",
+            category: "Battery",
+            price: 1400,
+            quantity: 0,
+            rating: 4.1
+        },
+        {
+            id: 107,
+            partName: "Speaker",
+            model: "Redmi Note 13",
+            category: "Audio",
+            price: 750,
+            quantity: 3,
+            rating: 4.0
+        },
+        {
+            id: 108,
+            partName: "Charging Port",
+            model: "OnePlus 12",
+            category: "Charging",
+            price: 1600,
+            quantity: 15,
+            rating: 4.3
+        },
+        {
+            id: 109,
+            partName: "Front Camera",
+            model: "Samsung S24",
+            category: "Camera",
+            price: 2900,
+            quantity: 2,
+            rating: 4.2
+        }
+    ];
+
+    let allParts = [];
+    let usingDemoData = false;
+
+    const searchInput = document.getElementById("searchInput");
+    const modelFilter = document.getElementById("modelFilter");
+    const categoryFilter = document.getElementById("categoryFilter");
+    const minPriceInput = document.getElementById("minPrice");
+    const maxPriceInput = document.getElementById("maxPrice");
+    const sortFilter = document.getElementById("sortFilter");
+    const productGrid = document.getElementById("productGrid");
+
+    let searchTimer = null;
+
+    function escapeHTML(value) {
+        return String(value ?? "").replace(/[&<>"']/g, character => ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;"
+        })[character]);
+    }
+
+    function formatPrice(value) {
+        const price = Number(value);
+
+        if (!Number.isFinite(price)) {
+            return "Unavailable";
+        }
+
+        return new Intl.NumberFormat("en-IN", {
+            style: "currency",
+            currency: "INR",
+            maximumFractionDigits: 2
+        }).format(price);
+    }
+
+    function normalizePart(part, index) {
+        return {
+            id: part.id ?? part.partId ?? part.part_id ?? index + 1,
+
+            partName: String(
+                part.partName ??
+                part.name ??
+                part.part_name ??
+                "Spare Part"
+            ),
+
+            model: String(
+                part.model ??
+                part.phoneModel ??
+                part.phone_model ??
+                "Unknown Model"
+            ),
+
+            category: String(
+                part.category ??
+                part.partCategory ??
+                part.part_category ??
+                "General"
+            ),
+
+            price: Number(part.price ?? 0),
+
+            quantity: Number(
+                part.quantity ??
+                part.stock ??
+                part.stockQuantity ??
+                0
+            ),
+
+            rating: Number(part.rating ?? 0)
+        };
+    }
+
+    async function loadInventory() {
+        const refreshButton = document.getElementById("refreshButton");
+
+        refreshButton.disabled = true;
+
+        document.getElementById("dataMessage").textContent = "";
+
+        productGrid.innerHTML = `
+            <div class="state-box">
+                <h3>Loading inventory...</h3>
+                <p>Connecting to the spare-parts service.</p>
+            </div>
+        `;
+
+        let lastError = null;
+
+        try {
+            for (const endpoint of API_URLS) {
+                try {
+                    const response = await fetch(endpoint, {
+                        headers: {
+                            "Accept": "application/json"
+                        },
+                        cache: "no-store"
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(
+                            endpoint + " returned HTTP " + response.status
+                        );
+                    }
+
+                    const payload = await response.json();
+
+                    const records = Array.isArray(payload)
+                        ? payload
+                        : payload.parts ?? payload.spareParts ?? payload.data;
+
+                    if (!Array.isArray(records)) {
+                        throw new Error(
+                            "The endpoint did not return a product array."
+                        );
+                    }
+
+                    allParts = records.map(normalizePart);
+                    usingDemoData = false;
+
+                    document.getElementById("dataMessage").textContent =
+                        "Inventory loaded from the server.";
+
+                    document.getElementById("dataMessage").className =
+                        "message success";
+
+                    populateFilters();
+                    renderProducts();
+
+                    return;
+
+                } catch (error) {
+                    lastError = error;
+                }
+            }
+
+            throw lastError ?? new Error("No inventory API is configured.");
+
+        } catch (error) {
+            console.error("Inventory loading failed:", error);
+
+            allParts = DEMO_PARTS.map(normalizePart);
+            usingDemoData = true;
+
+            document.getElementById("dataMessage").textContent =
+                "Live inventory is unavailable. Showing SAMPLE DATA for preview only. " +
+                "Check the endpoint configuration in App.java.";
+
+            document.getElementById("dataMessage").className =
+                "message warning";
+
+            populateFilters();
+            renderProducts();
+
+        } finally {
+            refreshButton.disabled = false;
+        }
+    }
+
+    function populateFilters() {
+        const previousModel = modelFilter.value;
+        const previousCategory = categoryFilter.value;
+
+        const models = [...new Set(allParts.map(p => p.model))]
+            .filter(Boolean)
+            .sort((a, b) => a.localeCompare(b));
+
+        const categories = [...new Set(allParts.map(p => p.category))]
+            .filter(Boolean)
+            .sort((a, b) => a.localeCompare(b));
+
+        modelFilter.innerHTML =
+            '<option value="">All Models</option>' +
+            models.map(model => `
+                <option value="${escapeHTML(model)}">
+                    ${escapeHTML(model)}
+                </option>
+            `).join("");
+
+        categoryFilter.innerHTML =
+            '<option value="">All Categories</option>' +
+            categories.map(category => `
+                <option value="${escapeHTML(category)}">
+                    ${escapeHTML(category)}
+                </option>
+            `).join("");
+
+        if (models.includes(previousModel)) {
+            modelFilter.value = previousModel;
+        }
+
+        if (categories.includes(previousCategory)) {
+            categoryFilter.value = previousCategory;
+        }
+    }
+
+    function getStockFilter() {
+        return document.querySelector('input[name="stock"]:checked')?.value
+            ?? "all";
+    }
+
+    function getFilters() {
+        return {
+            search: searchInput.value.trim().toLowerCase(),
+            model: modelFilter.value,
+            category: categoryFilter.value,
+            minPrice: minPriceInput.value === ""
+                ? null
+                : Number(minPriceInput.value),
+            maxPrice: maxPriceInput.value === ""
+                ? null
+                : Number(maxPriceInput.value),
+            stock: getStockFilter(),
+            sort: sortFilter.value
+        };
+    }
+
+    function validateFilters(filters) {
+        if (filters.minPrice !== null &&
+            (!Number.isFinite(filters.minPrice) || filters.minPrice < 0)) {
+            return "Minimum price must be a valid non-negative number.";
+        }
+
+        if (filters.maxPrice !== null &&
+            (!Number.isFinite(filters.maxPrice) || filters.maxPrice < 0)) {
+            return "Maximum price must be a valid non-negative number.";
+        }
+
+        if (filters.minPrice !== null &&
+            filters.maxPrice !== null &&
+            filters.minPrice > filters.maxPrice) {
+            return "Minimum price cannot be greater than maximum price.";
+        }
+
+        return "";
+    }
+
+    function getFilteredParts() {
+        const filters = getFilters();
+        const validationMessage = validateFilters(filters);
+
+        const message = document.getElementById("filterMessage");
+
+        if (validationMessage) {
+            message.textContent = validationMessage;
+            message.className = "message error";
+            return [];
+        }
+
+        message.textContent = "";
+        message.className = "message";
+
+        let parts = allParts.filter(part => {
+            const searchText = [
+                part.id,
+                part.partName,
+                part.model,
+                part.category
+            ].join(" ").toLowerCase();
+
+            const matchesSearch =
+                !filters.search || searchText.includes(filters.search);
+
+            const matchesModel =
+                !filters.model || part.model === filters.model;
+
+            const matchesCategory =
+                !filters.category || part.category === filters.category;
+
+            const matchesMinPrice =
+                filters.minPrice === null ||
+                part.price >= filters.minPrice;
+
+            const matchesMaxPrice =
+                filters.maxPrice === null ||
+                part.price <= filters.maxPrice;
+
+            let matchesStock = true;
+
+            if (filters.stock === "available") {
+                matchesStock = part.quantity > 0;
+            } else if (filters.stock === "low") {
+                matchesStock = part.quantity > 0 && part.quantity <= 5;
+            } else if (filters.stock === "out") {
+                matchesStock = part.quantity <= 0;
+            }
+
+            return matchesSearch &&
+                matchesModel &&
+                matchesCategory &&
+                matchesMinPrice &&
+                matchesMaxPrice &&
+                matchesStock;
+        });
+
+        switch (filters.sort) {
+            case "priceLow":
+                parts.sort((a, b) => a.price - b.price);
+                break;
+
+            case "priceHigh":
+                parts.sort((a, b) => b.price - a.price);
+                break;
+
+            case "name":
+                parts.sort((a, b) => a.partName.localeCompare(b.partName));
+                break;
+
+            case "stock":
+                parts.sort((a, b) => b.quantity - a.quantity);
+                break;
+        }
+
+        return parts;
+    }
+
+    function getStockBadge(part) {
+        if (part.quantity <= 0) {
+            return {
+                text: "Out of Stock",
+                className: "out-stock"
+            };
+        }
+
+        if (part.quantity <= 5) {
+            return {
+                text: "Low Stock",
+                className: "low-stock"
+            };
+        }
+
+        return {
+            text: "In Stock",
+            className: "in-stock"
+        };
+    }
+
+    function renderActiveFilters() {
+        const filters = getFilters();
+        const chips = [];
+
+        if (filters.search) {
+            chips.push("Search: " + filters.search);
+        }
+
+        if (filters.model) {
+            chips.push("Model: " + filters.model);
+        }
+
+        if (filters.category) {
+            chips.push("Category: " + filters.category);
+        }
+
+        if (filters.minPrice !== null) {
+            chips.push("Min: " + formatPrice(filters.minPrice));
+        }
+
+        if (filters.maxPrice !== null) {
+            chips.push("Max: " + formatPrice(filters.maxPrice));
+        }
+
+        if (filters.stock !== "all") {
+            chips.push("Stock: " + filters.stock);
+        }
+
+        document.getElementById("activeFilters").innerHTML =
+            chips.map(chip => `
+                <span class="filter-chip">${escapeHTML(chip)}</span>
+            `).join("");
+    }
+
+    function renderProducts() {
+        const parts = getFilteredParts();
+
+        const validationMessage =
+            document.getElementById("filterMessage").textContent;
+
+        document.getElementById("matchingCount").textContent =
+            validationMessage ? "—" : parts.length;
+
+        document.getElementById("availableCount").textContent =
+            validationMessage
+                ? "—"
+                : parts.filter(p => p.quantity > 0).length;
+
+        const availablePrices = parts
+            .filter(p => p.quantity > 0 && p.price > 0)
+            .map(p => p.price);
+
+        document.getElementById("lowestPrice").textContent =
+            validationMessage
+                ? "—"
+                : availablePrices.length
+                    ? formatPrice(Math.min(...availablePrices))
+                    : "—";
+
+        document.getElementById("resultCount").textContent =
+            validationMessage
+                ? "Please correct the filters."
+                : `${parts.length} matching part${parts.length === 1 ? "" : "s"}`;
+
+        renderActiveFilters();
+
+        if (validationMessage) {
+            productGrid.innerHTML = `
+                <div class="state-box">
+                    <h3>Check your filters</h3>
+                    <p>${escapeHTML(validationMessage)}</p>
+                </div>
+            `;
+            return;
+        }
+
+        if (!parts.length) {
+            productGrid.innerHTML = `
+                <div class="state-box">
+                    <h3>No matching spare parts found</h3>
+                    <p>Change your search or clear some filters to see more parts.</p>
+                    <br>
+                    <button type="button"
+                            class="btn-primary"
+                            id="emptyResetButton">
+                        Reset Filters
+                    </button>
+                </div>
+            `;
+
+            document.getElementById("emptyResetButton")
+                .addEventListener("click", resetFilters);
+
+            return;
+        }
+
+        productGrid.innerHTML = parts.map(part => {
+            const stock = getStockBadge(part);
+
+            return `
+                <article class="product-card">
+
+                    <div class="product-top">
+                        <div class="product-icon" aria-hidden="true">🔧</div>
+
+                        <span class="badge ${stock.className}">
+                            ${stock.text}
+                        </span>
+                    </div>
+
+                    <div>
+                        <div class="product-name">
+                            ${escapeHTML(part.partName)}
+                        </div>
+
+                        <div class="product-model">
+                            ${escapeHTML(part.model)}
+                        </div>
+                    </div>
+
+                    <div class="product-price">
+                        ${escapeHTML(formatPrice(part.price))}
+                    </div>
+
+                    <div class="product-details">
+                        <div>
+                            <div class="detail-label">Part ID</div>
+                            <div class="detail-value">
+                                ${escapeHTML(part.id)}
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="detail-label">Category</div>
+                            <div class="detail-value">
+                                ${escapeHTML(part.category)}
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="detail-label">Available Quantity</div>
+                            <div class="detail-value">
+                                ${escapeHTML(part.quantity)}
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="detail-label">Rating</div>
+                            <div class="detail-value">
+                                ${part.rating > 0
+                                    ? "⭐ " + escapeHTML(part.rating.toFixed(1))
+                                    : "Not rated"}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="product-actions">
+                        <button
+                            type="button"
+                            class="btn-primary"
+                            data-compare-id="${escapeHTML(part.id)}"
+                        >
+                            ${part.quantity > 0
+                                ? "Compare This Part"
+                                : "View Part Details"}
+                        </button>
+                    </div>
+
+                </article>
+            `;
+        }).join("");
+
+        productGrid.querySelectorAll("[data-compare-id]")
+            .forEach(button => {
+                button.addEventListener("click", () => {
+                    const id = button.dataset.compareId;
+
+                    const part = allParts.find(
+                        p => String(p.id) === String(id)
+                    );
+
+                    if (!part) {
+                        return;
+                    }
+
+                    sessionStorage.setItem(
+                        "mspSelectedPart",
+                        JSON.stringify(part)
+                    );
+
+                    window.location.href = "compare.html";
+                });
+            });
+    }
+
+    function resetFilters() {
+        document.getElementById("filterForm").reset();
+
+        searchInput.value = "";
+        modelFilter.value = "";
+        categoryFilter.value = "";
+        minPriceInput.value = "";
+        maxPriceInput.value = "";
+        sortFilter.value = "default";
+
+        document.getElementById("filterMessage").textContent = "";
+
+        renderProducts();
+    }
+
+    document.getElementById("filterForm")
+        .addEventListener("submit", event => {
+            event.preventDefault();
+            renderProducts();
+        });
+
+    document.getElementById("clearButton")
+        .addEventListener("click", resetFilters);
+
+    document.getElementById("resetButton")
+        .addEventListener("click", resetFilters);
+
+    document.getElementById("refreshButton")
+        .addEventListener("click", loadInventory);
+
+    /*
+     * Live search with a short debounce.
+     * Other filters update immediately.
+     */
+    searchInput.addEventListener("input", () => {
+        clearTimeout(searchTimer);
+
+        searchTimer = setTimeout(renderProducts, 180);
+    });
+
+    modelFilter.addEventListener("change", renderProducts);
+    categoryFilter.addEventListener("change", renderProducts);
+    minPriceInput.addEventListener("input", renderProducts);
+    maxPriceInput.addEventListener("input", renderProducts);
+    sortFilter.addEventListener("change", renderProducts);
+
+    document.querySelectorAll('input[name="stock"]')
+        .forEach(radio => {
+            radio.addEventListener("change", renderProducts);
+        });
+
+    loadInventory();
+</script>
+
+</body>
+</html>
