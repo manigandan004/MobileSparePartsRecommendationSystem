@@ -1,0 +1,1076 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Order | PartPulse MSP</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --background: #f3f6fb;
+            --surface: #ffffff;
+            --text: #172033;
+            --muted: #64748b;
+            --border: #e2e8f0;
+            --green: #15803d;
+            --orange: #c2410c;
+            --red: #b91c1c;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        header {
+            background: #111827;
+            color: white;
+            padding: 18px 7%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .brand {
+            font-size: 23px;
+            font-weight: 800;
+        }
+
+        .brand span {
+            color: #60a5fa;
+        }
+
+        nav {
+            display: flex;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: #dbeafe;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        nav a:hover,
+        nav a.active {
+            color: white;
+            text-decoration: underline;
+        }
+
+        .container {
+            width: min(1100px, 92%);
+            margin: 35px auto;
+        }
+
+        .hero {
+            background: linear-gradient(125deg, #1d4ed8, #4338ca);
+            padding: 35px;
+            color: white;
+            border-radius: 18px;
+            margin-bottom: 25px;
+        }
+
+        .hero h1 {
+            font-size: clamp(27px, 4vw, 37px);
+            margin-bottom: 8px;
+        }
+
+        .hero p {
+            color: #dbeafe;
+            max-width: 680px;
+        }
+
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 22px;
+            box-shadow: 0 5px 18px #0f172a08;
+        }
+
+        .panel h2 {
+            font-size: 21px;
+            margin-bottom: 14px;
+        }
+
+        .search-form {
+            display: flex;
+            gap: 12px;
+        }
+
+        input {
+            flex: 1;
+            min-width: 0;
+            padding: 13px 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 9px;
+            font-size: 15px;
+        }
+
+        input:focus {
+            outline: 2px solid #93c5fd;
+            border-color: var(--primary);
+        }
+
+        button {
+            padding: 12px 18px;
+            border: none;
+            border-radius: 9px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .primary-btn {
+            background: var(--primary);
+            color: white;
+        }
+
+        .primary-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .secondary-btn {
+            background: #e2e8f0;
+            color: #1e293b;
+        }
+
+        .message {
+            margin-top: 12px;
+            font-size: 14px;
+            color: var(--muted);
+        }
+
+        .message.error {
+            color: var(--red);
+        }
+
+        .message.success {
+            color: var(--green);
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 22px;
+        }
+
+        .order-number {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 7px 12px;
+            border-radius: 20px;
+            background: #dbeafe;
+            color: #1d4ed8;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .status-badge.delivered {
+            background: #dcfce7;
+            color: var(--green);
+        }
+
+        .status-badge.cancelled {
+            background: #fee2e2;
+            color: var(--red);
+        }
+
+        .status-badge.delayed {
+            background: #ffedd5;
+            color: var(--orange);
+        }
+
+        .delivery-banner {
+            padding: 20px;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 12px;
+            margin-bottom: 25px;
+        }
+
+        .delivery-banner p {
+            color: #1e40af;
+            font-size: 13px;
+        }
+
+        .delivery-banner h3 {
+            color: #1d4ed8;
+            font-size: 23px;
+            margin-top: 5px;
+        }
+
+        .progress-track {
+            display: flex;
+            align-items: flex-start;
+            margin: 35px 0;
+            position: relative;
+        }
+
+        .step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .step:not(:last-child)::after {
+            content: "";
+            position: absolute;
+            height: 4px;
+            background: #e2e8f0;
+            top: 17px;
+            left: calc(50% + 18px);
+            width: calc(100% - 36px);
+            z-index: -1;
+        }
+
+        .step.completed:not(:last-child)::after {
+            background: var(--green);
+        }
+
+        .step-circle {
+            width: 36px;
+            height: 36px;
+            margin: 0 auto 10px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            color: #64748b;
+            display: grid;
+            place-items: center;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .step.completed .step-circle {
+            background: var(--green);
+            color: white;
+        }
+
+        .step.current .step-circle {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 0 0 5px #dbeafe;
+        }
+
+        .step-title {
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .step-date {
+            font-size: 11px;
+            color: var(--muted);
+            margin-top: 5px;
+        }
+
+        .cancelled-message {
+            background: #fef2f2;
+            color: var(--red);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 15px;
+        }
+
+        .detail-box {
+            padding: 17px;
+            border: 1px solid var(--border);
+            border-radius: 11px;
+            min-width: 0;
+        }
+
+        .detail-label {
+            color: var(--muted);
+            font-size: 12px;
+            margin-bottom: 4px;
+        }
+
+        .detail-value {
+            font-size: 15px;
+            font-weight: bold;
+            overflow-wrap: anywhere;
+        }
+
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .items-table th,
+        .items-table td {
+            text-align: left;
+            padding: 13px 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .items-table th {
+            color: var(--muted);
+            font-size: 12px;
+            background: #f8fafc;
+        }
+
+        .items-table td {
+            font-size: 14px;
+        }
+
+        .activity-list {
+            list-style: none;
+        }
+
+        .activity-list li {
+            padding: 13px 0 13px 22px;
+            border-left: 2px solid #cbd5e1;
+            position: relative;
+        }
+
+        .activity-list li::before {
+            content: "";
+            position: absolute;
+            left: -6px;
+            top: 20px;
+            width: 10px;
+            height: 10px;
+            background: var(--primary);
+            border-radius: 50%;
+        }
+
+        .activity-title {
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .activity-time {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .empty-state {
+            padding: 28px 15px;
+            text-align: center;
+            color: var(--muted);
+        }
+
+        .footer-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        @media (max-width: 700px) {
+            header {
+                padding: 17px 5%;
+            }
+
+            .container {
+                margin: 22px auto;
+            }
+
+            .hero,
+            .panel {
+                padding: 21px;
+            }
+
+            .search-form {
+                flex-direction: column;
+            }
+
+            .details-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .progress-track {
+                flex-direction: column;
+                gap: 0;
+                margin: 25px 0;
+            }
+
+            .step {
+                display: flex;
+                align-items: center;
+                text-align: left;
+                gap: 13px;
+                min-height: 66px;
+                width: 100%;
+            }
+
+            .step-circle {
+                margin: 0;
+                flex-shrink: 0;
+            }
+
+            .step:not(:last-child)::after {
+                width: 4px;
+                height: 34px;
+                left: 16px;
+                top: 48px;
+            }
+
+            .step-info {
+                flex: 1;
+            }
+
+            .items-table th,
+            .items-table td {
+                padding: 10px 6px;
+                font-size: 12px;
+            }
+        }
+
+        @media print {
+            header,
+            .hero,
+            .search-panel,
+            .footer-actions,
+            footer {
+                display: none !important;
+            }
+
+            body {
+                background: white;
+            }
+
+            .container {
+                width: 100%;
+                margin: 0;
+            }
+
+            .panel {
+                box-shadow: none;
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <div class="brand">PartPulse <span>MSP</span></div>
+
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="recommendations.html">Recommendations</a>
+        <a href="compare.html">Compare Parts</a>
+        <a href="track-order.html" class="active">Track Order</a>
+    </nav>
+</header>
+
+<main class="container">
+
+    <section class="hero">
+        <h1>Track Your Order 📦</h1>
+        <p>
+            Check your spare-parts order status, follow delivery progress,
+            and view shipment information in one place.
+        </p>
+    </section>
+
+    <section class="panel search-panel">
+        <h2>Find Your Order</h2>
+
+        <form id="trackForm" class="search-form">
+            <input
+                id="orderIdInput"
+                type="text"
+                placeholder="Enter your order ID"
+                aria-label="Order ID"
+                autocomplete="off"
+                required
+                maxlength="100"
+            >
+
+            <button id="trackButton" class="primary-btn" type="submit">
+                Track Order
+            </button>
+        </form>
+
+        <p id="searchMessage" class="message" role="status">
+            Enter the order ID provided when you placed your order.
+        </p>
+    </section>
+
+    <section id="orderSection" class="hidden">
+
+        <div class="panel">
+            <div class="order-header">
+                <div>
+                    <h2>Order Tracking Details</h2>
+                    <p class="order-number">
+                        Order ID: <strong id="orderIdDisplay">—</strong>
+                    </p>
+                    <p class="order-number">
+                        Last updated: <span id="lastUpdated">—</span>
+                    </p>
+                </div>
+
+                <span id="statusBadge" class="status-badge">
+                    Processing
+                </span>
+            </div>
+
+            <div class="delivery-banner">
+                <p id="deliveryLabel">Estimated Delivery</p>
+                <h3 id="deliveryDate">—</h3>
+                <p id="deliveryMessage">Your order information is being retrieved.</p>
+            </div>
+
+            <h2>Delivery Progress</h2>
+
+            <div id="progressTrack" class="progress-track"></div>
+
+            <div id="cancelledMessage" class="cancelled-message hidden">
+                This order has been cancelled. Contact the seller if you need
+                further assistance.
+            </div>
+
+            <div class="footer-actions">
+                <button id="refreshButton" class="secondary-btn" type="button">
+                    Refresh Status
+                </button>
+
+                <button id="printButton" class="primary-btn" type="button">
+                    Print Details
+                </button>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2>Order Information</h2>
+            <div id="orderDetails" class="details-grid"></div>
+        </div>
+
+        <div class="panel">
+            <h2>Items in Your Order</h2>
+
+            <div id="itemsContainer">
+                <div class="empty-state">No item details available.</div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2>Tracking Activity</h2>
+            <ul id="activityList" class="activity-list"></ul>
+        </div>
+
+    </section>
+
+</main>
+
+<footer>
+    PartPulse MSP — Mobile Spare Parts Management System
+</footer>
+
+<script>
+    "use strict";
+
+    /*
+     * API CONTRACT:
+     * GET /api/orders/track?orderId=YOUR_ORDER_ID
+     *
+     * The backend should return one order object.
+     * Update API_URL if App.java uses a different route.
+     *
+     * No fake orders are generated by this page.
+     */
+
+    const API_URL = "/api/orders/track";
+
+    const STEPS = [
+        "PLACED",
+        "CONFIRMED",
+        "PACKED",
+        "SHIPPED",
+        "OUT_FOR_DELIVERY",
+        "DELIVERED"
+    ];
+
+    const LABELS = {
+        PLACED: "Order Placed",
+        CONFIRMED: "Confirmed",
+        PACKED: "Packed",
+        SHIPPED: "Shipped",
+        OUT_FOR_DELIVERY: "Out for Delivery",
+        DELIVERED: "Delivered",
+        CANCELLED: "Cancelled",
+        DELAYED: "Delayed"
+    };
+
+    const form = document.getElementById("trackForm");
+    const input = document.getElementById("orderIdInput");
+    const trackButton = document.getElementById("trackButton");
+    const refreshButton = document.getElementById("refreshButton");
+    const searchMessage = document.getElementById("searchMessage");
+    const orderSection = document.getElementById("orderSection");
+
+    let currentOrderId = "";
+    let lastOrder = null;
+
+    function escapeHTML(value) {
+        return String(value ?? "").replace(/[&<>"']/g, character => ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;"
+        })[character]);
+    }
+
+    function showMessage(message, type = "") {
+        searchMessage.textContent = message;
+        searchMessage.className = "message " + type;
+    }
+
+    function normalizeStatus(value) {
+        const status = String(value ?? "PLACED")
+            .trim()
+            .toUpperCase()
+            .replace(/[\s-]+/g, "_");
+
+        const aliases = {
+            "PENDING": "PLACED",
+            "ORDER_PLACED": "PLACED",
+            "PROCESSING": "CONFIRMED",
+            "READY_TO_SHIP": "PACKED",
+            "IN_TRANSIT": "SHIPPED",
+            "OUT_FOR_DELIVERY": "OUT_FOR_DELIVERY",
+            "COMPLETE": "DELIVERED",
+            "COMPLETED": "DELIVERED",
+            "CANCELED": "CANCELLED"
+        };
+
+        return aliases[status] || status;
+    }
+
+    function formatDate(value) {
+        if (!value) return "Not available";
+
+        const date = new Date(value);
+
+        if (Number.isNaN(date.getTime())) {
+            return String(value);
+        }
+
+        return date.toLocaleString("en-IN", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
+        });
+    }
+
+    function formatDateOnly(value) {
+        if (!value) return "Not available";
+
+        const date = new Date(value);
+
+        if (Number.isNaN(date.getTime())) {
+            return String(value);
+        }
+
+        return date.toLocaleDateString("en-IN", {
+            day: "2-digit",
+            month: "long",
+            year: "numeric"
+        });
+    }
+
+    function formatMoney(value) {
+        const amount = Number(value);
+
+        if (!Number.isFinite(amount)) {
+            return "Not available";
+        }
+
+        return new Intl.NumberFormat("en-IN", {
+            style: "currency",
+            currency: "INR",
+            maximumFractionDigits: 2
+        }).format(amount);
+    }
+
+    function safeArray(value) {
+        return Array.isArray(value) ? value : [];
+    }
+
+    function getOrderId(order) {
+        return order.orderId ?? order.id ?? order.orderNumber ?? currentOrderId;
+    }
+
+    function getStatusLabel(status) {
+        return LABELS[status] || status.replaceAll("_", " ");
+    }
+
+    function renderProgress(order) {
+        const status = normalizeStatus(order.status);
+
+        const track = document.getElementById("progressTrack");
+        const cancelled = document.getElementById("cancelledMessage");
+
+        if (status === "CANCELLED") {
+            track.innerHTML = "";
+            cancelled.classList.remove("hidden");
+            return;
+        }
+
+        cancelled.classList.add("hidden");
+
+        const currentIndex = STEPS.indexOf(status);
+
+        track.innerHTML = STEPS.map((step, index) => {
+            let className = "step";
+
+            if (currentIndex >= 0 && index < currentIndex) {
+                className += " completed";
+            } else if (index === currentIndex) {
+                className += " current";
+            }
+
+            const historyEntry = safeArray(order.history)
+                .find(item => normalizeStatus(item.status) === step);
+
+            const date = historyEntry
+                ? formatDate(historyEntry.timestamp ?? historyEntry.date)
+                : "";
+
+            const symbol = currentIndex >= 0 && index < currentIndex
+                ? "✓"
+                : index + 1;
+
+            return `
+                <div class="${className}">
+                    <div class="step-circle">${symbol}</div>
+                    <div class="step-info">
+                        <div class="step-title">${escapeHTML(LABELS[step])}</div>
+                        <div class="step-date">${escapeHTML(date)}</div>
+                    </div>
+                </div>
+            `;
+        }).join("");
+    }
+
+    function renderOrderDetails(order) {
+        const details = [
+            ["Customer", order.customerName ?? order.customer ?? "Not available"],
+            ["Phone Model", order.phoneModel ?? order.model ?? "Not available"],
+            ["Shipping Address", order.shippingAddress ?? order.address ?? "Not available"],
+            ["Courier", order.courierName ?? order.courier ?? "Not assigned"],
+            ["Tracking Number", order.trackingNumber ?? "Not assigned"],
+            ["Order Date", formatDateOnly(order.orderDate ?? order.createdAt)],
+            ["Payment Status", order.paymentStatus ?? "Not available"],
+            ["Order Total", formatMoney(order.totalAmount ?? order.totalPrice)]
+        ];
+
+        document.getElementById("orderDetails").innerHTML =
+            details.map(([label, value]) => `
+                <div class="detail-box">
+                    <div class="detail-label">${escapeHTML(label)}</div>
+                    <div class="detail-value">${escapeHTML(value)}</div>
+                </div>
+            `).join("");
+    }
+
+    function renderItems(order) {
+        const items = safeArray(order.items ?? order.orderItems);
+        const container = document.getElementById("itemsContainer");
+
+        if (!items.length) {
+            container.innerHTML = `
+                <div class="empty-state">
+                    Item-level details are not available for this order.
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = `
+            <div style="overflow-x:auto">
+                <table class="items-table">
+                    <thead>
+                        <tr>
+                            <th>Part</th>
+                            <th>Quantity</th>
+                            <th>Unit Price</th>
+                            <th>Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${items.map(item => {
+                            const quantity = Number(item.quantity ?? 1);
+                            const price = Number(item.price ?? item.unitPrice ?? 0);
+                            const subtotal = Number.isFinite(quantity * price)
+                                ? quantity * price
+                                : 0;
+
+                            return `
+                                <tr>
+                                    <td>${escapeHTML(
+                                        item.partName ?? item.name ?? "Spare Part"
+                                    )}</td>
+                                    <td>${escapeHTML(quantity)}</td>
+                                    <td>${escapeHTML(formatMoney(price))}</td>
+                                    <td>${escapeHTML(formatMoney(subtotal))}</td>
+                                </tr>
+                            `;
+                        }).join("")}
+                    </tbody>
+                </table>
+            </div>
+        `;
+    }
+
+    function renderActivity(order) {
+        const activity = safeArray(order.history ?? order.trackingHistory)
+            .slice()
+            .sort((a, b) => {
+                const dateA = new Date(a.timestamp ?? a.date ?? 0).getTime();
+                const dateB = new Date(b.timestamp ?? b.date ?? 0).getTime();
+
+                return dateB - dateA;
+            });
+
+        const list = document.getElementById("activityList");
+
+        if (!activity.length) {
+            list.innerHTML = `
+                <li>
+                    <div class="activity-title">
+                        ${escapeHTML(getStatusLabel(normalizeStatus(order.status)))}
+                    </div>
+                    <div class="activity-time">
+                        Detailed tracking history has not been provided.
+                    </div>
+                </li>
+            `;
+            return;
+        }
+
+        list.innerHTML = activity.map(item => `
+            <li>
+                <div class="activity-title">
+                    ${escapeHTML(
+                        item.description ??
+                        item.message ??
+                        getStatusLabel(normalizeStatus(item.status))
+                    )}
+                </div>
+                <div class="activity-time">
+                    ${escapeHTML(formatDate(item.timestamp ?? item.date))}
+                </div>
+            </li>
+        `).join("");
+    }
+
+    function renderOrder(order) {
+        lastOrder = order;
+
+        document.getElementById("orderIdDisplay").textContent =
+            getOrderId(order);
+
+        document.getElementById("lastUpdated").textContent =
+            formatDate(order.updatedAt ?? order.lastUpdated);
+
+        const status = normalizeStatus(order.status);
+        const badge = document.getElementById("statusBadge");
+
+        badge.textContent = getStatusLabel(status);
+        badge.className = "status-badge";
+
+        if (status === "DELIVERED") {
+            badge.classList.add("delivered");
+        } else if (status === "CANCELLED") {
+            badge.classList.add("cancelled");
+        } else if (status === "DELAYED") {
+            badge.classList.add("delayed");
+        }
+
+        const deliveryDate = order.estimatedDelivery
+            ?? order.expectedDeliveryDate
+            ?? order.deliveryDate;
+
+        document.getElementById("deliveryLabel").textContent =
+            status === "DELIVERED"
+                ? "Delivered On"
+                : "Estimated Delivery";
+
+        document.getElementById("deliveryDate").textContent =
+            formatDateOnly(
+                status === "DELIVERED"
+                    ? order.deliveredAt ?? deliveryDate
+                    : deliveryDate
+            );
+
+        let deliveryMessage = "Your order status is shown below.";
+
+        if (status === "DELIVERED") {
+            deliveryMessage = "Your order has been delivered.";
+        } else if (status === "CANCELLED") {
+            deliveryMessage = "This order is cancelled.";
+        } else if (status === "DELAYED") {
+            deliveryMessage = order.statusMessage
+                ?? "Delivery is delayed. Please check with the seller.";
+        } else if (status === "OUT_FOR_DELIVERY") {
+            deliveryMessage = "Your order is on its way to the delivery address.";
+        } else if (status === "SHIPPED") {
+            deliveryMessage = "Your order has been shipped.";
+        }
+
+        document.getElementById("deliveryMessage").textContent =
+            deliveryMessage;
+
+        renderProgress(order);
+        renderOrderDetails(order);
+        renderItems(order);
+        renderActivity(order);
+
+        orderSection.classList.remove("hidden");
+    }
+
+    async function trackOrder(orderId) {
+        const cleanId = String(orderId ?? "").trim();
+
+        if (!cleanId) {
+            showMessage("Please enter a valid order ID.", "error");
+            return;
+        }
+
+        currentOrderId = cleanId;
+
+        trackButton.disabled = true;
+        refreshButton.disabled = true;
+
+        showMessage("Searching for order " + cleanId + "...");
+
+        try {
+            const url = new URL(API_URL, window.location.origin);
+            url.searchParams.set("orderId", cleanId);
+
+            const response = await fetch(url, {
+                method: "GET",
+                headers: {
+                    "Accept": "application/json"
+                },
+                cache: "no-store"
+            });
+
+            if (response.status === 404) {
+                orderSection.classList.add("hidden");
+                showMessage(
+                    "No order was found with that ID. Check the ID and try again.",
+                    "error"
+                );
+                return;
+            }
+
+            if (!response.ok) {
+                throw new Error("Server returned HTTP " + response.status);
+            }
+
+            const order = await response.json();
+
+            if (!order || typeof order !== "object" || Array.isArray(order)) {
+                throw new Error("The server returned an invalid order response.");
+            }
+
+            if (!order.status) {
+                throw new Error("The order response is missing its status.");
+            }
+
+            renderOrder(order);
+            showMessage("Order information loaded successfully.", "success");
+
+        } catch (error) {
+            console.error("Order tracking failed:", error);
+
+            orderSection.classList.add("hidden");
+
+            showMessage(
+                "Unable to retrieve order details. Check that the server is running " +
+                "and the tracking API matches this page.",
+                "error"
+            );
+
+        } finally {
+            trackButton.disabled = false;
+            refreshButton.disabled = false;
+        }
+    }
+
+    form.addEventListener("submit", event => {
+        event.preventDefault();
+        trackOrder(input.value);
+    });
+
+    refreshButton.addEventListener("click", () => {
+        if (currentOrderId) {
+            trackOrder(currentOrderId);
+        }
+    });
+
+    document.getElementById("printButton").addEventListener("click", () => {
+        if (lastOrder) {
+            window.print();
+        }
+    });
+
+    /*
+     * Optional support for links like:
+     * track-order.html?orderId=ORD1001
+     */
+    const params = new URLSearchParams(window.location.search);
+    const initialOrderId = params.get("orderId");
+
+    if (initialOrderId) {
+        input.value = initialOrderId;
+        trackOrder(initialOrderId);
+    }
+</script>
+
+</body>
+</html>
+```
