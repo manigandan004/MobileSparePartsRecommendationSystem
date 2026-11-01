@@ -983,3 +983,16 @@ src/
 pom.xml
 README.md
 >>>>>>> origin/main
+
+## MSPR-20: Price Tracking
+
+Implemented price tracking for the Mobile Spare Parts Management System.
+
+- **Frontend:** `frontend/price-tracking.html`
+- **Service:** `src/main/java/com/msp/service/PriceTrackingService.java`
+- **API endpoints:**
+  - `GET /api/price-tracking`
+  - `POST /api/price-tracking`
+  - `DELETE /api/price-tracking?id=...`
+
+The feature displays spare-part price information and supports creating and deleting target-price alerts. Price comparisons are simulated, and server-side watchlist entries are stored in memory.

@@ -1,0 +1,1962 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Price Tracking | PartPulse MSP</title>
+  <link rel="stylesheet" href="style.css">
+
+  <style>
+    :root {
+      --blue: #2563eb;
+      --blue-dark: #1d4ed8;
+      --ink: #172033;
+      --muted: #64748b;
+      --line: #e2e8f0;
+      --bg: #f5f7fb;
+      --green: #15803d;
+      --red: #b91c1c;
+      --amber: #b45309;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, "Segoe UI", Arial, sans-serif;
+    }
+
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    a { color: inherit; text-decoration: none; }
+
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      padding: 15px 6%;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255,255,255,.97);
+      backdrop-filter: blur(12px);
+    }
+
+    .logo {
+      color: var(--blue);
+      font-size: 23px;
+      font-weight: 900;
+      letter-spacing: -.8px;
+    }
+
+    .logo span { color: var(--ink); }
+
+    .nav-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 17px;
+      color: #475569;
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    .nav-links a:hover, .nav-links a.active { color: var(--blue); }
+
+    .account-btn {
+      padding: 10px 13px;
+      border-radius: 10px;
+      background: var(--blue);
+      color: white;
+      font-size: 11px;
+      font-weight: 850;
+    }
+
+    .page { width: min(1180px, 93%); margin: auto; }
+
+    .breadcrumb {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 9px;
+      padding: 22px 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 35px;
+      border-radius: 23px;
+      background: linear-gradient(120deg, #102044, #1d4ed8 70%, #60a5fa);
+      color: white;
+    }
+
+    .hero::after {
+      content: "₹";
+      position: absolute;
+      top: -90px;
+      right: 35px;
+      color: rgba(255,255,255,.10);
+      font-size: 280px;
+      font-weight: 900;
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      position: relative;
+      z-index: 1;
+      display: inline-block;
+      padding: 7px 10px;
+      border-radius: 8px;
+      background: rgba(255,255,255,.14);
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: 1px;
+    }
+
+    .hero h1 {
+      position: relative;
+      z-index: 1;
+      margin: 16px 0 10px;
+      font-size: clamp(29px, 4vw, 43px);
+      letter-spacing: -1px;
+    }
+
+    .hero p {
+      position: relative;
+      z-index: 1;
+      max-width: 660px;
+      color: #dbeafe;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .hero-actions {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .hero-actions a {
+      padding: 11px 14px;
+      border: 1px solid rgba(255,255,255,.45);
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 850;
+    }
+
+    .hero-actions a:first-child {
+      border-color: white;
+      background: white;
+      color: var(--blue);
+    }
+
+    .section-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: end;
+      flex-wrap: wrap;
+      gap: 13px;
+      margin: 29px 0 16px;
+    }
+
+    .section-heading h2 { margin: 0; font-size: 22px; letter-spacing: -.5px; }
+
+    .section-heading p {
+      margin: 7px 0 0;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 7px 10px;
+      border-radius: 8px;
+      background: #eff6ff;
+      color: var(--blue);
+      font-size: 10px;
+      font-weight: 900;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 13px;
+    }
+
+    .stat {
+      padding: 19px;
+      border: 1px solid var(--line);
+      border-radius: 15px;
+      background: white;
+      transition: .2s;
+    }
+
+    .stat:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 9px 25px rgba(15,23,42,.05);
+    }
+
+    .stat-top { display: flex; justify-content: space-between; gap: 8px; }
+    .stat-icon { font-size: 22px; }
+    .stat-label { color: var(--muted); font-size: 10px; font-weight: 850; }
+    .stat-number { display: block; margin-top: 12px; font-size: 26px; font-weight: 900; overflow-wrap: anywhere; }
+    .stat-note { display: block; margin-top: 6px; color: var(--muted); font-size: 10px; }
+
+    .panel {
+      min-width: 0;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 17px;
+      background: white;
+    }
+
+    .panel-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 17px;
+    }
+
+    .panel-heading h2 { margin: 0; font-size: 18px; }
+    .panel-heading p { margin: 7px 0 0; color: var(--muted); font-size: 11px; line-height: 1.7; }
+
+    .btn {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 7px;
+      min-height: 39px;
+      padding: 10px 13px;
+      border: 1px solid transparent;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 850;
+      transition: .2s;
+    }
+
+    .btn-primary { background: var(--blue); color: white; }
+    .btn-primary:hover { background: var(--blue-dark); }
+    .btn-outline { border-color: #d7dfeb; background: white; color: #334155; }
+    .btn-outline:hover { border-color: #93b4fb; background: #eff6ff; color: var(--blue); }
+    .btn-danger { border-color: #fecaca; background: white; color: var(--red); }
+    .btn:disabled { opacity: .55; cursor: not-allowed; }
+
+    .control {
+      width: 100%;
+      min-width: 0;
+      padding: 12px;
+      border: 1px solid #d7dfeb;
+      border-radius: 10px;
+      outline: none;
+      background: white;
+      color: var(--ink);
+      font-size: 11px;
+    }
+
+    .control:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px #dbeafe;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 330px;
+      align-items: start;
+      gap: 18px;
+      margin-top: 25px;
+    }
+
+    .main-column, .side-column { display: grid; gap: 18px; min-width: 0; }
+
+    .filters {
+      display: grid;
+      grid-template-columns: minmax(150px, 1fr) 150px 155px;
+      gap: 9px;
+      margin-bottom: 15px;
+    }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 16px; }
+
+    .chip {
+      padding: 8px 11px;
+      border: 1px solid #dce3ed;
+      border-radius: 20px;
+      background: white;
+      color: #475569;
+      font-size: 10px;
+      font-weight: 850;
+    }
+
+    .chip.active { border-color: var(--blue); background: var(--blue); color: white; }
+
+    .watchlist { display: grid; gap: 12px; }
+
+    .watch-card {
+      padding: 17px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: white;
+      transition: .2s;
+    }
+
+    .watch-card:hover { border-color: #b9cdf8; box-shadow: 0 5px 18px rgba(15,23,42,.035); }
+
+    .watch-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .product-main { display: flex; align-items: center; gap: 12px; min-width: 0; }
+
+    .product-icon {
+      display: grid;
+      place-items: center;
+      width: 47px;
+      height: 47px;
+      flex-shrink: 0;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      background: #f8fafc;
+      font-size: 23px;
+    }
+
+    .product-title { min-width: 0; }
+    .product-title h3 { margin: 0; font-size: 13px; line-height: 1.6; overflow-wrap: anywhere; }
+    .product-title p { margin: 5px 0 0; color: var(--muted); font-size: 10px; line-height: 1.6; overflow-wrap: anywhere; }
+
+    .watch-state {
+      flex-shrink: 0;
+      padding: 6px 8px;
+      border-radius: 8px;
+      background: #f1f5f9;
+      color: #475569;
+      font-size: 9px;
+      font-weight: 900;
+    }
+
+    .watch-state.reached { background: #dcfce7; color: #166534; }
+    .watch-state.close { background: #fef3c7; color: #92400e; }
+    .watch-state.drop { background: #dbeafe; color: #1d4ed8; }
+
+    .price-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 9px;
+      margin-top: 17px;
+    }
+
+    .price-cell {
+      min-width: 0;
+      padding: 11px;
+      border-radius: 10px;
+      background: #f8fafc;
+    }
+
+    .price-cell span { display: block; color: var(--muted); font-size: 9px; line-height: 1.6; }
+    .price-cell strong { display: block; margin-top: 6px; font-size: 15px; overflow-wrap: anywhere; }
+
+    .price-difference { color: var(--green); }
+    .price-difference.negative { color: var(--red); }
+
+    .progress-block { margin-top: 15px; }
+    .progress-label { display: flex; justify-content: space-between; gap: 10px; color: var(--muted); font-size: 10px; }
+    .progress-track { height: 7px; margin-top: 8px; overflow: hidden; border-radius: 20px; background: #e2e8f0; }
+    .progress-fill { height: 100%; border-radius: inherit; background: var(--blue); transition: width .25s; }
+    .progress-fill.reached { background: #16a34a; }
+
+    .watch-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 15px; }
+    .watch-actions .btn { flex: 1; }
+
+    .empty-state {
+      padding: 35px 18px;
+      border: 1px dashed #cbd5e1;
+      border-radius: 14px;
+      background: #f8fafc;
+      text-align: center;
+    }
+
+    .empty-state .empty-icon { font-size: 38px; }
+    .empty-state h3 { margin: 12px 0 7px; font-size: 14px; }
+    .empty-state p { color: var(--muted); font-size: 11px; line-height: 1.8; }
+
+    .status-message {
+      margin: 12px 0;
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-size: 11px;
+      line-height: 1.8;
+      overflow-wrap: anywhere;
+    }
+
+    .status-message.error { background: #fef2f2; color: #b91c1c; }
+    .status-message.success { background: #f0fdf4; color: #166534; }
+    .status-message[hidden] { display: none; }
+
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .field { min-width: 0; }
+    .field.full { grid-column: 1 / -1; }
+    .field label { display: block; margin-bottom: 8px; font-size: 11px; font-weight: 850; }
+    .hint { display: block; margin-top: 6px; color: var(--muted); font-size: 10px; line-height: 1.7; }
+
+    .check-row { display: flex; align-items: flex-start; gap: 9px; }
+    .check-row input { margin-top: 3px; accent-color: var(--blue); }
+
+    .history-chart {
+      width: 100%;
+      min-height: 185px;
+      overflow: hidden;
+      border: 1px solid #edf0f5;
+      border-radius: 12px;
+      background: #fcfdff;
+    }
+
+    .history-chart svg { display: block; width: 100%; height: auto; }
+    .chart-caption { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-top: 10px; color: var(--muted); font-size: 10px; }
+
+    .history-list { display: grid; gap: 9px; margin-top: 15px; }
+
+    .history-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid #edf0f5;
+      font-size: 11px;
+    }
+
+    .history-row:last-child { border-bottom: 0; }
+    .history-row span { color: var(--muted); }
+
+    .history-empty {
+      display: grid;
+      place-items: center;
+      min-height: 160px;
+      padding: 20px;
+      color: var(--muted);
+      text-align: center;
+      font-size: 11px;
+      line-height: 1.8;
+    }
+
+    .alert-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+      padding: 12px 0;
+      border-bottom: 1px solid #edf0f5;
+    }
+
+    .alert-item:last-child { border-bottom: 0; }
+    .alert-icon { font-size: 20px; }
+    .alert-item strong { display: block; font-size: 11px; line-height: 1.7; }
+    .alert-item p { margin: 5px 0 0; color: var(--muted); font-size: 10px; line-height: 1.7; }
+
+    .tip {
+      padding: 15px;
+      border: 1px solid #bfdbfe;
+      border-radius: 12px;
+      background: #eff6ff;
+      color: #1e40af;
+      font-size: 11px;
+      line-height: 1.8;
+    }
+
+    .detail-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      background: rgba(15,23,42,.58);
+    }
+
+    .detail-backdrop.open { display: flex; }
+
+    .detail-modal {
+      width: min(570px, 100%);
+      max-height: 88vh;
+      overflow-y: auto;
+      border-radius: 17px;
+      background: white;
+      box-shadow: 0 25px 80px rgba(0,0,0,.25);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 20px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .modal-header h2 { margin: 0; font-size: 17px; }
+    .close-button { width: 34px; height: 34px; border: 1px solid var(--line); border-radius: 9px; background: white; font-size: 19px; }
+    .modal-body { padding: 20px; }
+    .modal-body p { color: var(--muted); font-size: 11px; line-height: 1.8; }
+    .modal-body .form-grid { margin-top: 15px; }
+
+    .pagination { display: flex; justify-content: center; flex-wrap: wrap; gap: 7px; margin-top: 17px; }
+    .pagination button { min-width: 34px; min-height: 34px; padding: 6px 10px; border: 1px solid var(--line); border-radius: 8px; background: white; font-size: 11px; font-weight: 800; }
+    .pagination button.active { border-color: var(--blue); background: var(--blue); color: white; }
+
+    .bottom-note {
+      margin: 24px 0 40px;
+      padding: 17px;
+      border: 1px solid #fde68a;
+      border-radius: 13px;
+      background: #fffbeb;
+      color: #92400e;
+      font-size: 11px;
+      line-height: 1.8;
+    }
+
+    footer { padding: 25px; background: #101b32; color: #cbd5e1; text-align: center; font-size: 12px; }
+    footer strong { color: white; }
+
+    @media (max-width: 1050px) {
+      .layout { grid-template-columns: 1fr; }
+      .side-column { grid-template-columns: 1fr 1fr; align-items: start; }
+    }
+
+    @media (max-width: 760px) {
+      .stats { grid-template-columns: 1fr 1fr; }
+      .filters { grid-template-columns: 1fr 1fr; }
+      .filters input { grid-column: 1 / -1; }
+    }
+
+    @media (max-width: 560px) {
+      .navbar { padding: 13px 4%; }
+      .nav-links { width: 100%; justify-content: space-between; gap: 6px; }
+      .nav-links a { font-size: 9px; }
+      .account-btn { display: none; }
+      .hero { padding: 25px 20px; }
+      .panel { padding: 15px; }
+      .side-column { grid-template-columns: 1fr; }
+      .filters { grid-template-columns: 1fr; }
+      .filters input { grid-column: auto; }
+      .price-grid { grid-template-columns: 1fr 1fr; }
+      .price-cell:last-child { grid-column: 1 / -1; }
+      .watch-top { flex-direction: column; }
+      .watch-state { align-self: flex-start; }
+      .form-grid { grid-template-columns: 1fr; }
+      .field.full { grid-column: auto; }
+      .watch-actions .btn { flex-basis: 40%; }
+      .stat { padding: 13px; }
+      .stat-number { font-size: 22px; }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="navbar">
+    <a href="index.html" class="logo">PartPulse<span> MSP</span></a>
+
+    <nav class="nav-links" aria-label="Main navigation">
+      <a href="index.html">Home</a>
+      <a href="models.html">My Device</a>
+      <a href="browse.html">Spare Parts</a>
+      <a href="compare.html">Compare</a>
+      <a href="orders.html">Orders</a>
+      <a class="active" href="price-tracking.html">Price Tracking</a>
+    </nav>
+
+    <a href="login.html" class="account-btn">My Account ↗</a>
+  </header>
+
+  <main class="page">
+    <div class="breadcrumb">
+      <a href="index.html">Home</a>
+      <span>›</span>
+      <strong>Price Tracking</strong>
+    </div>
+
+    <section class="hero">
+      <span class="eyebrow">₹ SMART PRICE WATCH</span>
+      <h1>Track prices. Buy at the right time.</h1>
+      <p>Add spare parts to your watchlist, set your target prices, compare current prices against your targets, and inspect price history when your backend provides it.</p>
+      <div class="hero-actions">
+        <a href="#addTracking">＋ Track a spare part</a>
+        <a href="#watchlist">View watchlist ↓</a>
+        <a href="#priceHistory">Price history</a>
+      </div>
+    </section>
+
+    <section class="section-heading">
+      <div>
+        <h2>Your price dashboard</h2>
+        <p>Live values depend on the latest prices returned by your application.</p>
+      </div>
+      <span class="badge" id="dataStatus">Connecting…</span>
+    </section>
+
+    <section class="stats">
+      <article class="stat">
+        <div class="stat-top">
+          <span class="stat-label">TRACKED PARTS</span>
+          <span class="stat-icon">👁️</span>
+        </div>
+        <strong class="stat-number" id="trackedCount">0</strong>
+        <span class="stat-note">Items in your watchlist</span>
+      </article>
+
+      <article class="stat">
+        <div class="stat-top">
+          <span class="stat-label">TARGET REACHED</span>
+          <span class="stat-icon">🎯</span>
+        </div>
+        <strong class="stat-number" id="targetCount">0</strong>
+        <span class="stat-note">At or below your target price</span>
+      </article>
+
+      <article class="stat">
+        <div class="stat-top">
+          <span class="stat-label">PRICE DROPS</span>
+          <span class="stat-icon">📉</span>
+        </div>
+        <strong class="stat-number" id="dropCount">0</strong>
+        <span class="stat-note">Compared with available history</span>
+      </article>
+
+      <article class="stat">
+        <div class="stat-top">
+          <span class="stat-label">POTENTIAL SAVINGS</span>
+          <span class="stat-icon">💰</span>
+        </div>
+        <strong class="stat-number" id="savingsValue">₹0</strong>
+        <span class="stat-note">Against current prices above target</span>
+      </article>
+    </section>
+
+    <div class="layout">
+      <div class="main-column">
+        <section class="panel" id="addTracking">
+          <div class="panel-heading">
+            <div>
+              <h2>Track a spare part</h2>
+              <p>Select a part, enter your target price, and save it to your watchlist.</p>
+            </div>
+            <span class="badge">PRICE ALERT SETUP</span>
+          </div>
+
+          <div id="formMessage" class="status-message" role="status" hidden></div>
+
+          <form id="trackingForm">
+            <div class="form-grid">
+              <div class="field full">
+                <label for="partSelect">Spare part <span style="color:var(--red)">*</span></label>
+                <select class="control" id="partSelect" required>
+                  <option value="">Loading spare parts…</option>
+                </select>
+                <span class="hint">Parts are loaded from your existing GET /api/spare-parts endpoint.</span>
+              </div>
+
+              <div class="field">
+                <label for="currentPrice">Current listed price (₹)</label>
+                <input class="control" id="currentPrice" type="number" min="0" step="0.01" readonly placeholder="Select a part">
+                <span class="hint">Read-only value from your spare-parts data.</span>
+              </div>
+
+              <div class="field">
+                <label for="targetPrice">Your target price (₹) <span style="color:var(--red)">*</span></label>
+                <input class="control" id="targetPrice" type="number" min="0.01" step="0.01" required placeholder="e.g. 799">
+                <span class="hint">We'll compare this target with the listed price whenever data is refreshed.</span>
+              </div>
+
+              <div class="field full">
+                <label class="check-row">
+                  <input type="checkbox" id="alertEnabled" checked>
+                  <span>Enable target-price alert for this item</span>
+                </label>
+                <span class="hint">This saves an alert preference. Automatic email, SMS, and push alerts require backend integration.</span>
+              </div>
+
+              <div class="field full">
+                <label for="trackingNote">Personal note (optional)</label>
+                <input class="control" id="trackingNote" maxlength="160" placeholder="e.g. Need this battery for my phone repair">
+              </div>
+
+              <div class="field full">
+                <button class="btn btn-primary" id="addTrackingBtn" type="submit">＋ Add to watchlist</button>
+                <button class="btn btn-outline" id="clearTrackingForm" type="reset" style="margin-left:6px">Clear form</button>
+              </div>
+            </div>
+          </form>
+        </section>
+
+        <section class="panel" id="watchlist">
+          <div class="panel-heading">
+            <div>
+              <h2>My price watchlist</h2>
+              <p>Search, filter, sort, inspect history, or update your target price.</p>
+            </div>
+            <button class="btn btn-outline" id="refreshBtn" type="button">↻ Refresh prices</button>
+          </div>
+
+          <div id="watchMessage" class="status-message" role="status" hidden></div>
+
+          <div class="filters">
+            <input class="control" id="searchInput" type="search" placeholder="Search parts or notes…" aria-label="Search watchlist">
+            <select class="control" id="sortSelect" aria-label="Sort watchlist">
+              <option value="name">Name A–Z</option>
+              <option value="price-low">Lowest price</option>
+              <option value="price-high">Highest price</option>
+              <option value="target">Closest to target</option>
+            </select>
+            <select class="control" id="stateFilter" aria-label="Filter price status">
+              <option value="all">All tracked parts</option>
+              <option value="reached">Target reached</option>
+              <option value="drop">Price dropped</option>
+              <option value="waiting">Waiting for target</option>
+            </select>
+          </div>
+
+          <div class="chips" id="alertChips">
+            <button class="chip active" type="button" data-alert-filter="all">All items</button>
+            <button class="chip" type="button" data-alert-filter="enabled">Alerts enabled</button>
+            <button class="chip" type="button" data-alert-filter="disabled">Alerts disabled</button>
+          </div>
+
+          <div class="watchlist" id="watchlistItems"></div>
+
+          <div class="empty-state" id="watchEmpty" hidden>
+            <div class="empty-icon">👀</div>
+            <h3 id="watchEmptyTitle">Your watchlist is empty</h3>
+            <p id="watchEmptyText">Choose a spare part above and add your target price to start tracking.</p>
+            <a class="btn btn-primary" href="#addTracking">Track your first part ↑</a>
+          </div>
+
+          <div class="pagination" id="pagination"></div>
+        </section>
+
+        <section class="panel" id="priceHistory">
+          <div class="panel-heading">
+            <div>
+              <h2>Price history</h2>
+              <p>Choose a tracked part to inspect the history stored by your backend.</p>
+            </div>
+            <span class="badge" id="historyRange">Available data only</span>
+          </div>
+
+          <div class="field">
+            <label for="historyPart">Select tracked part</label>
+            <select class="control" id="historyPart">
+              <option value="">Select a part</option>
+            </select>
+          </div>
+
+          <div class="history-chart" id="historyChart" style="margin-top:14px">
+            <div class="history-empty">Select a part to view its price history.</div>
+          </div>
+
+          <div class="chart-caption">
+            <span id="historyCaption">No history selected</span>
+            <span>Prices in INR (₹)</span>
+          </div>
+
+          <div class="history-list" id="historyList"></div>
+        </section>
+      </div>
+
+      <aside class="side-column">
+        <section class="panel">
+          <div class="panel-heading">
+            <div>
+              <h2>Price alerts</h2>
+              <p>Based on the data currently available in your watchlist.</p>
+            </div>
+          </div>
+
+          <div id="alertSummary"></div>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading">
+            <div>
+              <h2>Price comparison</h2>
+              <p>Review your target versus current listed prices.</p>
+            </div>
+          </div>
+
+          <div id="comparisonSummary"></div>
+          <a href="compare.html" class="btn btn-outline" style="width:100%;margin-top:12px">Compare spare parts ↗</a>
+        </section>
+
+        <section class="panel">
+          <div class="panel-heading">
+            <div>
+              <h2>Smart tracking tips</h2>
+              <p>Get more value from your watchlist.</p>
+            </div>
+          </div>
+
+          <div class="alert-item">
+            <span class="alert-icon">🎯</span>
+            <div>
+              <strong>Set a realistic target</strong>
+              <p>Choose a price that fits your budget rather than assuming every item will drop.</p>
+            </div>
+          </div>
+
+          <div class="alert-item">
+            <span class="alert-icon">🔄</span>
+            <div>
+              <strong>Refresh price data</strong>
+              <p>A refresh retrieves the latest listed prices available from your application.</p>
+            </div>
+          </div>
+
+          <div class="alert-item">
+            <span class="alert-icon">📊</span>
+            <div>
+              <strong>Use price history</strong>
+              <p>Historical comparisons are meaningful only when actual dated price records exist.</p>
+            </div>
+          </div>
+
+          <div class="tip" style="margin-top:14px">
+            <strong>Important:</strong> A target-price match is not a purchase or reservation. Prices and stock availability can change.
+          </div>
+        </section>
+      </aside>
+    </div>
+
+    <div class="bottom-note">
+      <strong>Price-data note:</strong> Current prices come from your spare-parts API. This page does not assume an external retailer feed, a historical price chart, or automatic notifications exist. Those features require recorded price history and a scheduled backend process.
+    </div>
+  </main>
+
+  <footer>
+    <strong>PartPulse MSP</strong> · Mobile Spare Parts Management
+    <p>Track spare-part prices and make informed purchasing decisions.</p>
+  </footer>
+
+  <div class="detail-backdrop" id="editBackdrop" role="presentation">
+    <section class="detail-modal" role="dialog" aria-modal="true" aria-labelledby="editTitle">
+      <div class="modal-header">
+        <h2 id="editTitle">Update price target</h2>
+        <button class="close-button" id="closeEdit" type="button" aria-label="Close dialog">×</button>
+      </div>
+      <div class="modal-body">
+        <p id="editProductName"></p>
+        <form id="editTargetForm">
+          <input type="hidden" id="editTrackingId">
+          <div class="form-grid">
+            <div class="field full">
+              <label for="editTarget">New target price (₹)</label>
+              <input class="control" id="editTarget" type="number" min="0.01" step="0.01" required>
+            </div>
+            <div class="field full">
+              <label class="check-row">
+                <input type="checkbox" id="editAlertEnabled">
+                <span>Enable target-price alert</span>
+              </label>
+            </div>
+          </div>
+          <div class="form-actions" style="display:flex;gap:9px;margin-top:18px">
+            <button class="btn btn-primary" type="submit">Save changes</button>
+            <button class="btn btn-outline" id="cancelEdit" type="button">Cancel</button>
+          </div>
+        </form>
+      </div>
+    </section>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    (() => {
+      "use strict";
+
+      const $ = id => document.getElementById(id);
+      const PAGE_SIZE = 6;
+      const STORAGE_KEY = "partpulse_price_watchlist_v1";
+
+      const state = {
+        products: [],
+        watchlist: [],
+        categoryFilter: "all",
+        search: "",
+        sort: "name",
+        statusFilter: "all",
+        page: 1,
+        loading: false,
+        remoteAvailable: false
+      };
+
+      function first(obj, keys, fallback = "") {
+        for (const key of keys) {
+          if (obj && obj[key] !== undefined && obj[key] !== null && obj[key] !== "") {
+            return obj[key];
+          }
+        }
+        return fallback;
+      }
+
+      function escapeHTML(value) {
+        return String(value ?? "").replace(/[&<>"']/g, char => ({
+          "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+        })[char]);
+      }
+
+      function arrayFrom(data, keys = []) {
+        if (Array.isArray(data)) return data;
+        for (const key of keys) {
+          if (Array.isArray(data?.[key])) return data[key];
+        }
+        return [];
+      }
+
+      function money(value) {
+        const n = Number(value);
+        return Number.isFinite(n)
+          ? "₹" + n.toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+          : "Not available";
+      }
+
+      function numeric(value) {
+        if (value === null || value === undefined || value === "") return null;
+        const n = Number(value);
+        return Number.isFinite(n) && n >= 0 ? n : null;
+      }
+
+      function productId(product) {
+        return String(first(product, ["id", "part_id", "partId", "spare_part_id"], ""));
+      }
+
+      function productName(product) {
+        return String(first(product, ["name", "part_name", "partName", "title"], "Spare part"));
+      }
+
+      function productBrand(product) {
+        return String(first(product, ["brand", "brand_name", "brandName", "manufacturer"], ""));
+      }
+
+      function productModel(product) {
+        return String(first(product, ["model", "model_name", "modelName", "phone_model"], ""));
+      }
+
+      function productCategory(product) {
+        return String(first(product, ["category", "part_type", "partType", "type"], "Spare part"));
+      }
+
+      function productPrice(product) {
+        return numeric(first(product, [
+          "selling_price", "sellingPrice", "price", "unit_price", "unitPrice", "cost"
+        ], null));
+      }
+
+      function productIcon(product) {
+        const text = (productName(product) + " " + productCategory(product)).toLowerCase();
+        if (text.includes("battery")) return "🔋";
+        if (text.includes("display") || text.includes("screen")) return "📱";
+        if (text.includes("charging") || text.includes("port")) return "🔌";
+        if (text.includes("back glass") || text.includes("glass")) return "🪟";
+        if (text.includes("camera")) return "📷";
+        if (text.includes("speaker")) return "🔊";
+        return "🔧";
+      }
+
+      function watchId() {
+        return "watch-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 7);
+      }
+
+      function watchProductId(item) {
+        return String(first(item, ["partId", "part_id", "productId", "product_id"], ""));
+      }
+
+      function watchTarget(item) {
+        return numeric(first(item, ["targetPrice", "target_price", "target"], null));
+      }
+
+      function watchEnabled(item) {
+        const value = first(item, ["alertEnabled", "alert_enabled", "enabled"], true);
+        return value === true || value === 1 || String(value).toLowerCase() === "true";
+      }
+
+      function watchNote(item) {
+        return String(first(item, ["note", "personalNote", "personal_note"], ""));
+      }
+
+      function watchProduct(item) {
+        const id = watchProductId(item);
+        return state.products.find(product => productId(product) === id) || item.product || null;
+      }
+
+      function currentPrice(item) {
+        const product = watchProduct(item);
+        if (product) return productPrice(product);
+
+        return numeric(first(item, ["currentPrice", "current_price", "price"], null));
+      }
+
+      function watchName(item) {
+        const product = watchProduct(item);
+        return product ? productName(product) : String(first(item, ["name", "partName", "part_name"], "Spare part"));
+      }
+
+      function historyOf(item) {
+        const history = first(item, ["priceHistory", "price_history", "history", "prices"], []);
+        if (!Array.isArray(history)) return [];
+
+        return history.map(point => {
+          if (typeof point === "number" || typeof point === "string") {
+            return { date: null, price: numeric(point) };
+          }
+
+          const rawDate = first(point, ["date", "recorded_at", "recordedAt", "timestamp", "created_at"], "");
+          const date = rawDate ? new Date(rawDate) : null;
+          const validDate = date && !Number.isNaN(date.getTime()) ? date : null;
+          const price = numeric(first(point, ["price", "amount", "value", "unit_price"], null));
+
+          return { date: validDate, price };
+        }).filter(point => point.price !== null);
+      }
+
+      function priceDrop(item) {
+        const history = historyOf(item);
+        const current = currentPrice(item);
+
+        if (current === null || history.length < 2) return null;
+
+        const prior = history[history.length - 2].price;
+        if (prior <= 0) return null;
+
+        return ((prior - current) / prior) * 100;
+      }
+
+      function targetReached(item) {
+        const current = currentPrice(item);
+        const target = watchTarget(item);
+        return current !== null && target !== null && current <= target;
+      }
+
+      function potentialSavings(item) {
+        const current = currentPrice(item);
+        const target = watchTarget(item);
+        return current !== null && target !== null && current > target ? current - target : 0;
+      }
+
+      function targetProgress(item) {
+        const current = currentPrice(item);
+        const target = watchTarget(item);
+
+        if (current === null || target === null || current <= 0) return null;
+        return Math.max(0, Math.min(100, (target / current) * 100));
+      }
+
+      function setMessage(id, text, type = "") {
+        const element = $(id);
+        element.textContent = text;
+        element.className = "status-message" + (type ? " " + type : "");
+        element.hidden = !text;
+      }
+
+      async function apiGet(path) {
+        if (window.API && typeof window.API.get === "function") {
+          return await window.API.get(path);
+        }
+
+        const response = await fetch(path);
+        if (!response.ok) throw new Error("Request failed (" + response.status + ")");
+        return response.json();
+      }
+
+      async function apiPost(path, data) {
+        if (window.API && typeof window.API.post === "function") {
+          return await window.API.post(path, data);
+        }
+
+        const body = new URLSearchParams();
+        Object.entries(data).forEach(([key, value]) => {
+          body.append(key, typeof value === "object" ? JSON.stringify(value) : String(value));
+        });
+
+        const response = await fetch(path, {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
+          body
+        });
+
+        const text = await response.text();
+        let result = {};
+        try { result = text ? JSON.parse(text) : {}; }
+        catch { result = { message: text }; }
+
+        if (!response.ok) throw new Error(result.message || result.error || "Request failed (" + response.status + ")");
+        return result;
+      }
+
+      async function apiDelete(path) {
+        const response = await fetch(path, { method: "DELETE" });
+        if (!response.ok) throw new Error("Delete request failed (" + response.status + ")");
+        const text = await response.text();
+        try { return text ? JSON.parse(text) : {}; } catch { return {}; }
+      }
+
+      function saveLocalWatchlist() {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(state.watchlist));
+          return true;
+        } catch (error) {
+          console.error(error);
+          return false;
+        }
+      }
+
+      function loadLocalWatchlist() {
+        try {
+          const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+          return Array.isArray(saved) ? saved : [];
+        } catch {
+          return [];
+        }
+      }
+
+      function normalizeRemoteTracking(record) {
+        return {
+          id: String(first(record, ["tracking_id", "trackingId", "watch_id", "watchId", "id"], watchId())),
+          partId: String(first(record, ["part_id", "partId", "product_id", "productId"], "")),
+          targetPrice: numeric(first(record, ["target_price", "targetPrice", "target"], null)),
+          alertEnabled: first(record, ["alert_enabled", "alertEnabled", "enabled"], true) !== false,
+          note: String(first(record, ["note", "personal_note", "personalNote"], "")),
+          priceHistory: first(record, ["price_history", "priceHistory", "history", "prices"], []),
+          product: record.product || null,
+          remote: true
+        };
+      }
+
+      function populateProducts() {
+        const select = $("partSelect");
+        const previous = select.value;
+
+        select.innerHTML = '<option value="">Choose a spare part</option>';
+
+        state.products.forEach(product => {
+          const id = productId(product);
+          if (!id) return;
+
+          const option = document.createElement("option");
+          option.value = id;
+          option.textContent = productName(product) +
+            (productBrand(product) ? " — " + productBrand(product) : "") +
+            (productPrice(product) !== null ? " · " + money(productPrice(product)) : "");
+          select.appendChild(option);
+        });
+
+        if (state.products.some(product => productId(product) === previous)) {
+          select.value = previous;
+        }
+
+        updateSelectedProduct();
+      }
+
+      function updateSelectedProduct() {
+        const id = $("partSelect").value;
+        const product = state.products.find(item => productId(item) === id);
+        const price = product ? productPrice(product) : null;
+
+        $("currentPrice").value = price === null ? "" : price.toFixed(2);
+
+        if (price !== null && !$("targetPrice").value) {
+          $("targetPrice").value = "";
+        }
+      }
+
+      function renderStats() {
+        $("trackedCount").textContent = state.watchlist.length;
+        $("targetCount").textContent = state.watchlist.filter(targetReached).length;
+        $("dropCount").textContent = state.watchlist.filter(item => {
+          const drop = priceDrop(item);
+          return drop !== null && drop > 0;
+        }).length;
+
+        const savings = state.watchlist.reduce((sum, item) => sum + potentialSavings(item), 0);
+        $("savingsValue").textContent = money(savings);
+      }
+
+      function itemState(item) {
+        const current = currentPrice(item);
+        const target = watchTarget(item);
+        const drop = priceDrop(item);
+
+        if (current === null || target === null) return "unknown";
+        if (current <= target) return "reached";
+        if (drop !== null && drop > 0) return "drop";
+        return "waiting";
+      }
+
+      function stateLabel(status) {
+        return {
+          reached: "Target reached",
+          drop: "Price dropped",
+          waiting: "Waiting for target",
+          unknown: "Need price data"
+        }[status] || "Tracking";
+      }
+
+      function stateClass(status) {
+        return {
+          reached: "reached",
+          drop: "drop",
+          waiting: "",
+          unknown: ""
+        }[status] || "";
+      }
+
+      function renderWatchCard(item) {
+        const product = watchProduct(item);
+        const name = watchName(item);
+        const id = watchProductId(item);
+        const current = currentPrice(item);
+        const target = watchTarget(item);
+        const reached = targetReached(item);
+        const drop = priceDrop(item);
+        const progress = targetProgress(item);
+        const status = itemState(item);
+        const brand = product ? productBrand(product) : "";
+        const model = product ? productModel(product) : "";
+        const category = product ? productCategory(product) : "";
+        const note = watchNote(item);
+
+        let differenceText = "History unavailable";
+        let differenceClass = "";
+
+        if (drop !== null) {
+          if (drop > 0) {
+            differenceText = drop.toFixed(1) + "% lower";
+            differenceClass = "price-difference";
+          } else if (drop < 0) {
+            differenceText = Math.abs(drop).toFixed(1) + "% higher";
+            differenceClass = "price-difference negative";
+          } else {
+            differenceText = "No change";
+          }
+        }
+
+        const progressText = reached
+          ? "Your target has been reached"
+          : current !== null && target !== null
+            ? (current - target > 0 ? money(current - target) + " above target" : "Target comparison unavailable")
+            : "Current price or target unavailable";
+
+        return `
+          <article class="watch-card">
+            <div class="watch-top">
+              <div class="product-main">
+                <div class="product-icon">${productIcon(product || { name })}</div>
+                <div class="product-title">
+                  <h3>${escapeHTML(name)}</h3>
+                  <p>${escapeHTML([brand, model, category].filter(Boolean).join(" · ") || ("Part ID: " + id))}</p>
+                  ${note ? '<p>📝 ' + escapeHTML(note) + '</p>' : ''}
+                </div>
+              </div>
+              <span class="watch-state ${stateClass(status)}">${escapeHTML(stateLabel(status))}</span>
+            </div>
+
+            <div class="price-grid">
+              <div class="price-cell">
+                <span>Current price</span>
+                <strong>${current === null ? "—" : escapeHTML(money(current))}</strong>
+              </div>
+              <div class="price-cell">
+                <span>Your target</span>
+                <strong>${target === null ? "—" : escapeHTML(money(target))}</strong>
+              </div>
+              <div class="price-cell">
+                <span>Recent history</span>
+                <strong class="${differenceClass}" style="font-size:12px">${escapeHTML(differenceText)}</strong>
+              </div>
+            </div>
+
+            <div class="progress-block">
+              <div class="progress-label">
+                <span>${escapeHTML(progressText)}</span>
+                <span>${progress === null ? "—" : Math.round(progress) + "%"}</span>
+              </div>
+              <div class="progress-track">
+                <div class="progress-fill ${reached ? "reached" : ""}" style="width:${progress === null ? 0 : progress}%"></div>
+              </div>
+            </div>
+
+            <div class="watch-actions">
+              <button class="btn btn-outline" type="button" data-history="${escapeHTML(item.id)}">View history</button>
+              <button class="btn btn-outline" type="button" data-edit="${escapeHTML(item.id)}">Edit target</button>
+              <button class="btn btn-outline" type="button" data-toggle="${escapeHTML(item.id)}">${watchEnabled(item) ? "🔔 Alerts on" : "🔕 Alerts off"}</button>
+              <button class="btn btn-danger" type="button" data-remove="${escapeHTML(item.id)}">Remove</button>
+            </div>
+          </article>`;
+      }
+
+      function filteredWatchlist() {
+        let items = state.watchlist.filter(item => {
+          const text = [
+            watchName(item),
+            watchNote(item),
+            watchProduct(item) ? productBrand(watchProduct(item)) : "",
+            watchProduct(item) ? productModel(watchProduct(item)) : ""
+          ].join(" ").toLowerCase();
+
+          if (state.search && !text.includes(state.search.toLowerCase())) return false;
+
+          const status = itemState(item);
+          if (state.statusFilter !== "all" && status !== state.statusFilter) return false;
+
+          if (state.categoryFilter === "enabled" && !watchEnabled(item)) return false;
+          if (state.categoryFilter === "disabled" && watchEnabled(item)) return false;
+
+          return true;
+        });
+
+        items.sort((a, b) => {
+          const priceA = currentPrice(a);
+          const priceB = currentPrice(b);
+          const targetA = watchTarget(a);
+          const targetB = watchTarget(b);
+
+          if (state.sort === "price-low") return (priceA ?? Infinity) - (priceB ?? Infinity);
+          if (state.sort === "price-high") return (priceB ?? -Infinity) - (priceA ?? -Infinity);
+          if (state.sort === "target") {
+            const gapA = priceA !== null && targetA !== null && priceA > 0 ? Math.abs(priceA - targetA) / priceA : Infinity;
+            const gapB = priceB !== null && targetB !== null && priceB > 0 ? Math.abs(priceB - targetB) / priceB : Infinity;
+            return gapA - gapB;
+          }
+          return watchName(a).localeCompare(watchName(b));
+        });
+
+        return items;
+      }
+
+      function renderPagination(totalPages) {
+        const container = $("pagination");
+        container.innerHTML = "";
+
+        if (totalPages <= 1) return;
+
+        const addButton = (label, page, active = false, disabled = false) => {
+          const button = document.createElement("button");
+          button.textContent = label;
+          button.disabled = disabled;
+          if (active) button.classList.add("active");
+
+          button.addEventListener("click", () => {
+            state.page = page;
+            renderWatchlist();
+            $("watchlist").scrollIntoView({ behavior: "smooth", block: "start" });
+          });
+
+          container.appendChild(button);
+        };
+
+        addButton("←", Math.max(1, state.page - 1), false, state.page === 1);
+
+        for (let page = 1; page <= totalPages; page++) {
+          addButton(String(page), page, page === state.page);
+        }
+
+        addButton("→", Math.min(totalPages, state.page + 1), false, state.page === totalPages);
+      }
+
+      function renderWatchlist() {
+        const filtered = filteredWatchlist();
+        const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+
+        if (state.page > totalPages) state.page = totalPages;
+
+        const start = (state.page - 1) * PAGE_SIZE;
+        const visible = filtered.slice(start, start + PAGE_SIZE);
+
+        $("watchlistItems").innerHTML = visible.map(renderWatchCard).join("");
+        $("watchlistItems").style.display = filtered.length ? "grid" : "none";
+        $("watchEmpty").hidden = filtered.length > 0;
+
+        $("watchEmptyTitle").textContent = state.watchlist.length ? "No matching parts" : "Your watchlist is empty";
+        $("watchEmptyText").textContent = state.watchlist.length
+          ? "Try another search or filter."
+          : "Choose a spare part above and add your target price to start tracking.";
+
+        renderPagination(totalPages);
+        renderStats();
+        renderAlertSummary();
+        renderComparisonSummary();
+        populateHistorySelector();
+      }
+
+      function renderAlertSummary() {
+        const items = state.watchlist.filter(watchEnabled);
+        const reached = items.filter(targetReached);
+        const waiting = items.filter(item => itemState(item) === "waiting");
+        const noPrice = items.filter(item => currentPrice(item) === null);
+
+        let html = "";
+
+        if (reached.length) {
+          html += reached.map(item => `
+            <div class="alert-item">
+              <span class="alert-icon">🎯</span>
+              <div>
+                <strong>${escapeHTML(watchName(item))}</strong>
+                <p>Current price ${escapeHTML(money(currentPrice(item)))} is at or below your ${escapeHTML(money(watchTarget(item)))} target.</p>
+              </div>
+            </div>`).join("");
+        }
+
+        if (!reached.length) {
+          html += `
+            <div class="alert-item">
+              <span class="alert-icon">👀</span>
+              <div>
+                <strong>No target reached yet</strong>
+                <p>Items with alert preferences enabled will appear here when their listed prices match your targets.</p>
+              </div>
+            </div>`;
+        }
+
+        if (waiting.length) {
+          html += `
+            <div class="alert-item">
+              <span class="alert-icon">⏳</span>
+              <div>
+                <strong>${waiting.length} item(s) above target</strong>
+                <p>Current prices are still higher than the target prices you selected.</p>
+              </div>
+            </div>`;
+        }
+
+        if (noPrice.length) {
+          html += `
+            <div class="alert-item">
+              <span class="alert-icon">ℹ️</span>
+              <div>
+                <strong>${noPrice.length} item(s) need price data</strong>
+                <p>Refresh your product data or check the spare-part record.</p>
+              </div>
+            </div>`;
+        }
+
+        $("alertSummary").innerHTML = html;
+      }
+
+      function renderComparisonSummary() {
+        const comparable = state.watchlist.filter(item =>
+          currentPrice(item) !== null && watchTarget(item) !== null
+        );
+
+        if (!comparable.length) {
+          $("comparisonSummary").innerHTML = `
+            <div class="history-empty" style="min-height:90px">
+              Add a target price and make sure current prices are available to compare.
+            </div>`;
+          return;
+        }
+
+        const reached = comparable.filter(targetReached).length;
+        const totalGap = comparable.reduce((sum, item) => sum + potentialSavings(item), 0);
+
+        $("comparisonSummary").innerHTML = `
+          <div class="price-cell" style="margin-bottom:9px">
+            <span>Targets reached</span>
+            <strong>${reached} of ${comparable.length}</strong>
+          </div>
+          <div class="price-cell">
+            <span>Total amount above target prices</span>
+            <strong>${escapeHTML(money(totalGap))}</strong>
+          </div>
+          <p class="hint">This is a comparison against your chosen targets, not guaranteed savings or a forecast.</p>`;
+      }
+
+      function populateHistorySelector() {
+        const select = $("historyPart");
+        const previous = select.value;
+
+        select.innerHTML = '<option value="">Select a tracked part</option>';
+
+        state.watchlist.forEach(item => {
+          const option = document.createElement("option");
+          option.value = item.id;
+          option.textContent = watchName(item);
+          select.appendChild(option);
+        });
+
+        if (state.watchlist.some(item => item.id === previous)) {
+          select.value = previous;
+        }
+
+        if (select.value) renderHistory(select.value);
+        else {
+          $("historyChart").innerHTML = '<div class="history-empty">Select a tracked part to view its price history.</div>';
+          $("historyCaption").textContent = "No history selected";
+          $("historyList").innerHTML = "";
+        }
+      }
+
+      function renderHistory(id) {
+        const item = state.watchlist.find(record => record.id === id);
+        if (!item) return;
+
+        const history = historyOf(item);
+        const current = currentPrice(item);
+
+        if (!history.length) {
+          $("historyChart").innerHTML = `
+            <div class="history-empty">
+              <div>
+                <strong>No historical price records available</strong><br>
+                The backend must store dated price snapshots before a genuine price-history chart can be shown.
+              </div>
+            </div>`;
+          $("historyCaption").textContent = "History unavailable";
+          $("historyList").innerHTML = current === null ? "" : `
+            <div class="history-row"><span>Current listed price</span><strong>${escapeHTML(money(current))}</strong></div>`;
+          $("historyRange").textContent = "No history data";
+          return;
+        }
+
+        const values = history.map(point => point.price);
+        const min = Math.min(...values);
+        const max = Math.max(...values);
+        const range = max - min || Math.max(max * 0.1, 1);
+
+        const width = 620;
+        const height = 210;
+        const padX = 42;
+        const padY = 25;
+        const plotWidth = width - padX * 2;
+        const plotHeight = height - padY * 2;
+
+        const points = values.map((value, index) => ({
+          x: padX + (values.length === 1 ? plotWidth / 2 : (index / (values.length - 1)) * plotWidth),
+          y: height - padY - ((value - min) / range) * plotHeight,
+          value
+        }));
+
+        const path = points.map((point, index) =>
+          (index === 0 ? "M" : "L") + point.x.toFixed(1) + " " + point.y.toFixed(1)
+        ).join(" ");
+
+        const circles = points.map(point =>
+          `<circle cx="${point.x}" cy="${point.y}" r="4" fill="#2563eb" stroke="white" stroke-width="2"><title>${escapeHTML(money(point.value))}</title></circle>`
+        ).join("");
+
+        const grid = [0, 1, 2, 3].map(index => {
+          const y = padY + index * (plotHeight / 3);
+          const value = max - index * (range / 3);
+          return `
+            <line x1="${padX}" y1="${y}" x2="${width - padX}" y2="${y}" stroke="#e2e8f0" stroke-dasharray="4 4"/>
+            <text x="${padX - 7}" y="${y + 4}" text-anchor="end" font-size="10" fill="#64748b">${escapeHTML(Math.round(value))}</text>`;
+        }).join("");
+
+        $("historyChart").innerHTML = `
+          <svg viewBox="0 0 ${width} ${height}" role="img" aria-label="Historical spare-part prices">
+            ${grid}
+            <path d="${path}" fill="none" stroke="#2563eb" stroke-width="3" stroke-linejoin="round" stroke-linecap="round"/>
+            ${circles}
+          </svg>`;
+
+        const dated = history.filter(point => point.date);
+        $("historyCaption").textContent = history.length + " recorded point(s)";
+        $("historyRange").textContent = dated.length
+          ? dated.length + " dated record(s)"
+          : "Dates unavailable";
+
+        $("historyList").innerHTML = history.slice().reverse().slice(0, 8).map(point => `
+          <div class="history-row">
+            <span>${escapeHTML(point.date ? point.date.toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }) : "Date not recorded")}</span>
+            <strong>${escapeHTML(money(point.price))}</strong>
+          </div>`).join("");
+
+        if (current !== null) {
+          $("historyList").insertAdjacentHTML("afterbegin", `
+            <div class="history-row">
+              <span>Current listed price</span>
+              <strong>${escapeHTML(money(current))}</strong>
+            </div>`);
+        }
+      }
+
+      function addWatchItem(product, target, enabled, note) {
+        const existing = state.watchlist.find(item => watchProductId(item) === productId(product));
+
+        if (existing) {
+          existing.targetPrice = target;
+          existing.alertEnabled = enabled;
+          existing.note = note;
+          existing.product = product;
+          return { updated: true, item: existing };
+        }
+
+        const item = {
+          id: watchId(),
+          partId: productId(product),
+          targetPrice: target,
+          alertEnabled: enabled,
+          note,
+          priceHistory: [],
+          product,
+          remote: false
+        };
+
+        state.watchlist.unshift(item);
+        return { updated: false, item };
+      }
+
+      async function saveTracking(item) {
+        // Save through the server if its price-tracking endpoint is available.
+        // If it is not, retain a clearly labelled browser-local watchlist.
+        try {
+          const result = await apiPost("/api/price-tracking", {
+            partId: watchProductId(item),
+            targetPrice: watchTarget(item),
+            alertEnabled: watchEnabled(item),
+            note: watchNote(item)
+          });
+
+          item.remote = true;
+
+          const serverId = first(result, ["trackingId", "tracking_id", "id"], "");
+          if (serverId) item.id = String(serverId);
+
+          state.remoteAvailable = true;
+          return "remote";
+        } catch (error) {
+          console.warn("Remote price tracking is unavailable; saving locally.", error);
+
+          const saved = saveLocalWatchlist();
+          if (!saved) throw new Error("Could not save the watchlist in this browser.");
+
+          return "local";
+        }
+      }
+
+      async function addTracking(event) {
+        event.preventDefault();
+
+        const id = $("partSelect").value;
+        const product = state.products.find(item => productId(item) === id);
+        const target = numeric($("targetPrice").value);
+        const enabled = $("alertEnabled").checked;
+        const note = $("trackingNote").value.trim();
+
+        if (!product) {
+          setMessage("formMessage", "Select a valid spare part.", "error");
+          return;
+        }
+
+        if (target === null || target <= 0) {
+          setMessage("formMessage", "Enter a target price greater than zero.", "error");
+          return;
+        }
+
+        const result = addWatchItem(product, target, enabled, note);
+        const button = $("addTrackingBtn");
+        button.disabled = true;
+        button.textContent = "Saving…";
+
+        try {
+          const storageMode = await saveTracking(result.item);
+
+          renderWatchlist();
+          setMessage(
+            "formMessage",
+            result.updated
+              ? (storageMode === "remote"
+                  ? "Your tracking settings were updated through the backend."
+                  : "Your target was updated in this browser. The backend tracking endpoint is not available.")
+              : (storageMode === "remote"
+                  ? "Spare part added to your price watchlist."
+                  : "Spare part added to your browser-local watchlist. It is not yet synced to the server."),
+            "success"
+          );
+
+          $("trackingForm").reset();
+          updateSelectedProduct();
+        } catch (error) {
+          setMessage("formMessage", error.message || "Could not save the tracking settings.", "error");
+        } finally {
+          button.disabled = false;
+          button.textContent = "＋ Add to watchlist";
+        }
+      }
+
+      function openEdit(id) {
+        const item = state.watchlist.find(record => record.id === id);
+        if (!item) return;
+
+        $("editTrackingId").value = item.id;
+        $("editProductName").textContent = watchName(item);
+        $("editTarget").value = watchTarget(item) ?? "";
+        $("editAlertEnabled").checked = watchEnabled(item);
+        $("editBackdrop").classList.add("open");
+        $("editTarget").focus();
+      }
+
+      function closeEdit() {
+        $("editBackdrop").classList.remove("open");
+      }
+
+      async function saveEdit(event) {
+        event.preventDefault();
+
+        const id = $("editTrackingId").value;
+        const item = state.watchlist.find(record => record.id === id);
+        const target = numeric($("editTarget").value);
+
+        if (!item) return;
+
+        if (target === null || target <= 0) {
+          setMessage("watchMessage", "Enter a valid target price greater than zero.", "error");
+          return;
+        }
+
+        item.targetPrice = target;
+        item.alertEnabled = $("editAlertEnabled").checked;
+
+        try {
+          const mode = await saveTracking(item);
+          saveLocalWatchlist();
+          renderWatchlist();
+          closeEdit();
+
+          setMessage(
+            "watchMessage",
+            mode === "remote"
+              ? "Tracking settings updated on the server."
+              : "Tracking settings updated in this browser only.",
+            "success"
+          );
+        } catch (error) {
+          setMessage("watchMessage", error.message || "Could not save changes.", "error");
+        }
+      }
+
+      async function toggleAlert(id) {
+        const item = state.watchlist.find(record => record.id === id);
+        if (!item) return;
+
+        item.alertEnabled = !watchEnabled(item);
+
+        try {
+          const mode = await saveTracking(item);
+          saveLocalWatchlist();
+          renderWatchlist();
+
+          setMessage(
+            "watchMessage",
+            mode === "remote"
+              ? "Alert preference updated on the server."
+              : "Alert preference updated locally. Automatic notifications still require backend support.",
+            "success"
+          );
+        } catch (error) {
+          item.alertEnabled = !item.alertEnabled;
+          renderWatchlist();
+          setMessage("watchMessage", error.message || "Could not update alert preference.", "error");
+        }
+      }
+
+      async function removeWatch(id) {
+        const item = state.watchlist.find(record => record.id === id);
+        if (!item) return;
+
+        const confirmed = window.confirm("Remove " + watchName(item) + " from your price watchlist?");
+        if (!confirmed) return;
+
+        if (item.remote) {
+          try {
+            await apiDelete("/api/price-tracking?id=" + encodeURIComponent(item.id));
+          } catch (error) {
+            setMessage(
+              "watchMessage",
+              "The server did not confirm removal. DELETE /api/price-tracking?id=... must be supported before remote records can be removed.",
+              "error"
+            );
+            return;
+          }
+        }
+
+        state.watchlist = state.watchlist.filter(record => record.id !== id);
+        saveLocalWatchlist();
+        renderWatchlist();
+        setMessage("watchMessage", "Item removed from your watchlist.", "success");
+      }
+
+      async function loadData() {
+        if (state.loading) return;
+
+        state.loading = true;
+        $("refreshBtn").disabled = true;
+        $("refreshBtn").textContent = "Loading…";
+        setMessage("watchMessage", "Refreshing product and tracking data…");
+
+        try {
+          const productsResult = await apiGet("/api/spare-parts");
+          state.products = arrayFrom(productsResult, ["parts", "spareParts", "data", "results"]);
+
+          let remoteTracking = null;
+
+          try {
+            const trackingResult = await apiGet("/api/price-tracking");
+            remoteTracking = arrayFrom(trackingResult, ["tracking", "watchlist", "items", "data", "results"]);
+            state.remoteAvailable = true;
+          } catch (error) {
+            state.remoteAvailable = false;
+            console.info("Remote price tracking is not configured.", error);
+          }
+
+          if (remoteTracking !== null) {
+            state.watchlist = remoteTracking.map(normalizeRemoteTracking);
+            // Keep browser-local items only when the server does not already
+            // contain a matching part. This avoids duplicating remote entries.
+            const local = loadLocalWatchlist();
+            local.forEach(localItem => {
+              if (!state.watchlist.some(remote => watchProductId(remote) === watchProductId(localItem))) {
+                state.watchlist.push(localItem);
+              }
+            });
+          } else {
+            state.watchlist = loadLocalWatchlist();
+          }
+
+          state.watchlist.forEach(item => {
+            const product = state.products.find(p => productId(p) === watchProductId(item));
+            if (product) item.product = product;
+          });
+
+          populateProducts();
+          renderWatchlist();
+
+          $("dataStatus").textContent = state.remoteAvailable
+            ? "Product data + tracking API"
+            : "Product data loaded";
+
+          setMessage(
+            "watchMessage",
+            state.remoteAvailable
+              ? "Product prices and server tracking records loaded."
+              : "Product prices loaded. Watchlist tracking is using browser-local storage because the tracking API is unavailable.",
+            "success"
+          );
+        } catch (error) {
+          console.error(error);
+          state.products = [];
+
+          // Preserve locally saved watchlist data even if the product API fails.
+          state.watchlist = loadLocalWatchlist();
+          populateProducts();
+          renderWatchlist();
+
+          $("dataStatus").textContent = "Connection issue";
+          setMessage(
+            "watchMessage",
+            "Could not load spare parts. Check that your Java backend is running and GET /api/spare-parts is available. " +
+            (error.message || ""),
+            "error"
+          );
+        } finally {
+          state.loading = false;
+          $("refreshBtn").disabled = false;
+          $("refreshBtn").textContent = "↻ Refresh prices";
+        }
+      }
+
+      $("partSelect").addEventListener("change", updateSelectedProduct);
+      $("trackingForm").addEventListener("submit", addTracking);
+      $("editTargetForm").addEventListener("submit", saveEdit);
+      $("closeEdit").addEventListener("click", closeEdit);
+      $("cancelEdit").addEventListener("click", closeEdit);
+
+      $("editBackdrop").addEventListener("click", event => {
+        if (event.target === $("editBackdrop")) closeEdit();
+      });
+
+      document.addEventListener("keydown", event => {
+        if (event.key === "Escape") closeEdit();
+      });
+
+      $("clearTrackingForm").addEventListener("click", () => {
+        setTimeout(() => {
+          setMessage("formMessage", "");
+          updateSelectedProduct();
+        }, 0);
+      });
+
+      $("searchInput").addEventListener("input", () => {
+        state.search = $("searchInput").value.trim();
+        state.page = 1;
+        renderWatchlist();
+      });
+
+      $("sortSelect").addEventListener("change", () => {
+        state.sort = $("sortSelect").value;
+        state.page = 1;
+        renderWatchlist();
+      });
+
+      $("stateFilter").addEventListener("change", () => {
+        state.statusFilter = $("stateFilter").value;
+        state.page = 1;
+        renderWatchlist();
+      });
+
+      $("alertChips").addEventListener("click", event => {
+        const button = event.target.closest("[data-alert-filter]");
+        if (!button) return;
+
+        state.categoryFilter = button.dataset.alertFilter;
+        state.page = 1;
+
+        $("alertChips").querySelectorAll("[data-alert-filter]").forEach(chip => {
+          chip.classList.toggle("active", chip === button);
+        });
+
+        renderWatchlist();
+      });
+
+      $("watchlistItems").addEventListener("click", event => {
+        const history = event.target.closest("[data-history]");
+        const edit = event.target.closest("[data-edit]");
+        const toggle = event.target.closest("[data-toggle]");
+        const remove = event.target.closest("[data-remove]");
+
+        if (history) {
+          $("historyPart").value = history.dataset.history;
+          renderHistory(history.dataset.history);
+          $("priceHistory").scrollIntoView({ behavior: "smooth", block: "start" });
+        } else if (edit) {
+          openEdit(edit.dataset.edit);
+        } else if (toggle) {
+          toggleAlert(toggle.dataset.toggle);
+        } else if (remove) {
+          removeWatch(remove.dataset.remove);
+        }
+      });
+
+      $("historyPart").addEventListener("change", () => {
+        if ($("historyPart").value) renderHistory($("historyPart").value);
+      });
+
+      $("refreshBtn").addEventListener("click", loadData);
+
+      loadData();
+    })();
+  </script>
+</body>
+</html>
