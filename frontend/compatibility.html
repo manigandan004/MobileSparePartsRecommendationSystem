@@ -1,1 +1,193 @@
-<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Compatibility</title><link rel="stylesheet" href="style.css"></head><body><main class="container"><a href="index.html">← Home</a><h1>Check Spare-Part Compatibility</h1><input id="part" type="number" value="1" placeholder="Part ID"><input id="model" placeholder="Exact mobile model"><button onclick="check()">Check</button><div id="out"></div></main><script>async function check(){const part=document.getElementById('part').value,model=encodeURIComponent(document.getElementById('model').value);const x=await fetch(`/api/compatibility?partId=${part}&model=${model}`).then(r=>r.json());document.getElementById('out').innerHTML=`<div class="card"><h2>${x.compatible?'Compatible':'Not confirmed'}</h2><p>${x.message}</p></div>`}</script></body></html>
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check Spare-Part Compatibility</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<nav class="nav">
+    <a href="index.html" class="brand">PartPulse MSP</a>
+</nav>
+
+<main class="container">
+
+    <div class="card">
+        <h1>Check Spare-Part Compatibility</h1>
+        <p>Select your mobile model and a spare part to check whether they are compatible.</p>
+
+        <label for="model">Select Mobile Model</label>
+        <select id="model" class="input">
+            <option value="">Loading models...</option>
+        </select>
+
+        <label for="part">Select Spare Part</label>
+        <select id="part" class="input" disabled>
+            <option value="">Select a mobile model first</option>
+        </select>
+
+        <button id="checkBtn" class="btn" disabled>
+            Check Compatibility
+        </button>
+
+        <div id="result"></div>
+    </div>
+
+</main>
+
+<script>
+const modelSelect = document.getElementById("model");
+const partSelect = document.getElementById("part");
+const checkBtn = document.getElementById("checkBtn");
+const result = document.getElementById("result");
+
+let models = [];
+let parts = [];
+
+async function loadModels() {
+    try {
+        const response = await fetch("/api/models");
+
+        if (!response.ok) {
+            throw new Error("Failed to load mobile models");
+        }
+
+        models = await response.json();
+
+        modelSelect.innerHTML =
+            '<option value="">Select Mobile Model</option>';
+
+        models.forEach(model => {
+            const option = document.createElement("option");
+            option.value = model.name;
+            option.textContent = model.brand + " - " + model.name;
+            modelSelect.appendChild(option);
+        });
+
+    } catch (error) {
+        modelSelect.innerHTML =
+            '<option value="">Unable to load models</option>';
+
+        result.innerHTML =
+            '<p class="error">Unable to load mobile models.</p>';
+    }
+}
+
+async function loadParts() {
+    try {
+        const response = await fetch("/api/spare-parts");
+
+        if (!response.ok) {
+            throw new Error("Failed to load spare parts");
+        }
+
+        parts = await response.json();
+
+        updatePartList();
+
+    } catch (error) {
+        partSelect.innerHTML =
+            '<option value="">Unable to load spare parts</option>';
+
+        result.innerHTML =
+            '<p class="error">Unable to load spare parts.</p>';
+    }
+}
+
+function updatePartList() {
+
+    const selectedModel = modelSelect.value;
+
+    partSelect.innerHTML =
+        '<option value="">Select Spare Part</option>';
+
+    result.innerHTML = "";
+
+    if (!selectedModel) {
+        partSelect.disabled = true;
+        checkBtn.disabled = true;
+        return;
+    }
+
+    parts.forEach(part => {
+
+        const option = document.createElement("option");
+
+        option.value = part.id;
+
+        option.textContent =
+            part.part_name +
+            " - " +
+            part.category +
+            " (₹" +
+            Number(part.price).toFixed(2) +
+            ")";
+
+        partSelect.appendChild(option);
+    });
+
+    partSelect.disabled = false;
+    checkBtn.disabled = true;
+}
+
+modelSelect.addEventListener("change", updatePartList);
+
+partSelect.addEventListener("change", () => {
+    checkBtn.disabled = !partSelect.value;
+    result.innerHTML = "";
+});
+
+checkBtn.addEventListener("click", () => {
+
+    const selectedModel = modelSelect.value;
+    const selectedPartId = Number(partSelect.value);
+
+    const selectedPart =
+        parts.find(part => Number(part.id) === selectedPartId);
+
+    if (!selectedModel || !selectedPart) {
+        return;
+    }
+
+    const compatible =
+        selectedPart.model.toLowerCase() ===
+        selectedModel.toLowerCase();
+
+    if (compatible) {
+
+        result.innerHTML = `
+            <div class="card" style="margin-top:20px;">
+                <h2>✓ Compatible</h2>
+                <p>
+                    <strong>${selectedPart.part_name}</strong>
+                    is compatible with
+                    <strong>${selectedModel}</strong>.
+                </p>
+            </div>
+        `;
+
+    } else {
+
+        result.innerHTML = `
+            <div class="card" style="margin-top:20px;">
+                <h2>✗ Not Compatible</h2>
+                <p>
+                    <strong>${selectedPart.part_name}</strong>
+                    is designed for
+                    <strong>${selectedPart.model}</strong>,
+                    not <strong>${selectedModel}</strong>.
+                </p>
+            </div>
+        `;
+    }
+});
+
+loadModels();
+loadParts();
+</script>
+
+</body>
+</html>
